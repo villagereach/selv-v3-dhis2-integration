@@ -16,7 +16,6 @@
 package org.openlmis.integration.dhis2;
 
 import java.util.List;
-
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

@@ -16,7 +16,6 @@
 package org.openlmis.integration.dhis2;
 
 import java.io.IOException;
-
 import org.openlmis.integration.dhis2.util.Resource2Db;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;

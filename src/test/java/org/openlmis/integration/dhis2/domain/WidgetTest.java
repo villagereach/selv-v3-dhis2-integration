@@ -21,9 +21,9 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.web.widget.WidgetDto;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.WidgetDataBuilder;
+import org.openlmis.integration.dhis2.web.widget.WidgetDto;
 
 public class WidgetTest {
 

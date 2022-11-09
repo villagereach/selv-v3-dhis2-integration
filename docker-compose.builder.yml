@@ -30,11 +30,11 @@ services:
     env_file: .env
   image:
     build: .
-    image: openlmis/template-service
+    image: openlmismz/selv-v3-dhis2-integration
   db:
     image: openlmis/postgres:9.6-debezium
     env_file: .env
   log:
     image: openlmis/rsyslog:1
     volumes:
-      - '../logs/template-service:/var/log'
+      - '../logs/selv-v3-dhis2-integration:/var/log'

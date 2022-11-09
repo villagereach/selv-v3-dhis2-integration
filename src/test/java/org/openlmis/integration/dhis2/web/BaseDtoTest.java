@@ -18,8 +18,8 @@ package org.openlmis.integration.dhis2.web;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.web.widget.WidgetDto;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.web.widget.WidgetDto;
 
 public class BaseDtoTest {
 
