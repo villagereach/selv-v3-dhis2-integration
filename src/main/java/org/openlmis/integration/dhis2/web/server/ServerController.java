@@ -13,18 +13,19 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web.widget;
+package org.openlmis.integration.dhis2.web.server;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.server.ServerDto;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
-import org.openlmis.integration.dhis2.repository.WidgetRepository;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
@@ -48,107 +49,107 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Controller used to expose Widgets via HTTP.
+ * Controller used to expose Servers via HTTP.
  */
 @Controller
-@RequestMapping(WidgetController.RESOURCE_PATH)
+@RequestMapping(ServerController.RESOURCE_PATH)
 @Transactional
-public class WidgetController extends BaseController {
+public class ServerController extends BaseController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(WidgetController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServerController.class);
 
-  public static final String RESOURCE_PATH = API_PATH + "/widgets";
+  public static final String RESOURCE_PATH = API_PATH + "/servers";
 
   @Autowired
-  private WidgetRepository widgetRepository;
+  private ServerRepository serverRepository;
 
   /**
-   * Allows the creation of a new widget. If the id is specified, it will be ignored.
+   * Allows the creation of a new server. If the id is specified, it will be ignored.
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public WidgetDto createWidget(@RequestBody WidgetDto widget) {
-    LOGGER.debug("Creating new widget");
-    Widget newWidget = Widget.newInstance(widget);
-    newWidget.setId(null);
-    newWidget = widgetRepository.saveAndFlush(newWidget);
+  public ServerDto createServer(@RequestBody ServerDto server) {
+    LOGGER.debug("Creating new server");
+    Server newServer = Server.newInstance(server);
+    newServer.setId(null);
+    newServer = serverRepository.saveAndFlush(newServer);
 
-    return WidgetDto.newInstance(newWidget);
+    return ServerDto.newInstance(newServer);
   }
 
   /**
-   * Updates the specified widget.
+   * Updates the specified server.
    */
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public WidgetDto saveWidget(@PathVariable("id") UUID id, @RequestBody WidgetDto widget) {
-    if (null != widget.getId() && !Objects.equals(widget.getId(), id)) {
-      throw new ValidationMessageException(MessageKeys.ERROR_WIDGET_ID_MISMATCH);
+  public ServerDto saveServer(@PathVariable("id") UUID id, @RequestBody ServerDto server) {
+    if (null != server.getId() && !Objects.equals(server.getId(), id)) {
+      throw new ValidationMessageException(MessageKeys.ERROR_SERVER_ID_MISMATCH);
     }
 
-    LOGGER.debug("Updating widget");
-    Widget db;
-    Optional<Widget> widgetOptional = widgetRepository.findById(id);
-    if (widgetOptional.isPresent()) {
-      db = widgetOptional.get();
-      db.updateFrom(widget);
+    LOGGER.debug("Updating server");
+    Server db;
+    Optional<Server> serverOptional = serverRepository.findById(id);
+    if (serverOptional.isPresent()) {
+      db = serverOptional.get();
+      db.updateFrom(server);
     } else {
-      db = Widget.newInstance(widget);
+      db = Server.newInstance(server);
       db.setId(id);
     }
 
-    widgetRepository.saveAndFlush(db);
+    serverRepository.saveAndFlush(db);
 
-    return WidgetDto.newInstance(db);
+    return ServerDto.newInstance(db);
   }
 
   /**
-   * Deletes the specified widget.
+   * Deletes the specified server.
    */
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteWidget(@PathVariable("id") UUID id) {
-    if (!widgetRepository.existsById(id)) {
-      throw new NotFoundException(MessageKeys.ERROR_WIDGET_NOT_FOUND);
+  public void deleteServer(@PathVariable("id") UUID id) {
+    if (!serverRepository.existsById(id)) {
+      throw new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND);
     }
 
-    widgetRepository.deleteById(id);
+    serverRepository.deleteById(id);
   }
 
   /**
-   * Retrieves all widgets. Note that an empty collection rather than a 404 should be
-   * returned if no widgets exist.
+   * Retrieves all servers. Note that an empty collection rather than a 404 should be
+   * returned if no servers exist.
    */
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Page<WidgetDto> getAllWidgets(Pageable pageable) {
-    Page<Widget> page = widgetRepository.findAll(pageable);
-    List<WidgetDto> content = page
+  public Page<ServerDto> getAllServers(Pageable pageable) {
+    Page<Server> page = serverRepository.findAll(pageable);
+    List<ServerDto> content = page
         .getContent()
         .stream()
-        .map(WidgetDto::newInstance)
+        .map(ServerDto::newInstance)
         .collect(Collectors.toList());
     return Pagination.getPage(content, pageable, page.getTotalElements());
   }
 
   /**
-   * Retrieves the specified widget.
+   * Retrieves the specified server.
    */
   @GetMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public WidgetDto getSpecifiedWidget(@PathVariable("id") UUID id) {
-    Widget widget = widgetRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_WIDGET_NOT_FOUND));
+  public ServerDto getSpecifiedServer(@PathVariable("id") UUID id) {
+    Server server = serverRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
-    return WidgetDto.newInstance(widget);
+    return ServerDto.newInstance(server);
   }
 
   /**
-   * Retrieves audit information related to the specified widget.
+   * Retrieves audit information related to the specified server.
    *
    * @param author The author of the changes which should be returned.
    *               If null or empty, changes are returned regardless of author.
@@ -160,17 +161,17 @@ public class WidgetController extends BaseController {
   @GetMapping(value = "/{id}/auditLog")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ResponseEntity<String> getWidgetAuditLog(@PathVariable("id") UUID id,
+  public ResponseEntity<String> getServerAuditLog(@PathVariable("id") UUID id,
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
 
     //Return a 404 if the specified instance can't be found
-    if (!widgetRepository.existsById(id)) {
-      throw new NotFoundException(MessageKeys.ERROR_WIDGET_NOT_FOUND);
+    if (!serverRepository.existsById(id)) {
+      throw new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND);
     }
 
-    return getAuditLogResponse(Widget.class, id, author, changedPropertyName, page);
+    return getAuditLogResponse(Server.class, id, author, changedPropertyName, page);
   }
 
 }

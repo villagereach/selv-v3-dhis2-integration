@@ -44,29 +44,29 @@ import org.javers.repository.jql.JqlQuery;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.WidgetDataBuilder;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.server.ServerDto;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
-import org.openlmis.integration.dhis2.web.widget.WidgetController;
-import org.openlmis.integration.dhis2.web.widget.WidgetDto;
+import org.openlmis.integration.dhis2.web.server.ServerController;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 @SuppressWarnings("PMD.TooManyMethods")
-public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
+public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
-  private static final String RESOURCE_URL = WidgetController.RESOURCE_PATH;
+  private static final String RESOURCE_URL = ServerController.RESOURCE_PATH;
   private static final String ID_URL = RESOURCE_URL + "/{id}";
   private static final String AUDIT_LOG_URL = ID_URL + "/auditLog";
 
   private static final String NAME = "name";
 
-  private Widget widget = new WidgetDataBuilder().build();
-  private WidgetDto widgetDto = WidgetDto.newInstance(widget);
+  private Server server = new ServerDataBuilder().build();
+  private ServerDto serverDto = ServerDto.newInstance(server);
 
-  private GlobalId globalId = new UnboundedValueObjectId(Widget.class.getSimpleName());
+  private GlobalId globalId = new UnboundedValueObjectId(Server.class.getSimpleName());
   private ValueChange change = new ValueChange(globalId, NAME, "name1", "name2");
 
   private CommitId commitId = new CommitId(1, 0);
@@ -75,14 +75,14 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Before
   public void setUp() {
-    given(widgetRepository.saveAndFlush(any(Widget.class))).willAnswer(new SaveAnswer<>());
+    given(serverRepository.saveAndFlush(any(Server.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
   }
 
   @Test
-  public void shouldReturnPageOfWidgets() {
-    given(widgetRepository.findAll(any(Pageable.class)))
-        .willReturn(new PageImpl<>(Collections.singletonList(widget)));
+  public void shouldReturnPageOfServers() {
+    given(serverRepository.findAll(any(Pageable.class)))
+        .willReturn(new PageImpl<>(Collections.singletonList(server)));
 
     restAssured
         .given()
@@ -94,14 +94,14 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body("content", hasSize(1))
-        .body("content[0].id", is(widget.getId().toString()))
-        .body("content[0].name", is(widget.getName()));
+        .body("content[0].id", is(server.getId().toString()))
+        .body("content[0].name", is(server.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForAllWidgetsEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForAllServersEndpointIfUserIsNotAuthorized() {
     restAssured.given()
         .when()
         .get(RESOURCE_URL)
@@ -112,28 +112,28 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldCreateWidget() {
+  public void shouldCreateServer() {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .body(widgetDto)
+        .body(serverDto)
         .when()
         .post(RESOURCE_URL)
         .then()
         .statusCode(HttpStatus.SC_CREATED)
         .body(ID, is(notNullValue()))
-        .body(NAME, is(widgetDto.getName()));
+        .body(NAME, is(serverDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForCreateWidgetEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForCreateServerEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .body(widgetDto)
+        .body(serverDto)
         .when()
         .post(RESOURCE_URL)
         .then()
@@ -143,45 +143,45 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldReturnGivenWidget() {
-    given(widgetRepository.findById(widgetDto.getId())).willReturn(Optional.of(widget));
+  public void shouldReturnGivenServer() {
+    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.of(server));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .get(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
-        .body(ID, is(widgetDto.getId().toString()))
-        .body(NAME, is(widgetDto.getName()));
+        .body(ID, is(serverDto.getId().toString()))
+        .body(NAME, is(serverDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnNotFoundMessageIfWidgetDoesNotExistForGivenWidgetEndpoint() {
-    given(widgetRepository.findById(widgetDto.getId())).willReturn(Optional.empty());
+  public void shouldReturnNotFoundMessageIfServerDoesNotExistForGivenServerEndpoint() {
+    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.empty());
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .get(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_NOT_FOUND)
-        .body(MESSAGE_KEY, is(MessageKeys.ERROR_WIDGET_NOT_FOUND));
+        .body(MESSAGE_KEY, is(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForGetWidgetEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForGetServerEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .get(ID_URL)
         .then()
@@ -191,75 +191,75 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldUpdateWidget() {
-    given(widgetRepository.findById(widgetDto.getId())).willReturn(Optional.of(widget));
+  public void shouldUpdateServer() {
+    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.of(server));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .pathParam(ID, widgetDto.getId().toString())
-        .body(widgetDto)
+        .pathParam(ID, serverDto.getId().toString())
+        .body(serverDto)
         .when()
         .put(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
-        .body(ID, is(widgetDto.getId().toString()))
-        .body(NAME, is(widgetDto.getName()));
+        .body(ID, is(serverDto.getId().toString()))
+        .body(NAME, is(serverDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldCreateWidgetIfWidgetDoesNotExistForUpdateWidgetEndpoint()
+  public void shouldCreateServerIfServerDoesNotExistForUpdateServerEndpoint()
       throws JsonProcessingException {
-    String widgetJson = "{\"code\":\"" + widgetDto.getCode() + "\",\"name\":\""
-        + widgetDto.getName() + "\"}";
-    Map<String, String> widgetMap = new ObjectMapper().readValue(widgetJson,
+    String serverJson = "{\"code\":\"" + serverDto.getCode() + "\",\"name\":\""
+        + serverDto.getName() + "\"}";
+    Map<String, String> serverMap = new ObjectMapper().readValue(serverJson,
         new TypeReference<Map<String, String>>() {});
     UUID pathId = UUID.randomUUID();
-    given(widgetRepository.findById(pathId)).willReturn(Optional.empty());
+    given(serverRepository.findById(pathId)).willReturn(Optional.empty());
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .pathParam(ID, pathId)
-        .body(widgetMap)
+        .body(serverMap)
         .when()
         .put(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body(ID, is(pathId.toString()))
-        .body(NAME, is(widgetDto.getName()));
+        .body(NAME, is(serverDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnBadRequestMessageIfWidgetCannotBeUpdated() {
+  public void shouldReturnBadRequestMessageIfServerCannotBeUpdated() {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .pathParam(ID, UUID.randomUUID().toString())
-        .body(widgetDto)
+        .body(serverDto)
         .when()
         .put(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_BAD_REQUEST)
-        .body(MESSAGE_KEY, is(MessageKeys.ERROR_WIDGET_ID_MISMATCH));
+        .body(MESSAGE_KEY, is(MessageKeys.ERROR_SERVER_ID_MISMATCH));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForUpdateWidgetEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForUpdateServerEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .pathParam(ID, widgetDto.getId().toString())
-        .body(widgetDto)
+        .pathParam(ID, serverDto.getId().toString())
+        .body(serverDto)
         .when()
         .put(ID_URL)
         .then()
@@ -269,13 +269,13 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldDeleteWidget() {
-    given(widgetRepository.existsById(widgetDto.getId())).willReturn(true);
+  public void shouldDeleteServer() {
+    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .delete(ID_URL)
         .then()
@@ -285,27 +285,27 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldReturnNotFoundMessageIfWidgetDoesNotExistForDeleteWidgetEndpoint() {
-    given(widgetRepository.existsById(widgetDto.getId())).willReturn(false);
+  public void shouldReturnNotFoundMessageIfServerDoesNotExistForDeleteServerEndpoint() {
+    given(serverRepository.existsById(serverDto.getId())).willReturn(false);
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .delete(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_NOT_FOUND)
-        .body(MESSAGE_KEY, is(MessageKeys.ERROR_WIDGET_NOT_FOUND));
+        .body(MESSAGE_KEY, is(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForDeleteWidgetEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForDeleteServerEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .delete(ID_URL)
         .then()
@@ -316,20 +316,20 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldRetrieveAuditLogs() {
-    given(widgetRepository.existsById(widgetDto.getId())).willReturn(true);
+    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
     willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body("", hasSize(1))
         .body("changeType", hasItem(change.getClass().getSimpleName()))
-        .body("globalId.valueObject", hasItem(Widget.class.getSimpleName()))
+        .body("globalId.valueObject", hasItem(Server.class.getSimpleName()))
         .body("commitMetadata.author", hasItem(commitMetadata.getAuthor()))
         .body("commitMetadata.properties", hasItem(hasSize(0)))
         .body("commitMetadata.commitDate", hasItem(commitMetadata.getCommitDate().toString()))
@@ -343,13 +343,13 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldRetrieveAuditLogsWithParameters() {
-    given(widgetRepository.existsById(widgetDto.getId())).willReturn(true);
+    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
     willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .queryParam("author", commitMetadata.getAuthor())
         .queryParam("changedPropertyName", change.getPropertyName())
         .when()
@@ -358,7 +358,7 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
         .statusCode(HttpStatus.SC_OK)
         .body("", hasSize(1))
         .body("changeType", hasItem(change.getClass().getSimpleName()))
-        .body("globalId.valueObject", hasItem(Widget.class.getSimpleName()))
+        .body("globalId.valueObject", hasItem(Server.class.getSimpleName()))
         .body("commitMetadata.author", hasItem(commitMetadata.getAuthor()))
         .body("commitMetadata.properties", hasItem(hasSize(0)))
         .body("commitMetadata.commitDate", hasItem(commitMetadata.getCommitDate().toString()))
@@ -371,13 +371,13 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldReturnNotFoundMessageIfWidgetDoesNotExistForAuditLogEndpoint() {
-    given(widgetRepository.existsById(widgetDto.getId())).willReturn(false);
+  public void shouldReturnNotFoundMessageIfServerDoesNotExistForAuditLogEndpoint() {
+    given(serverRepository.existsById(serverDto.getId())).willReturn(false);
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
         .then()
@@ -390,7 +390,7 @@ public class WidgetControllerIntegrationTest extends BaseWebIntegrationTest {
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
-        .pathParam(ID, widgetDto.getId().toString())
+        .pathParam(ID, serverDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
         .then()

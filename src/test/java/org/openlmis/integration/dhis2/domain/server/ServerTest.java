@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain;
+package org.openlmis.integration.dhis2.domain.server;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,16 +21,17 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
-import org.openlmis.integration.dhis2.WidgetDataBuilder;
-import org.openlmis.integration.dhis2.web.widget.WidgetDto;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
-public class WidgetTest {
+public class ServerTest {
 
   @Test
   public void equalsContract() {
     EqualsVerifier
-        .forClass(Widget.class)
+        .forClass(Server.class)
         .withRedefinedSuperclass()
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
@@ -38,39 +39,39 @@ public class WidgetTest {
 
   @Test
   public void shouldImplementToString() {
-    Widget widget = new WidgetDataBuilder().build();
-    ToStringTestUtils.verify(Widget.class, widget, "TEXT");
+    Server server = new ServerDataBuilder().build();
+    ToStringTestUtils.verify(Server.class, server, "TEXT");
   }
 
   @Test
   public void shouldCreateNewInstance() {
-    Widget widget = new WidgetDataBuilder().build();
-    WidgetDto dto = WidgetDto.newInstance(widget);
+    Server server = new ServerDataBuilder().build();
+    ServerDto dto = ServerDto.newInstance(server);
 
-    Widget newWidget = Widget.newInstance(dto);
+    Server newServer = Server.newInstance(dto);
 
-    assertThat(newWidget).isEqualTo(widget);
+    assertThat(newServer).isEqualTo(server);
   }
 
   @Test
   public void shouldUpdateFrom() {
-    Widget widget = new WidgetDataBuilder().build();
-    WidgetDto dto = WidgetDto.newInstance(widget);
+    Server server = new ServerDataBuilder().build();
+    ServerDto dto = ServerDto.newInstance(server);
     dto.setName("ala");
 
-    widget.updateFrom(dto);
+    server.updateFrom(dto);
 
-    assertThat(widget.getName()).isEqualTo("ala");
+    assertThat(server.getName()).isEqualTo("ala");
   }
 
   @Test
   public void shouldExportData() {
-    Widget widget = new WidgetDataBuilder().build();
-    WidgetDto dto = new WidgetDto();
+    Server server = new ServerDataBuilder().build();
+    ServerDto dto = new ServerDto();
 
-    widget.export(dto);
+    server.export(dto);
 
-    Assertions.assertThat(dto.getId()).isEqualTo(widget.getId());
-    assertThat(dto.getName()).isEqualTo(widget.getName());
+    Assertions.assertThat(dto.getId()).isEqualTo(server.getId());
+    assertThat(dto.getName()).isEqualTo(server.getName());
   }
 }

@@ -13,30 +13,34 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web;
+package org.openlmis.integration.dhis2.dto.server;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
-import org.openlmis.integration.dhis2.ToStringTestUtils;
-import org.openlmis.integration.dhis2.web.widget.WidgetDto;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.BaseDto;
 
-public class BaseDtoTest {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public final class ServerDto extends BaseDto implements Server.Importer, Server.Exporter {
+  private String name;
+  private String code;
 
-  @Test
-  public void equalsContract() {
-    EqualsVerifier
-        .forClass(BaseDto.class)
-        .withRedefinedSubclass(WidgetDto.class)
-        .suppress(Warning.NONFINAL_FIELDS)
-        .verify();
+  /**
+   * Creates new instance based on domain object.
+   */
+  public static ServerDto newInstance(Server server) {
+    ServerDto dto = new ServerDto();
+    server.export(dto);
+
+    return dto;
   }
-
-  @Test
-  public void shouldImplementToString() {
-    BaseDto baseDto = new BaseDto() {};
-    ToStringTestUtils.verify(BaseDto.class, baseDto);
-  }
-
-
 }

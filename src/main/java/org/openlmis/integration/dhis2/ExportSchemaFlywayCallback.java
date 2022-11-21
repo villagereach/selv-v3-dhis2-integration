@@ -52,7 +52,7 @@ public class ExportSchemaFlywayCallback extends BaseCallback {
 
       int exitCode = 0;
       try {
-        schemaName = Optional.ofNullable(schemaName).orElse("template");
+        schemaName = Optional.ofNullable(schemaName).orElse("dhis2");
 
         Process proc = Runtime.getRuntime().exec("/app/export_schema.sh " + schemaName);
 

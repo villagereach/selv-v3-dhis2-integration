@@ -19,56 +19,57 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.WidgetDataBuilder;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.CrudRepository;
 
-public class WidgetRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Widget> {
+public class ServerRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Server> {
 
   @Autowired
-  private WidgetRepository widgetRepository;
+  private ServerRepository serverRepository;
 
   @Override
-  CrudRepository<Widget, UUID> getRepository() {
-    return widgetRepository;
+  CrudRepository<Server, UUID> getRepository() {
+    return serverRepository;
   }
 
   @Override
-  Widget generateInstance() {
-    return new WidgetDataBuilder()
+  Server generateInstance() {
+    return new ServerDataBuilder()
         .withName("name" + getNextInstanceNumber())
         .withName("code" + getNextInstanceNumber())
         .buildAsNew();
   }
 
   @Test
-  public void shouldAllowForSeveralWidgetsWithoutCode() {
-    long count = widgetRepository.count();
+  public void shouldAllowForSeveralServersWithoutCode() {
+    long count = serverRepository.count();
 
-    Widget widget1 = new WidgetDataBuilder()
+    Server server1 = new ServerDataBuilder()
         .withName("name" + getNextInstanceNumber())
         .withCode(null)
         .buildAsNew();
-    Widget widget2 = new WidgetDataBuilder()
+    Server server2 = new ServerDataBuilder()
         .withName("name" + getNextInstanceNumber())
         .withCode(null)
         .buildAsNew();
 
-    widgetRepository.saveAndFlush(widget1);
-    widgetRepository.saveAndFlush(widget2);
+    serverRepository.saveAndFlush(server1);
+    serverRepository.saveAndFlush(server2);
 
-    assertThat(widgetRepository.count()).isEqualTo(count + 2);
+    assertThat(serverRepository.count()).isEqualTo(count + 2);
   }
 
   @Test(expected = DataIntegrityViolationException.class)
-  public void shouldNotAllowForSeveralWidgetsWithSameCode() {
-    Widget widget1 = generateInstance();
-    Widget widget2 = generateInstance();
-    widget2.setCode(widget1.getCode());
+  public void shouldNotAllowForSeveralServersWithSameCode() {
+    Server server1 = generateInstance();
+    Server server2 = generateInstance();
+    server2.setCode(server1.getCode());
 
-    widgetRepository.saveAndFlush(widget1);
-    widgetRepository.saveAndFlush(widget2);
+    serverRepository.saveAndFlush(server1);
+    serverRepository.saveAndFlush(server2);
   }
 }

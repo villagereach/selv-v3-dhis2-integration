@@ -17,42 +17,42 @@ package org.openlmis.integration.dhis2;
 
 import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.domain.server.Server;
 
-public class WidgetDataBuilder {
+public class ServerDataBuilder {
   private UUID id = UUID.randomUUID();
   private String name = "name";
   private String code = RandomStringUtils.randomAlphanumeric(10);
 
-  public WidgetDataBuilder withName(String name) {
+  public ServerDataBuilder withName(String name) {
     this.name = name;
     return this;
   }
 
-  public WidgetDataBuilder withCode(String code) {
+  public ServerDataBuilder withCode(String code) {
     this.code = code;
     return this;
   }
 
   /**
-   * Builds new instance of Widget (with id field).
+   * Builds new instance of Server (with id field).
    */
-  public Widget build() {
-    Widget widget = buildAsNew();
-    widget.setId(id);
+  public Server build() {
+    Server server = buildAsNew();
+    server.setId(id);
 
-    return widget;
+    return server;
   }
 
   /**
-   * Builds new instance of Widget as a new object (without id field).
+   * Builds new instance of Server as a new object (without id field).
    */
-  public Widget buildAsNew() {
-    Widget widget = new Widget();
-    widget.setName(name);
-    widget.setCode(code);
+  public Server buildAsNew() {
+    Server server = new Server();
+    server.setName(name);
+    server.setCode(code);
 
-    return widget;
+    return server;
   }
 
 }

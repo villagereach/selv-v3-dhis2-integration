@@ -13,34 +13,19 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web.widget;
+package org.openlmis.integration.dhis2.dto;
 
-import lombok.AllArgsConstructor;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.openlmis.integration.dhis2.domain.Widget;
-import org.openlmis.integration.dhis2.web.BaseDto;
+import org.openlmis.integration.dhis2.domain.BaseEntity;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public final class WidgetDto extends BaseDto implements Widget.Importer, Widget.Exporter {
-  private String name;
-  private String code;
-
-  /**
-   * Creates new instance based on domain object.
-   */
-  public static WidgetDto newInstance(Widget widget) {
-    WidgetDto dto = new WidgetDto();
-    widget.export(dto);
-
-    return dto;
-  }
+@EqualsAndHashCode
+@ToString
+public abstract class BaseDto implements BaseEntity.BaseExporter, BaseEntity.BaseImporter {
+  private UUID id;
 }

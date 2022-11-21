@@ -13,28 +13,31 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web.widget;
+package org.openlmis.integration.dhis2.dto;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.dto.BaseDto;
+import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
-public class WidgetDtoTest {
+public class BaseDtoTest {
 
   @Test
   public void equalsContract() {
     EqualsVerifier
-        .forClass(WidgetDto.class)
-        .withRedefinedSuperclass()
+        .forClass(BaseDto.class)
+        .withRedefinedSubclass(ServerDto.class)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }
 
   @Test
   public void shouldImplementToString() {
-    WidgetDto widget = new WidgetDto();
-    ToStringTestUtils.verify(WidgetDto.class, widget);
+    BaseDto baseDto = new BaseDto() {};
+    ToStringTestUtils.verify(BaseDto.class, baseDto);
   }
+
 
 }

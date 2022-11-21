@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain;
+package org.openlmis.integration.dhis2.domain.server;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,14 +24,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
+import org.openlmis.integration.dhis2.domain.BaseEntity;
 
 @Entity
-@TypeName("Widget")
-@Table(name = "widget", schema = "template")
+@TypeName("Server")
+@Table(name = "server", schema = "dhis2")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Widget extends BaseEntity {
+public class Server extends BaseEntity {
   private static final String TEXT = "text";
 
   @Column(nullable = false, columnDefinition = TEXT)
@@ -47,12 +48,12 @@ public class Widget extends BaseEntity {
   /**
    * Creates new instance based on data from the importer.
    */
-  public static Widget newInstance(Importer importer) {
-    Widget widget = new Widget();
-    widget.setId(importer.getId());
-    widget.updateFrom(importer);
+  public static Server newInstance(Importer importer) {
+    Server server = new Server();
+    server.setId(importer.getId());
+    server.updateFrom(importer);
 
-    return widget;
+    return server;
   }
 
   public void updateFrom(Importer importer) {

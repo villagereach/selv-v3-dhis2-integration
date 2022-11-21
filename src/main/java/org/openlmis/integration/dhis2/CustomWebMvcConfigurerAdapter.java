@@ -34,15 +34,15 @@ public class CustomWebMvcConfigurerAdapter implements WebMvcConfigurer {
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addViewController("/template/docs")
-        .setViewName("redirect:" + serviceUrl + "/template/docs/");
-    registry.addViewController("/template/docs/")
-        .setViewName("forward:/template/docs/index.html");
+    registry.addViewController("/dhis2/docs")
+        .setViewName("redirect:" + serviceUrl + "/dhis2/docs/");
+    registry.addViewController("/dhis2/docs/")
+        .setViewName("forward:/dhis2/docs/index.html");
   }
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/template/webjars/**")
+    registry.addResourceHandler("/dhis2/webjars/**")
         .addResourceLocations("classpath:/META-INF/resources/webjars/");
   }
 

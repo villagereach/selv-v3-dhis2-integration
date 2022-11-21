@@ -13,19 +13,29 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web;
+package org.openlmis.integration.dhis2.dto.server;
 
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.openlmis.integration.dhis2.domain.BaseEntity;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
+import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-public abstract class BaseDto implements BaseEntity.BaseExporter, BaseEntity.BaseImporter {
-  private UUID id;
+public class ServerDtoTest {
+
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+        .forClass(ServerDto.class)
+        .withRedefinedSuperclass()
+        .suppress(Warning.NONFINAL_FIELDS)
+        .verify();
+  }
+
+  @Test
+  public void shouldImplementToString() {
+    ServerDto server = new ServerDto();
+    ToStringTestUtils.verify(ServerDto.class, server);
+  }
+
 }

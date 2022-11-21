@@ -1,13 +1,13 @@
 #%RAML 0.8
 ---
-title: OpenLMIS Template API
+title: OpenLMIS SELV3 DHIS2 Integration
 version: "@version@"
 baseUri: "@baseUrl@"
 protocols: [ HTTP, HTTPS ]
 
 documentation:
 - title: Getting Started
-  content: Welcome to the OpenLMIS template-service documentation. This minimal API is intended for illustrative purposes.
+  content: Welcome to the OpenLMIS SELV3 DHIS2 Integration Service documentation.
 
 schemas:
 - auditLogEntry: !include schemas/auditLogEntry.json
@@ -18,13 +18,9 @@ schemas:
         "items": { "type": "object", "$ref": "schemas/auditLogEntry.json" }
     }
 
-
 - localizedErrorResponse: !include schemas/localizedErrorResponse.json
 
 - version: !include schemas/version.json
-
-- widget: !include schemas/widget.json
-- widgetPage: !include schemas/widgetPage.json
 
 traits:
 - secured:
@@ -131,7 +127,7 @@ resourceTypes:
         type: string
         required: true
         repeat: false
-/template:
+/dhis2-integration:
   displayName: Version
   get:
     description: Get version
@@ -144,108 +140,3 @@ resourceTypes:
             schema: version
 
 /api:
-  /widgets:
-    displayName: widgets
-    get:
-      is: [ secured, paginated, sorted ]
-      description: Get all widgets that match the given parameters.
-      responses:
-        200:
-          headers:
-            Keep-Alive:
-          body:
-            application/json:
-              schema: widgetPage
-        401:
-          headers:
-            Keep-Alive:
-          body:
-            application/json:
-    post:
-      is: [ secured ]
-      description: Creates given widget if possible.
-      body:
-        application/json:
-          schema: widget
-      responses:
-        201:
-          headers:
-            Keep-Alive:
-          body:
-            application/json:
-              schema: widget
-        401:
-          headers:
-            Keep-Alive:
-          body:
-            application/json:
-    /{id}:
-      uriParameters:
-        id:
-          displayName: id
-          type: string
-          required: true
-          repeat: false
-      get:
-        is: [ secured ]
-        description: Get chosen widget.
-        responses:
-          200:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-                schema: widget
-          404:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-                schema: localizedErrorResponse
-          401:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-      put:
-        is: [ secured ]
-        description: Update existing widget.
-        body:
-          application/json:
-            schema: widget
-        responses:
-          200:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-                schema: widget
-          400:
-            body:
-              application/json:
-                schema: localizedErrorResponse
-          401:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-      delete:
-        is: [ secured ]
-        description: "[AVOID USING] Completely removes widget. This action is not recoverable."
-        responses:
-          204:
-            headers:
-              Keep-Alive:
-          404:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-                schema: localizedErrorResponse
-          401:
-            headers:
-              Keep-Alive:
-            body:
-              application/json:
-    /{id}/auditLog:
-      type: instanceAuditLog
