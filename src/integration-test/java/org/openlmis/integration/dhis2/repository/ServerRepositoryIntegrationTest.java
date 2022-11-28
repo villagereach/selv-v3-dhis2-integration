@@ -15,19 +15,14 @@
 
 package org.openlmis.integration.dhis2.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.UUID;
-import org.junit.Test;
 import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.CrudRepository;
 
 public class ServerRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Server> {
-
   @Autowired
   private ServerRepository serverRepository;
 
@@ -39,37 +34,6 @@ public class ServerRepositoryIntegrationTest extends BaseCrudRepositoryIntegrati
   @Override
   Server generateInstance() {
     return new ServerDataBuilder()
-        .withName("name" + getNextInstanceNumber())
-        .withName("code" + getNextInstanceNumber())
-        .buildAsNew();
-  }
-
-  @Test
-  public void shouldAllowForSeveralServersWithoutCode() {
-    long count = serverRepository.count();
-
-    Server server1 = new ServerDataBuilder()
-        .withName("name" + getNextInstanceNumber())
-        .withCode(null)
-        .buildAsNew();
-    Server server2 = new ServerDataBuilder()
-        .withName("name" + getNextInstanceNumber())
-        .withCode(null)
-        .buildAsNew();
-
-    serverRepository.saveAndFlush(server1);
-    serverRepository.saveAndFlush(server2);
-
-    assertThat(serverRepository.count()).isEqualTo(count + 2);
-  }
-
-  @Test(expected = DataIntegrityViolationException.class)
-  public void shouldNotAllowForSeveralServersWithSameCode() {
-    Server server1 = generateInstance();
-    Server server2 = generateInstance();
-    server2.setCode(server1.getCode());
-
-    serverRepository.saveAndFlush(server1);
-    serverRepository.saveAndFlush(server2);
+            .buildAsNew();
   }
 }

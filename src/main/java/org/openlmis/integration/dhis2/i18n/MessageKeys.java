@@ -20,7 +20,7 @@ import java.util.Arrays;
 public abstract class MessageKeys {
   private static final String DELIMITER = ".";
 
-  private static final String SERVICE_PREFIX = "dhis2";
+  private static final String SERVICE_PREFIX = "integration.dhis2";
   private static final String ERROR = "error";
 
   private static final String SERVER = "server";

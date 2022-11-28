@@ -23,7 +23,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
-import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
 public class ServerTest {
@@ -41,16 +40,6 @@ public class ServerTest {
   public void shouldImplementToString() {
     Server server = new ServerDataBuilder().build();
     ToStringTestUtils.verify(Server.class, server, "TEXT");
-  }
-
-  @Test
-  public void shouldCreateNewInstance() {
-    Server server = new ServerDataBuilder().build();
-    ServerDto dto = ServerDto.newInstance(server);
-
-    Server newServer = Server.newInstance(dto);
-
-    assertThat(newServer).isEqualTo(server);
   }
 
   @Test

@@ -18,6 +18,7 @@ package org.openlmis.integration.dhis2.domain.server;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,20 +31,29 @@ import org.openlmis.integration.dhis2.domain.BaseEntity;
 @TypeName("Server")
 @Table(name = "server", schema = "dhis2")
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Server extends BaseEntity {
-  private static final String TEXT = "text";
-
-  @Column(nullable = false, columnDefinition = TEXT)
+  @Column(nullable = false)
   @Getter
   @Setter
   private String name;
 
-  @Column(unique = true, columnDefinition = TEXT)
+  @Column(nullable = false)
   @Getter
   @Setter
-  private String code;
+  private String url;
+
+  @Column(nullable = false)
+  @Getter
+  @Setter
+  private String username;
+
+  @Column(nullable = false)
+  @Getter
+  @Setter
+  private String password;
 
   /**
    * Creates new instance based on data from the importer.
@@ -58,7 +68,7 @@ public class Server extends BaseEntity {
 
   public void updateFrom(Importer importer) {
     name = importer.getName();
-    code = importer.getCode();
+    url = importer.getUrl();
   }
 
   /**
@@ -67,15 +77,14 @@ public class Server extends BaseEntity {
   public void export(Exporter exporter) {
     exporter.setId(getId());
     exporter.setName(name);
-    exporter.setCode(code);
+    exporter.setUrl(url);
   }
-
 
   public interface Exporter extends BaseExporter {
 
     void setName(String name);
 
-    void setCode(String code);
+    void setUrl(String url);
 
   }
 
@@ -83,7 +92,7 @@ public class Server extends BaseEntity {
 
     String getName();
 
-    String getCode();
+    String getUrl();
 
   }
 

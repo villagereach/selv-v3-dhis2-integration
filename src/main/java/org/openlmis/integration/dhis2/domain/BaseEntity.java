@@ -31,7 +31,7 @@ import org.hibernate.annotations.Type;
 @ToString
 public abstract class BaseEntity {
 
-  private static final String UUID_TYPE = "pg-uuid";
+  public static final String UUID_TYPE = "pg-uuid";
 
   @Id
   @GeneratedValue(generator = "uuid-gen")

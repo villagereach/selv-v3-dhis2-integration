@@ -1,7 +1,7 @@
 version: "2"
 services:
-  selv-v3-dhis2-integration:
-    image: openlmismz/selv-v3-dhis2-integration
+  selv-dhis2-integration:
+    image: openlmismz/selv-dhis2-integration
     links:
       - db
       - log
@@ -14,4 +14,4 @@ services:
   log:
     image: openlmis/rsyslog:1
     volumes:
-      - '../logs/selv-v3-dhis2-integration:/var/log'
+      - '../logs/selv-dhis2-integration:/var/log'

@@ -32,7 +32,7 @@ import org.openlmis.integration.dhis2.dto.BaseDto;
 @ToString(callSuper = true)
 public final class ServerDto extends BaseDto implements Server.Importer, Server.Exporter {
   private String name;
-  private String code;
+  private String url;
 
   /**
    * Creates new instance based on domain object.

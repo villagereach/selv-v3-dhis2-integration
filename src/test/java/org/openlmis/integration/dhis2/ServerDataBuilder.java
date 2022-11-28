@@ -16,21 +16,17 @@
 package org.openlmis.integration.dhis2;
 
 import java.util.UUID;
-import org.apache.commons.lang.RandomStringUtils;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class ServerDataBuilder {
   private UUID id = UUID.randomUUID();
   private String name = "name";
-  private String code = RandomStringUtils.randomAlphanumeric(10);
+  private String url = "http://test.configuration";
+  private String username = "username";
+  private String password = "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG";
 
   public ServerDataBuilder withName(String name) {
     this.name = name;
-    return this;
-  }
-
-  public ServerDataBuilder withCode(String code) {
-    this.code = code;
     return this;
   }
 
@@ -48,9 +44,8 @@ public class ServerDataBuilder {
    * Builds new instance of Server as a new object (without id field).
    */
   public Server buildAsNew() {
-    Server server = new Server();
-    server.setName(name);
-    server.setCode(code);
+    Server server = new Server(name, url, username, password);
+    //    server.setName(name);
 
     return server;
   }
