@@ -1,5 +1,5 @@
 {
-  "name": "openlmis-dhis2-integration",
+  "name": "selv-dhis2-integration",
   "version": "0.0.1",
   "devDependencies": {
     "raml2html": "~2.4.0"
