@@ -44,10 +44,7 @@ public class ServerDataBuilder {
    * Builds new instance of Server as a new object (without id field).
    */
   public Server buildAsNew() {
-    Server server = new Server(name, url, username, password);
-    //    server.setName(name);
-
-    return server;
+    return new Server(name, url, username, password);
   }
 
 }

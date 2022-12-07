@@ -40,7 +40,7 @@ public interface ServerRepository extends PagingAndSortingRepository<Server, UUI
       + "            dhis2.server s\n"
       + "            INNER JOIN dhis2.jv_global_id g "
       + "ON CAST(s.id AS varchar) = SUBSTRING(g.local_id, 2, 36)\n"
-      + "            INNER JOIN dhis2.jv_snapshot s  ON g.global_id_pk = s.global_id_fk\n"
+      + "            INNER JOIN dhis2.jv_snapshot jv ON g.global_id_pk = jv.global_id_fk\n"
       + "    )\n",
       nativeQuery = true)
   Page<Server> findAllWithoutSnapshots(Pageable pageable);

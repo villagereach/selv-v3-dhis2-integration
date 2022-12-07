@@ -58,7 +58,7 @@ public class ServerController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServerController.class);
 
-  public static final String RESOURCE_PATH = API_PATH + "/servers";
+  public static final String RESOURCE_PATH = API_PATH + "/serverConfiguration";
 
   @Autowired
   private ServerRepository serverRepository;
