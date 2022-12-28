@@ -40,29 +40,32 @@ import org.javers.repository.jql.JqlQuery;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.openlmis.integration.dhis2.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.server.ServerDto;
+import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
-import org.openlmis.integration.dhis2.web.server.ServerController;
+import org.openlmis.integration.dhis2.web.dataset.DatasetController;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 @SuppressWarnings("PMD.TooManyMethods")
-public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
+public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
-  private static final String RESOURCE_URL = ServerController.RESOURCE_PATH;
+  private static final String RESOURCE_URL = DatasetController.RESOURCE_PATH;
   private static final String ID_URL = RESOURCE_URL + "/{id}";
   private static final String AUDIT_LOG_URL = ID_URL + "/auditLog";
 
   private static final String NAME = "name";
-
   private Server server = new ServerDataBuilder().build();
-  private ServerDto serverDto = ServerDto.newInstance(server);
 
-  private GlobalId globalId = new UnboundedValueObjectId(Server.class.getSimpleName());
+  private Dataset dataset = new DatasetDataBuilder().withServer(server).build();
+  private DatasetDto datasetDto = DatasetDto.newInstance(dataset);
+
+  private GlobalId globalId = new UnboundedValueObjectId(Dataset.class.getSimpleName());
   private ValueChange change = new ValueChange(globalId, NAME, "name1", "name2");
 
   private CommitId commitId = new CommitId(1, 0);
@@ -71,14 +74,14 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Before
   public void setUp() {
-    given(serverRepository.saveAndFlush(any(Server.class))).willAnswer(new SaveAnswer<>());
+    given(datasetRepository.saveAndFlush(any(Dataset.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
   }
 
   @Test
-  public void shouldReturnPageOfServers() {
-    given(serverRepository.findAll(any(Pageable.class)))
-        .willReturn(new PageImpl<>(Collections.singletonList(server)));
+  public void shouldReturnPageOfDatasets() {
+    given(datasetRepository.findAll(any(Pageable.class)))
+        .willReturn(new PageImpl<>(Collections.singletonList(dataset)));
 
     restAssured
         .given()
@@ -90,14 +93,14 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body("content", hasSize(1))
-        .body("content[0].id", is(server.getId().toString()))
-        .body("content[0].name", is(server.getName()));
+        .body("content[0].id", is(dataset.getId().toString()))
+        .body("content[0].name", is(dataset.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForAllServersEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForAllDatasetsEndpointIfUserIsNotAuthorized() {
     restAssured.given()
         .when()
         .get(RESOURCE_URL)
@@ -108,28 +111,28 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldCreateServer() {
+  public void shouldCreateDataset() {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .body(serverDto)
+        .body(datasetDto)
         .when()
         .post(RESOURCE_URL)
         .then()
         .statusCode(HttpStatus.SC_CREATED)
         .body(ID, is(notNullValue()))
-        .body(NAME, is(serverDto.getName()));
+        .body(NAME, is(datasetDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForCreateServerEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForCreateDatasetEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .body(serverDto)
+        .body(datasetDto)
         .when()
         .post(RESOURCE_URL)
         .then()
@@ -139,45 +142,45 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldReturnGivenServer() {
-    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.of(server));
+  public void shouldReturnGivenDataset() {
+    given(datasetRepository.findById(datasetDto.getId())).willReturn(Optional.of(dataset));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
-        .body(ID, is(serverDto.getId().toString()))
-        .body(NAME, is(serverDto.getName()));
+        .body(ID, is(datasetDto.getId().toString()))
+        .body(NAME, is(datasetDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnNotFoundMessageIfServerDoesNotExistForGivenServerEndpoint() {
-    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.empty());
+  public void shouldReturnNotFoundMessageIfDatasetDoesNotExistForGivenDatasetEndpoint() {
+    given(datasetRepository.findById(datasetDto.getId())).willReturn(Optional.empty());
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_NOT_FOUND)
-        .body(MESSAGE_KEY, is(MessageKeys.ERROR_SERVER_NOT_FOUND));
+        .body(MESSAGE_KEY, is(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForGetServerEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForGetDatasetEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(ID_URL)
         .then()
@@ -187,49 +190,49 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldUpdateServer() {
-    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.of(server));
+  public void shouldUpdateDataset() {
+    given(datasetRepository.findById(datasetDto.getId())).willReturn(Optional.of(dataset));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .pathParam(ID, serverDto.getId().toString())
-        .body(serverDto)
+        .pathParam(ID, datasetDto.getId().toString())
+        .body(datasetDto)
         .when()
         .put(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
-        .body(ID, is(serverDto.getId().toString()))
-        .body(NAME, is(serverDto.getName()));
+        .body(ID, is(datasetDto.getId().toString()))
+        .body(NAME, is(datasetDto.getName()));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnBadRequestMessageIfServerCannotBeUpdated() {
+  public void shouldReturnBadRequestMessageIfDatasetCannotBeUpdated() {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .pathParam(ID, UUID.randomUUID().toString())
-        .body(serverDto)
+        .body(datasetDto)
         .when()
         .put(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_BAD_REQUEST)
-        .body(MESSAGE_KEY, is(MessageKeys.ERROR_SERVER_ID_MISMATCH));
+        .body(MESSAGE_KEY, is(MessageKeys.ERROR_DATASET_ID_MISMATCH));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForUpdateServerEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForUpdateDatasetEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .pathParam(ID, serverDto.getId().toString())
-        .body(serverDto)
+        .pathParam(ID, datasetDto.getId().toString())
+        .body(datasetDto)
         .when()
         .put(ID_URL)
         .then()
@@ -239,13 +242,13 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldDeleteServer() {
-    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
+  public void shouldDeleteDataset() {
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(true);
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .delete(ID_URL)
         .then()
@@ -255,27 +258,27 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldReturnNotFoundMessageIfServerDoesNotExistForDeleteServerEndpoint() {
-    given(serverRepository.existsById(serverDto.getId())).willReturn(false);
+  public void shouldReturnNotFoundMessageIfDatasetDoesNotExistForDeleteDatasetEndpoint() {
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(false);
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .delete(ID_URL)
         .then()
         .statusCode(HttpStatus.SC_NOT_FOUND)
-        .body(MESSAGE_KEY, is(MessageKeys.ERROR_SERVER_NOT_FOUND));
+        .body(MESSAGE_KEY, is(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 
   @Test
-  public void shouldReturnUnauthorizedForDeleteServerEndpointIfUserIsNotAuthorized() {
+  public void shouldReturnUnauthorizedForDeleteDatasetEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .delete(ID_URL)
         .then()
@@ -286,20 +289,20 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldRetrieveAuditLogs() {
-    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(true);
     willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
         .then()
         .statusCode(HttpStatus.SC_OK)
         .body("", hasSize(1))
         .body("changeType", hasItem(change.getClass().getSimpleName()))
-        .body("globalId.valueObject", hasItem(Server.class.getSimpleName()))
+        .body("globalId.valueObject", hasItem(Dataset.class.getSimpleName()))
         .body("commitMetadata.author", hasItem(commitMetadata.getAuthor()))
         .body("commitMetadata.properties", hasItem(hasSize(0)))
         .body("commitMetadata.commitDate", hasItem(commitMetadata.getCommitDate().toString()))
@@ -313,13 +316,13 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldRetrieveAuditLogsWithParameters() {
-    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(true);
     willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .queryParam("author", commitMetadata.getAuthor())
         .queryParam("changedPropertyName", change.getPropertyName())
         .when()
@@ -328,7 +331,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
         .statusCode(HttpStatus.SC_OK)
         .body("", hasSize(1))
         .body("changeType", hasItem(change.getClass().getSimpleName()))
-        .body("globalId.valueObject", hasItem(Server.class.getSimpleName()))
+        .body("globalId.valueObject", hasItem(Dataset.class.getSimpleName()))
         .body("commitMetadata.author", hasItem(commitMetadata.getAuthor()))
         .body("commitMetadata.properties", hasItem(hasSize(0)))
         .body("commitMetadata.commitDate", hasItem(commitMetadata.getCommitDate().toString()))
@@ -341,13 +344,13 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   }
 
   @Test
-  public void shouldReturnNotFoundMessageIfServerDoesNotExistForAuditLogEndpoint() {
-    given(serverRepository.existsById(serverDto.getId())).willReturn(false);
+  public void shouldReturnNotFoundMessageIfDatasetDoesNotExistForAuditLogEndpoint() {
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(false);
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
         .then()
@@ -360,7 +363,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
-        .pathParam(ID, serverDto.getId().toString())
+        .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
         .then()
@@ -368,5 +371,4 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
-
 }

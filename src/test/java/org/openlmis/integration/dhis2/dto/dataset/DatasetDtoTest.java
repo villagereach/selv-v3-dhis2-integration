@@ -13,39 +13,28 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2;
+package org.openlmis.integration.dhis2.dto.dataset;
 
-import java.util.UUID;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
+import org.openlmis.integration.dhis2.ToStringTestUtils;
 
-public class ServerDataBuilder {
+public class DatasetDtoTest {
 
-  private UUID id = UUID.randomUUID();
-  private String name = "test-name";
-  private String url = "http://test.configuration";
-  private String username = "test-username";
-  private String password = "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG";
-
-  public ServerDataBuilder withName(String name) {
-    this.name = name;
-    return this;
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+        .forClass(DatasetDto.class)
+        .withRedefinedSuperclass()
+        .suppress(Warning.NONFINAL_FIELDS)
+        .verify();
   }
 
-  /**
-   * Builds new instance of Server (with id field).
-   */
-  public Server build() {
-    Server server = buildAsNew();
-    server.setId(id);
-
-    return server;
-  }
-
-  /**
-   * Builds new instance of Server as a new object (without id field).
-   */
-  public Server buildAsNew() {
-    return new Server(name, url, username, password);
+  @Test
+  public void shouldImplementToString() {
+    DatasetDto dataset = new DatasetDto();
+    ToStringTestUtils.verify(DatasetDto.class, dataset);
   }
 
 }

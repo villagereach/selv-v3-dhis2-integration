@@ -13,10 +13,12 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.server;
+package org.openlmis.integration.dhis2.domain.dataset;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,16 +28,16 @@ import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
+import org.openlmis.integration.dhis2.domain.server.Server;
 
 @Entity
-@TypeName("Server")
-@Table(name = "server", schema = "dhis2")
+@TypeName("Dataset")
+@Table(name = "dataset", schema = "dhis2")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Server extends BaseEntity {
-
+public class Dataset extends BaseEntity {
   @Column(nullable = false)
   @Getter
   @Setter
@@ -44,27 +46,28 @@ public class Server extends BaseEntity {
   @Column(nullable = false)
   @Getter
   @Setter
-  private String url;
+  private String dhisDatasetId;
 
   @Column(nullable = false)
   @Getter
   @Setter
-  private String username;
+  private String cronExpression;
 
-  @Column(nullable = false)
   @Getter
   @Setter
-  private String password;
+  @ManyToOne
+  @JoinColumn(name = "serverId", nullable = false)
+  private Server server;
 
   /**
    * Creates new instance based on data from the importer.
    */
-  public static Server newInstance(Importer importer) {
-    Server server = new Server();
-    server.setId(importer.getId());
-    server.updateFrom(importer);
+  public static Dataset newInstance(Importer importer) {
+    Dataset dataset = new Dataset();
+    dataset.setId(importer.getId());
+    dataset.updateFrom(importer);
 
-    return server;
+    return dataset;
   }
 
   /**
@@ -72,9 +75,8 @@ public class Server extends BaseEntity {
    */
   public void updateFrom(Importer importer) {
     name = importer.getName();
-    url = importer.getUrl();
-    username = importer.getUsername();
-    password = importer.getPassword();
+    dhisDatasetId = importer.getDhisDatasetId();
+    cronExpression = importer.getCronExpression();
   }
 
   /**
@@ -83,31 +85,31 @@ public class Server extends BaseEntity {
   public void export(Exporter exporter) {
     exporter.setId(getId());
     exporter.setName(name);
-    exporter.setUrl(url);
-    exporter.setUsername(username);
-    exporter.setPassword(password);
+    exporter.setDhisDatasetId(dhisDatasetId);
+    exporter.setCronExpression(cronExpression);
+    exporter.setServer(server);
   }
 
   public interface Exporter extends BaseExporter {
 
     void setName(String name);
 
-    void setUrl(String url);
+    void setDhisDatasetId(String dhisDatasetId);
 
-    void setUsername(String username);
+    void setCronExpression(String cronExpression);
 
-    void setPassword(String password);
+    void setServer(Server server);
   }
 
   public interface Importer extends BaseImporter {
 
     String getName();
 
-    String getUrl();
+    String getDhisDatasetId();
 
-    String getUsername();
+    String getCronExpression();
 
-    String getPassword();
   }
+
 
 }

@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
+import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,9 @@ public abstract class BaseWebIntegrationTest {
 
   @MockBean
   public ServerRepository serverRepository;
+
+  @MockBean
+  DatasetRepository datasetRepository;
 
   /**
    * Constructor for test.
