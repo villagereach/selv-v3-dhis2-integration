@@ -44,4 +44,5 @@ public interface ServerRepository extends PagingAndSortingRepository<Server, UUI
       + "    )\n",
       nativeQuery = true)
   Page<Server> findAllWithoutSnapshots(Pageable pageable);
+
 }

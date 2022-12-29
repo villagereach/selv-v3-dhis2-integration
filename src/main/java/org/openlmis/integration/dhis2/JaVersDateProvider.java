@@ -30,6 +30,7 @@ import org.joda.time.LocalDateTime;
  * system timezone, which may change, when constructing a LocalDateTime.)
  */
 public class JaVersDateProvider implements DateProvider {
+
   public static final DateTimeZone DATE_TIME_ZONE = DateTimeZone.UTC;
   public static final ZoneId ZONE_ID = ZoneId.of(DATE_TIME_ZONE.getID());
 
@@ -71,4 +72,5 @@ public class JaVersDateProvider implements DateProvider {
     Instant maxInstant = Instant.MAX.minus(Duration.ofDays(366));
     return ZonedDateTime.ofInstant(maxInstant, ZONE_ID);
   }
+
 }

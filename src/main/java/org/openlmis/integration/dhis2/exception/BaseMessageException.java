@@ -21,6 +21,7 @@ import org.openlmis.integration.dhis2.util.Message;
  * Base class for exceptions using Message.
  */
 public class BaseMessageException extends RuntimeException {
+
   private final transient Message message;
 
   public BaseMessageException(Message message) {
@@ -49,4 +50,5 @@ public class BaseMessageException extends RuntimeException {
   public String getMessage() {
     return this.message.toString();
   }
+
 }

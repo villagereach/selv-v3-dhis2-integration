@@ -31,6 +31,7 @@ import org.openlmis.integration.dhis2.dto.BaseDto;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public final class ServerDto extends BaseDto implements Server.Importer, Server.Exporter {
+
   private String name;
   private String url;
 
@@ -40,7 +41,7 @@ public final class ServerDto extends BaseDto implements Server.Importer, Server.
   public static ServerDto newInstance(Server server) {
     ServerDto dto = new ServerDto();
     server.export(dto);
-
     return dto;
   }
+
 }

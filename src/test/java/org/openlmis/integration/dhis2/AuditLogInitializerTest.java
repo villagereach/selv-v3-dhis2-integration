@@ -107,14 +107,13 @@ public class AuditLogInitializerTest {
 
   @Getter
   @AllArgsConstructor
-  class TestItem {
-
+  public class TestItem {
     UUID id;
   }
 
   @JaversSpringDataAuditable
-  interface TestItemRepository
+  public interface TestItemRepository
       extends PagingAndSortingRepository<TestItem, UUID> {
-
   }
+
 }

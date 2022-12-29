@@ -150,4 +150,5 @@ public class Resource2DbTest {
   public void insertToDbFromCsvWithNullResourceShouldThrowException() throws IOException {
     resource2Db.insertToDbFromCsv("test", null);
   }
+
 }

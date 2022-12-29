@@ -23,17 +23,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
 public class ServerRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Server> {
+
   @Autowired
   private ServerRepository serverRepository;
 
   @Override
-  CrudRepository<Server, UUID> getRepository() {
+  public CrudRepository<Server, UUID> getRepository() {
     return serverRepository;
   }
 
   @Override
-  Server generateInstance() {
+  public Server generateInstance() {
     return new ServerDataBuilder()
             .buildAsNew();
   }
+
 }

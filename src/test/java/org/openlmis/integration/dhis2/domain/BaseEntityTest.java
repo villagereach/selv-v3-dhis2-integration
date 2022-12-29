@@ -38,5 +38,4 @@ public class BaseEntityTest {
     ToStringTestUtils.verify(BaseEntity.class, base, "UUID_TYPE");
   }
 
-
 }

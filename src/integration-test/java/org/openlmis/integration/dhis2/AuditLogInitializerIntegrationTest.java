@@ -109,4 +109,5 @@ public class AuditLogInitializerIntegrationTest {
             .setParameter(5, "password")
             .executeUpdate();
   }
+
 }

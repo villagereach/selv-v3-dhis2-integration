@@ -41,7 +41,7 @@ public class TestDataInitializerTest {
   @Test
   public void shouldLoadData() throws IOException {
     initializer.run();
-
     verify(loader).insertToDbFromCsv("dhis2.server", serverResource);
   }
+
 }

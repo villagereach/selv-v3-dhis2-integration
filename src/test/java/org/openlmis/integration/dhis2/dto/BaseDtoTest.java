@@ -39,5 +39,4 @@ public class BaseDtoTest {
     ToStringTestUtils.verify(BaseDto.class, baseDto);
   }
 
-
 }

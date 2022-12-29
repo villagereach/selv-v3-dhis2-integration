@@ -39,4 +39,5 @@ public class VersionController {
     LOGGER.debug("Returning version");
     return new Version();
   }
+
 }

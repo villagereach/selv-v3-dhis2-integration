@@ -146,4 +146,5 @@ public class GlobalErrorHandlingTest {
     when(messageSource.getMessage(key, null, ENGLISH_LOCALE))
         .thenReturn(ERROR_MESSAGE);
   }
+
 }

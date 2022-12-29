@@ -63,4 +63,5 @@ public class ServerTest {
     Assertions.assertThat(dto.getId()).isEqualTo(server.getId());
     assertThat(dto.getName()).isEqualTo(server.getName());
   }
+
 }

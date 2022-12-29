@@ -71,6 +71,6 @@ public class ResourceServerSecurityConfigurationTest {
 
     assertThat(corsConfiguration.getAllowedOrigins()).contains(ALLOWED_ORIGINS);
     assertThat(corsConfiguration.getAllowedMethods()).contains(ALLOWED_METHODS);
-
   }
+
 }

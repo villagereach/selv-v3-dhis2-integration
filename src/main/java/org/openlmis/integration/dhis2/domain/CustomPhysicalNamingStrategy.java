@@ -25,4 +25,5 @@ public class CustomPhysicalNamingStrategy extends PhysicalNamingStrategyStandard
   public Identifier toPhysicalColumnName(Identifier name, JdbcEnvironment jdbcEnvironment) {
     return jdbcEnvironment.getIdentifierHelper().toIdentifier(name.getText().replaceAll("_", ""));
   }
+
 }

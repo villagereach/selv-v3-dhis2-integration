@@ -19,6 +19,7 @@ import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class ServerDataBuilder {
+
   private UUID id = UUID.randomUUID();
   private String name = "name";
   private String url = "http://test.configuration";

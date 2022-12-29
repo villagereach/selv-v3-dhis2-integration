@@ -18,6 +18,7 @@ package org.openlmis.integration.dhis2.i18n;
 import java.util.Arrays;
 
 public abstract class MessageKeys {
+
   private static final String DELIMITER = ".";
 
   private static final String SERVICE_PREFIX = "integration.dhis2";
@@ -50,4 +51,5 @@ public abstract class MessageKeys {
   private static String join(String... params) {
     return String.join(DELIMITER, Arrays.asList(params));
   }
+
 }

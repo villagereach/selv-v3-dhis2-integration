@@ -27,5 +27,7 @@ import org.openlmis.integration.dhis2.domain.BaseEntity;
 @EqualsAndHashCode
 @ToString
 public abstract class BaseDto implements BaseEntity.BaseExporter, BaseEntity.BaseImporter {
+
   private UUID id;
+
 }

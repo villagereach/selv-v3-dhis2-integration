@@ -46,6 +46,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * {@link Resource}'s passed in.
  */
 public class Resource2Db {
+
   private static final XLogger XLOGGER = XLoggerFactory.getXLogger(Resource2Db.class);
 
   private final JdbcTemplate template;
@@ -185,4 +186,5 @@ public class Resource2Db {
 
     XLOGGER.exit("Total " + tableName + " inserts: " + Arrays.stream(updateCount).sum());
   }
+
 }

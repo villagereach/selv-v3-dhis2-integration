@@ -25,6 +25,7 @@ import org.springframework.context.MessageSource;
  * Immutable value object for a message that is localizable.
  */
 public class Message {
+
   private String key;
   private Object[] params;
 
@@ -111,4 +112,5 @@ public class Message {
       return message;
     }
   }
+
 }

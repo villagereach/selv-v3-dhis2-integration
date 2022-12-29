@@ -81,4 +81,5 @@ public class GlobalErrorHandling extends AbstractErrorHandling {
 
     return getLocalizedMessage(new Message(ex.getMessage()));
   }
+
 }

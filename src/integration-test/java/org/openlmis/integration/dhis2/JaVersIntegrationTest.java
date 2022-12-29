@@ -86,4 +86,5 @@ public class JaVersIntegrationTest {
     int delta = Math.abs(Seconds.secondsBetween(commitTime1, commitTime2).getSeconds());
     assertTrue(delta < 1);
   }
+
 }

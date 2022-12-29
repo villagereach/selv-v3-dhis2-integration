@@ -48,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Profile("init-audit-log")
 @Transactional
 public class AuditLogInitializer implements CommandLineRunner {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(AuditLogInitializer.class);
 
   private ApplicationContext applicationContext;
@@ -112,4 +113,5 @@ public class AuditLogInitializer implements CommandLineRunner {
           baseEntity.getClass(), baseEntity.getId());
     }
   }
+
 }

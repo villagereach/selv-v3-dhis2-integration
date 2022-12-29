@@ -140,4 +140,5 @@ public class ResourceServerSecurityConfiguration implements ResourceServerConfig
     }
     return source;
   }
+
 }

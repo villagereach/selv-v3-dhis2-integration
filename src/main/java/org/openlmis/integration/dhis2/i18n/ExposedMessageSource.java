@@ -22,4 +22,5 @@ import org.springframework.context.MessageSource;
 public interface ExposedMessageSource extends MessageSource {
 
   Map<String, String> getAllMessages(Locale locale);
+
 }

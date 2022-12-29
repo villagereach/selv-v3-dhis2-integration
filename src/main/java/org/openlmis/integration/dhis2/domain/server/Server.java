@@ -35,6 +35,7 @@ import org.openlmis.integration.dhis2.domain.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Server extends BaseEntity {
+
   @Column(nullable = false)
   @Getter
   @Setter
@@ -95,6 +96,5 @@ public class Server extends BaseEntity {
     String getUrl();
 
   }
-
 
 }

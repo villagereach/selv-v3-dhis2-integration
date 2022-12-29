@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 @Profile("demo-data")
 @Order(5)
 public class TestDataInitializer implements CommandLineRunner {
+
   private static final XLogger XLOGGER = XLoggerFactory.getXLogger(TestDataInitializer.class);
   private static final String DEMO_DATA_PATH = "classpath:db/demo-data/";
 
@@ -45,7 +46,7 @@ public class TestDataInitializer implements CommandLineRunner {
     this(new Resource2Db(template));
   }
 
-  TestDataInitializer(Resource2Db loader) {
+  public TestDataInitializer(Resource2Db loader) {
     this.loader = loader;
   }
 
@@ -60,4 +61,5 @@ public class TestDataInitializer implements CommandLineRunner {
 
     XLOGGER.exit();
   }
+
 }

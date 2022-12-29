@@ -55,4 +55,5 @@ public class CustomWebMvcConfigurerAdapter implements WebMvcConfigurer {
 
     argumentResolvers.add(resolver);
   }
+
 }

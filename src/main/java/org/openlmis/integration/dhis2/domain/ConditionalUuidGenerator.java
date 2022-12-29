@@ -29,4 +29,5 @@ public class ConditionalUuidGenerator extends UUIDGenerator {
       return ((BaseEntity) object).getId();
     }
   }
+
 }

@@ -30,6 +30,7 @@ import org.springframework.context.NoSuchMessageException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageTest {
+
   private static final Locale LOCALE = Locale.ENGLISH;
   private static final String MESSAGE_KEY = "foo";
 
@@ -117,4 +118,5 @@ public class MessageTest {
     assertThat(message2.equals(message1)).isTrue();
     assertThat(message1.hashCode()).isEqualTo(message2.hashCode());
   }
+
 }
