@@ -58,10 +58,9 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   private static final String RESOURCE_URL = DatasetController.RESOURCE_PATH;
   private static final String ID_URL = RESOURCE_URL + "/{id}";
   private static final String AUDIT_LOG_URL = ID_URL + "/auditLog";
-
   private static final String NAME = "name";
-  private Server server = new ServerDataBuilder().build();
 
+  private Server server = new ServerDataBuilder().build();
   private Dataset dataset = new DatasetDataBuilder().withServer(server).build();
   private DatasetDto datasetDto = DatasetDto.newInstance(dataset);
 
@@ -374,4 +373,5 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
+
 }

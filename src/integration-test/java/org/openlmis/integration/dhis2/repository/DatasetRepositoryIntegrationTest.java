@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
 public class DatasetRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Dataset> {
+
   @Autowired
   private DatasetRepository datasetRepository;
 
@@ -33,14 +34,15 @@ public class DatasetRepositoryIntegrationTest extends BaseCrudRepositoryIntegrat
   private ServerRepository serverRepository;
 
   @Override
-  CrudRepository<Dataset, UUID> getRepository() {
+  public CrudRepository<Dataset, UUID> getRepository() {
     return datasetRepository;
   }
 
   @Override
-  Dataset generateInstance() {
+  public Dataset generateInstance() {
     Server server = new ServerDataBuilder().buildAsNew();
     serverRepository.save(server);
     return new DatasetDataBuilder().withServer(server).buildAsNew();
   }
+
 }

@@ -97,6 +97,7 @@ public class Server extends BaseEntity {
     void setUsername(String username);
 
     void setPassword(String password);
+
   }
 
   public interface Importer extends BaseImporter {
@@ -108,6 +109,7 @@ public class Server extends BaseEntity {
     String getUsername();
 
     String getPassword();
+
   }
 
 }

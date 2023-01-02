@@ -26,7 +26,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 @JaversSpringDataAuditable
 public interface ServerRepository extends PagingAndSortingRepository<Server, UUID>,
-        BaseAuditableRepository<Server,  UUID> {
+        BaseAuditableRepository<Server, UUID> {
 
   @Query(value = "SELECT\n"
       + "    s.*\n"

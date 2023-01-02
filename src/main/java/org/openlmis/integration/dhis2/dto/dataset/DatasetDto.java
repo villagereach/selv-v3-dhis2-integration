@@ -35,6 +35,7 @@ import org.openlmis.integration.dhis2.dto.server.ServerDto;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public final class DatasetDto extends BaseDto implements Dataset.Importer, Dataset.Exporter {
+
   private String name;
   private String dhisDatasetId;
   private String cronExpression;

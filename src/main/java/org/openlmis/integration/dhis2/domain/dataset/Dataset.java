@@ -38,6 +38,7 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Dataset extends BaseEntity {
+
   @Column(nullable = false)
   @Getter
   @Setter
@@ -99,6 +100,7 @@ public class Dataset extends BaseEntity {
     void setCronExpression(String cronExpression);
 
     void setServer(Server server);
+
   }
 
   public interface Importer extends BaseImporter {
@@ -110,6 +112,5 @@ public class Dataset extends BaseEntity {
     String getCronExpression();
 
   }
-
 
 }

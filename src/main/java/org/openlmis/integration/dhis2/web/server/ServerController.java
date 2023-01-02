@@ -35,6 +35,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,8 +59,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ServerController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServerController.class);
-
   public static final String RESOURCE_PATH = API_PATH + "/serverConfiguration";
+
+  public final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   @Autowired
   private ServerRepository serverRepository;
@@ -99,9 +102,11 @@ public class ServerController extends BaseController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public ServerDto createServer(@RequestBody ServerDto server) {
+  public ServerDto createServer(@RequestBody ServerDto serverDto) {
     LOGGER.debug("Creating new server");
-    Server newServer = Server.newInstance(server);
+    serverDto.setPassword(passwordEncoder.encode(serverDto.getPassword()));
+
+    Server newServer = Server.newInstance(serverDto);
     newServer.setId(null);
     newServer = serverRepository.saveAndFlush(newServer);
 
@@ -114,25 +119,26 @@ public class ServerController extends BaseController {
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ServerDto updateServer(@PathVariable("id") UUID id, @RequestBody ServerDto server) {
-    if (null != server.getId() && !Objects.equals(server.getId(), id)) {
+  public ServerDto updateServer(@PathVariable("id") UUID id, @RequestBody ServerDto serverDto) {
+    LOGGER.debug("Updating server");
+    serverDto.setPassword(passwordEncoder.encode(serverDto.getPassword()));
+
+    if (null != serverDto.getId() && !Objects.equals(serverDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_SERVER_ID_MISMATCH);
     }
 
-    LOGGER.debug("Updating server");
-    Server db;
+    Server server;
     Optional<Server> serverOptional = serverRepository.findById(id);
     if (serverOptional.isPresent()) {
-      db = serverOptional.get();
-      db.updateFrom(server);
+      server = serverOptional.get();
+      server.updateFrom(serverDto);
     } else {
-      db = Server.newInstance(server);
-      db.setId(id);
+      server = Server.newInstance(serverDto);
+      server.setId(id);
     }
 
-    serverRepository.saveAndFlush(db);
-
-    return ServerDto.newInstance(db);
+    serverRepository.saveAndFlush(server);
+    return ServerDto.newInstance(server);
   }
 
   /**
@@ -166,7 +172,7 @@ public class ServerController extends BaseController {
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
 
-    //Return a 404 if the specified instance can't be found
+    // Return a 404 if the specified instance can't be found
     if (!serverRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND);
     }

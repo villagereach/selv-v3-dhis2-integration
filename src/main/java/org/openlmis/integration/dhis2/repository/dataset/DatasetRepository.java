@@ -26,7 +26,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 @JaversSpringDataAuditable
 public interface DatasetRepository extends PagingAndSortingRepository<Dataset, UUID>,
-        BaseAuditableRepository<Dataset,  UUID> {
+        BaseAuditableRepository<Dataset, UUID> {
 
   @Query(value = "SELECT\n"
       + "    d.*\n"
@@ -44,4 +44,5 @@ public interface DatasetRepository extends PagingAndSortingRepository<Dataset, U
       + "    )\n",
       nativeQuery = true)
   Page<Dataset> findAllWithoutSnapshots(Pageable pageable);
+
 }

@@ -37,7 +37,6 @@ public class ServerDataBuilder {
   public Server build() {
     Server server = buildAsNew();
     server.setId(id);
-
     return server;
   }
 

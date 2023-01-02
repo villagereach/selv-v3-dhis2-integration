@@ -20,6 +20,7 @@ import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class DatasetDataBuilder {
+
   private UUID id = UUID.randomUUID();
   private String name = "test-name";
   private String dhisDatasetId = "idXfoem";
@@ -52,7 +53,6 @@ public class DatasetDataBuilder {
   public Dataset build() {
     Dataset dataset = buildAsNew();
     dataset.setId(id);
-
     return dataset;
   }
 

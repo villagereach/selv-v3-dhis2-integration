@@ -131,19 +131,18 @@ public class DatasetController extends BaseController {
     }
 
     LOGGER.debug("Updating dataset");
-    Dataset db;
+    Dataset dataset;
     Optional<Dataset> datasetOptional = datasetRepository.findById(id);
     if (datasetOptional.isPresent()) {
-      db = datasetOptional.get();
-      db.updateFrom(datasetDto);
+      dataset = datasetOptional.get();
+      dataset.updateFrom(datasetDto);
     } else {
-      db = Dataset.newInstance(datasetDto);
-      db.setId(id);
+      dataset = Dataset.newInstance(datasetDto);
+      dataset.setId(id);
     }
 
-    datasetRepository.saveAndFlush(db);
-
-    return DatasetDto.newInstance(db);
+    datasetRepository.saveAndFlush(dataset);
+    return DatasetDto.newInstance(dataset);
   }
 
   /**
@@ -177,7 +176,7 @@ public class DatasetController extends BaseController {
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
 
-    //Return a 404 if the specified instance can't be found
+    // Return a 404 if the specified instance can't be found
     if (!datasetRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND);
     }
