@@ -112,6 +112,9 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldCreateDataset() {
+    given(serverRepository.findById(datasetDto.getServerDto().getId()))
+            .willReturn(Optional.of(server));
+
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())

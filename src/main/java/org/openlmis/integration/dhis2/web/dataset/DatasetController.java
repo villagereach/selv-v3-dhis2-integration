@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
@@ -69,6 +70,36 @@ public class DatasetController extends BaseController {
   private ServerRepository serverRepository;
 
   /**
+   * Retrieves the specified dataset.
+   */
+  @GetMapping(value = "/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public DatasetDto getDataset(@PathVariable("id") UUID id) {
+    Dataset dataset = datasetRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+
+    return DatasetDto.newInstance(dataset);
+  }
+
+  /**
+   * Retrieves all datasets. Note that an empty collection rather than a 404 should be
+   * returned if no datasets exist.
+   */
+  @GetMapping
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public Page<DatasetDto> getAllDatasets(Pageable pageable) {
+    Page<Dataset> page = datasetRepository.findAll(pageable);
+    List<DatasetDto> content = page
+            .getContent()
+            .stream()
+            .map(DatasetDto::newInstance)
+            .collect(Collectors.toList());
+    return Pagination.getPage(content, pageable, page.getTotalElements());
+  }
+
+  /**
    * Allows the creation of a new dataset. If the id is specified, it will be ignored.
    */
   @PostMapping
@@ -79,12 +110,10 @@ public class DatasetController extends BaseController {
     Dataset newDataset = Dataset.newInstance(datasetDto);
     newDataset.setId(null);
 
-    Optional<Server> server = serverRepository.findById(datasetDto.getServerDto().getId());
-    if (!server.isPresent()) {
-      throw new ValidationMessageException(MessageKeys.ERROR_SERVER_NOT_FOUND);
-    }
+    Server server = serverRepository.findById(datasetDto.getServerDto().getId())
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
-    newDataset.setServer(server.get());
+    newDataset.setServer(server);
     newDataset = datasetRepository.saveAndFlush(newDataset);
 
     return DatasetDto.newInstance(newDataset);
@@ -96,7 +125,7 @@ public class DatasetController extends BaseController {
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public DatasetDto saveDataset(@PathVariable("id") UUID id, @RequestBody DatasetDto datasetDto) {
+  public DatasetDto updateDataset(@PathVariable("id") UUID id, @RequestBody DatasetDto datasetDto) {
     if (null != datasetDto.getId() && !Objects.equals(datasetDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_DATASET_ID_MISMATCH);
     }
@@ -128,36 +157,6 @@ public class DatasetController extends BaseController {
     }
 
     datasetRepository.deleteById(id);
-  }
-
-  /**
-   * Retrieves all datasets. Note that an empty collection rather than a 404 should be
-   * returned if no datasets exist.
-   */
-  @GetMapping
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public Page<DatasetDto> getAllDatasets(Pageable pageable) {
-    Page<Dataset> page = datasetRepository.findAll(pageable);
-    List<DatasetDto> content = page
-        .getContent()
-        .stream()
-        .map(DatasetDto::newInstance)
-        .collect(Collectors.toList());
-    return Pagination.getPage(content, pageable, page.getTotalElements());
-  }
-
-  /**
-   * Retrieves the specified dataset.
-   */
-  @GetMapping(value = "/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public DatasetDto getSpecifiedDataset(@PathVariable("id") UUID id) {
-    Dataset dataset = datasetRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
-
-    return DatasetDto.newInstance(dataset);
   }
 
   /**

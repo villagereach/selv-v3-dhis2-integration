@@ -64,6 +64,36 @@ public class ServerController extends BaseController {
   private ServerRepository serverRepository;
 
   /**
+   * Retrieves the specified server.
+   */
+  @GetMapping(value = "/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public ServerDto getServer(@PathVariable("id") UUID id) {
+    Server server = serverRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+
+    return ServerDto.newInstance(server);
+  }
+
+  /**
+   * Retrieves all servers. Note that an empty collection rather than a 404 should be
+   * returned if no servers exist.
+   */
+  @GetMapping
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public Page<ServerDto> getAllServers(Pageable pageable) {
+    Page<Server> page = serverRepository.findAll(pageable);
+    List<ServerDto> content = page
+            .getContent()
+            .stream()
+            .map(ServerDto::newInstance)
+            .collect(Collectors.toList());
+    return Pagination.getPage(content, pageable, page.getTotalElements());
+  }
+
+  /**
    * Allows the creation of a new server. If the id is specified, it will be ignored.
    */
   @PostMapping
@@ -84,7 +114,7 @@ public class ServerController extends BaseController {
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ServerDto saveServer(@PathVariable("id") UUID id, @RequestBody ServerDto server) {
+  public ServerDto updateServer(@PathVariable("id") UUID id, @RequestBody ServerDto server) {
     if (null != server.getId() && !Objects.equals(server.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_SERVER_ID_MISMATCH);
     }
@@ -116,36 +146,6 @@ public class ServerController extends BaseController {
     }
 
     serverRepository.deleteById(id);
-  }
-
-  /**
-   * Retrieves all servers. Note that an empty collection rather than a 404 should be
-   * returned if no servers exist.
-   */
-  @GetMapping
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public Page<ServerDto> getAllServers(Pageable pageable) {
-    Page<Server> page = serverRepository.findAll(pageable);
-    List<ServerDto> content = page
-        .getContent()
-        .stream()
-        .map(ServerDto::newInstance)
-        .collect(Collectors.toList());
-    return Pagination.getPage(content, pageable, page.getTotalElements());
-  }
-
-  /**
-   * Retrieves the specified server.
-   */
-  @GetMapping(value = "/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public ServerDto getSpecifiedServer(@PathVariable("id") UUID id) {
-    Server server = serverRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
-
-    return ServerDto.newInstance(server);
   }
 
   /**
