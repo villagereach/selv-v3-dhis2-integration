@@ -18,8 +18,8 @@ package org.openlmis.integration.dhis2.errorhandling;
 import java.util.HashMap;
 import java.util.Map;
 import org.hibernate.exception.ConstraintViolationException;
-import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
+import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.util.Message;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,7 +39,7 @@ public class GlobalErrorHandling extends AbstractErrorHandling {
   private static final Map<String, String> CONSTRAINT_MAP = new HashMap<>();
 
   static {
-    CONSTRAINT_MAP.put("unq_widget_code", MessageKeys.ERROR_WIDGET_CODE_DUPLICATED);
+    CONSTRAINT_MAP.put("unq_server_code", MessageKeys.ERROR_SERVER_CODE_DUPLICATED);
   }
 
   @ExceptionHandler(NotFoundException.class)
@@ -81,4 +81,5 @@ public class GlobalErrorHandling extends AbstractErrorHandling {
 
     return getLocalizedMessage(new Message(ex.getMessage()));
   }
+
 }

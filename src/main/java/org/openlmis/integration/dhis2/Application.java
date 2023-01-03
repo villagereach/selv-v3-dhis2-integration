@@ -46,6 +46,7 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 @SpringBootApplication
 public class Application {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
   @Value("${defaultLocale}")
@@ -159,6 +160,5 @@ public class Application {
             .withDateTimeProvider(customDateProvider)
             .build();
   }
-
 
 }

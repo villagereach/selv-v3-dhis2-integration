@@ -34,9 +34,10 @@ public class VersionController {
    *
    * @return {Version} Returns version read from file.
    */
-  @RequestMapping("/template")
+  @RequestMapping("/dhis2")
   public Version display() {
     LOGGER.debug("Returning version");
     return new Version();
   }
+
 }

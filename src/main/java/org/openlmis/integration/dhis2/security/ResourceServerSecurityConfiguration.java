@@ -85,10 +85,10 @@ public class ResourceServerSecurityConfiguration implements ResourceServerConfig
     http
         .authorizeRequests()
         .antMatchers(
-            "/template",
+            "/dhis2",
             "/webjars/**",
-            "/template/webjars/**",
-            "/template/docs/**"
+            "/dhis2/webjars/**",
+            "/dhis2/docs/**"
         ).permitAll()
         .antMatchers("/**").fullyAuthenticated();
   }
@@ -140,4 +140,5 @@ public class ResourceServerSecurityConfiguration implements ResourceServerConfig
     }
     return source;
   }
+
 }

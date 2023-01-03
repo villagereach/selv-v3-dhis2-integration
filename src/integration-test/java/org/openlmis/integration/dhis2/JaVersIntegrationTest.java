@@ -31,7 +31,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.domain.server.Server;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -63,21 +63,21 @@ public class JaVersIntegrationTest {
   public void shouldAlwaysCommitWithUtcTimeZone() {
 
     //given
-    Widget widget = new Widget();
-    widget.setId(UUID.randomUUID());
-    widget.setName("name_1");
+    Server server = new Server();
+    server.setId(UUID.randomUUID());
+    server.setName("name_1");
 
     //when
     DateTimeZone.setDefault(DateTimeZone.forID("UTC"));
-    javers.commit(COMMIT_AUTHOR, widget);
+    javers.commit(COMMIT_AUTHOR, server);
 
     DateTimeZone.setDefault(DateTimeZone.forID("Africa/Johannesburg"));
-    widget.setName("name_2");
-    javers.commit(COMMIT_AUTHOR, widget);
+    server.setName("name_2");
+    javers.commit(COMMIT_AUTHOR, server);
 
     //then
     List<CdoSnapshot> snapshots = javers.findSnapshots(
-        QueryBuilder.byClass(Widget.class).build());
+        QueryBuilder.byClass(Server.class).build());
     assertEquals(2, snapshots.size());
 
     LocalDateTime commitTime1 = snapshots.get(0).getCommitMetadata().getCommitDate();
@@ -86,4 +86,5 @@ public class JaVersIntegrationTest {
     int delta = Math.abs(Seconds.secondsBetween(commitTime1, commitTime2).getSeconds());
     assertTrue(delta < 1);
   }
+
 }

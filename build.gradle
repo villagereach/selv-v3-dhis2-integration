@@ -87,7 +87,7 @@ flyway {
     url = "$System.env.DATABASE_URL"
     user = "$System.env.POSTGRES_USER"
     password = "$System.env.POSTGRES_PASSWORD"
-    schemas = ['template']
+    schemas = ['dhis2']
     sqlMigrationPrefix = ''
     placeholderPrefix = '#['
     placeholderSuffix = ']'

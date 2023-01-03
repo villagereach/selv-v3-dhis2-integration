@@ -64,4 +64,5 @@ public class CustomUserAuthenticationConverter implements UserAuthenticationConv
     }
     throw new IllegalArgumentException("Authorities must be either a String or a Collection");
   }
+
 }

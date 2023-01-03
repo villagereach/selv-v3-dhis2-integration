@@ -68,7 +68,6 @@ public abstract class BaseController {
     return jsonConverter.toJson(changes);
   }
 
-
   /*
     Return JaVers changes for the specified type, optionally filtered by id, author, and property.
   */

@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web.widget;
+package org.openlmis.integration.dhis2.dto.server;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,8 +21,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.openlmis.integration.dhis2.domain.Widget;
-import org.openlmis.integration.dhis2.web.BaseDto;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.BaseDto;
 
 @Getter
 @Setter
@@ -30,17 +30,18 @@ import org.openlmis.integration.dhis2.web.BaseDto;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public final class WidgetDto extends BaseDto implements Widget.Importer, Widget.Exporter {
+public final class ServerDto extends BaseDto implements Server.Importer, Server.Exporter {
+
   private String name;
-  private String code;
+  private String url;
 
   /**
    * Creates new instance based on domain object.
    */
-  public static WidgetDto newInstance(Widget widget) {
-    WidgetDto dto = new WidgetDto();
-    widget.export(dto);
-
+  public static ServerDto newInstance(Server server) {
+    ServerDto dto = new ServerDto();
+    server.export(dto);
     return dto;
   }
+
 }

@@ -35,4 +35,5 @@ public interface BaseAuditableRepository<T, I extends Serializable>
    * Returns a {@link Page} of entities which there are no Javers logs created for.
    */
   Page<T> findAllWithoutSnapshots(Pageable pageable);
+
 }

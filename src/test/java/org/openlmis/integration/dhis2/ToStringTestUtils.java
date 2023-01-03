@@ -29,4 +29,5 @@ public class ToStringTestUtils {
         .ignore(ignore)
         .containsAllPrivateFields(object);
   }
+
 }

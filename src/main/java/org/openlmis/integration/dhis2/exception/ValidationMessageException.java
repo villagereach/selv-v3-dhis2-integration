@@ -60,4 +60,5 @@ public class ValidationMessageException extends BaseMessageException {
       Throwable cause, String messageKey, Object... messageParameters) {
     super(new Message(messageKey, messageParameters), cause);
   }
+
 }

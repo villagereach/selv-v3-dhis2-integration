@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web;
+package org.openlmis.integration.dhis2.dto;
 
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -27,5 +27,7 @@ import org.openlmis.integration.dhis2.domain.BaseEntity;
 @EqualsAndHashCode
 @ToString
 public abstract class BaseDto implements BaseEntity.BaseExporter, BaseEntity.BaseImporter {
+
   private UUID id;
+
 }

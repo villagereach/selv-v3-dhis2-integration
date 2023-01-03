@@ -34,17 +34,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class BaseCrudRepositoryIntegrationTest<T extends BaseEntity> {
 
-  abstract CrudRepository<T, UUID> getRepository();
+  public abstract CrudRepository<T, UUID> getRepository();
 
   /*
    * Generate a unique instance of given type.
    * @return generated instance
    */
-  abstract T generateInstance();
+  public abstract T generateInstance();
 
   private AtomicInteger instanceNumber = new AtomicInteger(0);
 
-  int getNextInstanceNumber() {
+  public int getNextInstanceNumber() {
     return this.instanceNumber.incrementAndGet();
   }
 
@@ -101,4 +101,5 @@ public abstract class BaseCrudRepositoryIntegrationTest<T extends BaseEntity> {
     repository.deleteById(id);
     Assert.assertFalse(repository.existsById(id));
   }
+
 }

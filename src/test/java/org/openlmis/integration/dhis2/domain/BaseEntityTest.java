@@ -19,6 +19,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class BaseEntityTest {
 
@@ -26,7 +27,7 @@ public class BaseEntityTest {
   public void equalsContract() {
     EqualsVerifier
         .forClass(BaseEntity.class)
-        .withRedefinedSubclass(Widget.class)
+        .withRedefinedSubclass(Server.class)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }
@@ -36,6 +37,5 @@ public class BaseEntityTest {
     BaseEntity base = new BaseEntity() {};
     ToStringTestUtils.verify(BaseEntity.class, base, "UUID_TYPE");
   }
-
 
 }

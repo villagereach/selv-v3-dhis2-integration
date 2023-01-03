@@ -13,34 +13,36 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.repository;
+package org.openlmis.integration.dhis2.repository.server;
 
 import java.util.UUID;
 import org.javers.spring.annotation.JaversSpringDataAuditable;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.repository.BaseAuditableRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 @JaversSpringDataAuditable
-public interface WidgetRepository extends PagingAndSortingRepository<Widget, UUID>,
-      BaseAuditableRepository<Widget,  UUID> {
+public interface ServerRepository extends PagingAndSortingRepository<Server, UUID>,
+        BaseAuditableRepository<Server,  UUID> {
 
   @Query(value = "SELECT\n"
-      + "    w.*\n"
+      + "    s.*\n"
       + "FROM\n"
-      + "    template.widget w\n"
+      + "    dhis2.server s\n"
       + "WHERE\n"
       + "    id NOT IN (\n"
       + "        SELECT\n"
       + "            id\n"
       + "        FROM\n"
-      + "            template.widget w\n"
-      + "            INNER JOIN template.jv_global_id g "
-      + "ON CAST(w.id AS varchar) = SUBSTRING(g.local_id, 2, 36)\n"
-      + "            INNER JOIN template.jv_snapshot s  ON g.global_id_pk = s.global_id_fk\n"
+      + "            dhis2.server s\n"
+      + "            INNER JOIN dhis2.jv_global_id g "
+      + "ON CAST(s.id AS varchar) = SUBSTRING(g.local_id, 2, 36)\n"
+      + "            INNER JOIN dhis2.jv_snapshot jv ON g.global_id_pk = jv.global_id_fk\n"
       + "    )\n",
       nativeQuery = true)
-  Page<Widget> findAllWithoutSnapshots(Pageable pageable);
+  Page<Server> findAllWithoutSnapshots(Pageable pageable);
+
 }

@@ -30,7 +30,7 @@ import org.springframework.core.io.Resource;
 public class TestDataInitializerTest {
 
   @Mock
-  private Resource widgetResource;
+  private Resource serverResource;
 
   @Mock
   private Resource2Db loader;
@@ -41,7 +41,7 @@ public class TestDataInitializerTest {
   @Test
   public void shouldLoadData() throws IOException {
     initializer.run();
-
-    verify(loader).insertToDbFromCsv("template.widget", widgetResource);
+    verify(loader).insertToDbFromCsv("dhis2.server", serverResource);
   }
+
 }

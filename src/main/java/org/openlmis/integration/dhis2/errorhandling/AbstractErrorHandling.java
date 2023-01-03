@@ -40,7 +40,7 @@ public abstract class AbstractErrorHandling {
    * @param message a Message to translate
    * @return a LocalizedMessage translated by the MessageService bean
    */
-  final Message.LocalizedMessage getLocalizedMessage(Message message) {
+  public final Message.LocalizedMessage getLocalizedMessage(Message message) {
     return messageService.localize(message);
   }
 
@@ -50,7 +50,7 @@ public abstract class AbstractErrorHandling {
    * @param exception is any BaseMessageException containing a Message
    * @return a LocalizedMessage translated by the MessageService bean
    */
-  final Message.LocalizedMessage getLocalizedMessage(BaseMessageException exception) {
+  public final Message.LocalizedMessage getLocalizedMessage(BaseMessageException exception) {
     Message.LocalizedMessage message = messageService.localize(exception.asMessage());
     logger.error("{}", message);
     return message;

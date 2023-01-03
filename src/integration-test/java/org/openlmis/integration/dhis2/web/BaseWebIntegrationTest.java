@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
-import org.openlmis.integration.dhis2.repository.WidgetRepository;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,19 +61,20 @@ public abstract class BaseWebIntegrationTest {
   private static final String CLIENT_ACCESS_TOKEN = "6d6896a5-e94c-4183-839d-911bc63174ff";
   private static final String CLIENT_ACCESS_TOKEN_HEADER = "Bearer " + CLIENT_ACCESS_TOKEN;
 
-  static final String RAML_ASSERT_MESSAGE = "HTTP request/response should match RAML definition.";
+  public static final String RAML_ASSERT_MESSAGE =
+          "HTTP request/response should match RAML definition.";
 
-  static final String MESSAGE_KEY = "messageKey";
-  static final String ID = "id";
+  public static final String MESSAGE_KEY = "messageKey";
+  public static final String ID = "id";
 
-  RestAssuredClient restAssured;
+  public RestAssuredClient restAssured;
 
   private static final RamlDefinition ramlDefinition =
       RamlLoaders.fromClasspath().load("api-definition-raml.yaml").ignoringXheaders();
 
   private static final String MOCK_USER_CHECK_RESULT = "{\n"
       + "  \"aud\": [\n"
-      + "    \"template\"\n"
+      + "    \"dhis2\"\n"
       + "  ],\n"
       + "  \"user_name\": \"admin\",\n"
       + "  \"referenceDataUserId\": \"35316636-6264-6331-2d34-3933322d3462\",\n"
@@ -85,7 +86,7 @@ public abstract class BaseWebIntegrationTest {
 
   private static final String MOCK_CLIENT_CHECK_RESULT = "{\n"
       + "  \"aud\": [\n"
-      + "    \"template\"\n"
+      + "    \"dhis2\"\n"
       + "  ],\n"
       + "  \"scope\": [\"read\", \"write\"],\n"
       + "  \"exp\": 1474500343,\n"
@@ -93,7 +94,7 @@ public abstract class BaseWebIntegrationTest {
       + "  \"client_id\": \"trusted-client\"\n"
       + "}";
 
-  Pageable pageable = PageRequest.of(Pagination.DEFAULT_PAGE_NUMBER, 2000);
+  public Pageable pageable = PageRequest.of(Pagination.DEFAULT_PAGE_NUMBER, 2000);
 
   @Value("${service.url}")
   private String baseUri;
@@ -108,15 +109,15 @@ public abstract class BaseWebIntegrationTest {
   private ObjectMapper objectMapper;
 
   @SpyBean(name = "javersProvider")
-  Javers javers;
+  public Javers javers;
 
   @MockBean
-  WidgetRepository widgetRepository;
+  public ServerRepository serverRepository;
 
   /**
    * Constructor for test.
    */
-  BaseWebIntegrationTest() {
+  public BaseWebIntegrationTest() {
 
     // This mocks the auth check to always return valid admin credentials.
     wireMockRule.stubFor(post(urlEqualTo("/api/oauth/check_token"))
@@ -164,7 +165,7 @@ public abstract class BaseWebIntegrationTest {
    *
    * @return an access token
    */
-  String getTokenHeader() {
+  public String getTokenHeader() {
     return USER_ACCESS_TOKEN_HEADER;
   }
 
@@ -174,11 +175,11 @@ public abstract class BaseWebIntegrationTest {
    *
    * @return an access token
    */
-  String getClientTokenHeader() {
+  public String getClientTokenHeader() {
     return CLIENT_ACCESS_TOKEN_HEADER;
   }
 
-  static class SaveAnswer<T extends BaseEntity> implements Answer<T> {
+  public static class SaveAnswer<T extends BaseEntity> implements Answer<T> {
 
     @Override
     public T answer(InvocationOnMock invocation) {
@@ -196,4 +197,5 @@ public abstract class BaseWebIntegrationTest {
     }
 
   }
+
 }

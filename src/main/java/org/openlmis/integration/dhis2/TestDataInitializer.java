@@ -16,7 +16,6 @@
 package org.openlmis.integration.dhis2;
 
 import java.io.IOException;
-
 import org.openlmis.integration.dhis2.util.Resource2Db;
 import org.slf4j.ext.XLogger;
 import org.slf4j.ext.XLoggerFactory;
@@ -33,11 +32,12 @@ import org.springframework.stereotype.Component;
 @Profile("demo-data")
 @Order(5)
 public class TestDataInitializer implements CommandLineRunner {
+
   private static final XLogger XLOGGER = XLoggerFactory.getXLogger(TestDataInitializer.class);
   private static final String DEMO_DATA_PATH = "classpath:db/demo-data/";
 
-  @Value(value = DEMO_DATA_PATH + "template.widget.csv")
-  private Resource widgetResource;
+  @Value(value = DEMO_DATA_PATH + "server.csv")
+  private Resource serverResource;
 
   private Resource2Db loader;
   
@@ -46,7 +46,7 @@ public class TestDataInitializer implements CommandLineRunner {
     this(new Resource2Db(template));
   }
 
-  TestDataInitializer(Resource2Db loader) {
+  public TestDataInitializer(Resource2Db loader) {
     this.loader = loader;
   }
 
@@ -57,8 +57,9 @@ public class TestDataInitializer implements CommandLineRunner {
   public void run(String... args) throws IOException {
     XLOGGER.entry();
 
-    loader.insertToDbFromCsv("template.widget", widgetResource);
+    loader.insertToDbFromCsv("dhis2.server", serverResource);
 
     XLOGGER.exit();
   }
+
 }

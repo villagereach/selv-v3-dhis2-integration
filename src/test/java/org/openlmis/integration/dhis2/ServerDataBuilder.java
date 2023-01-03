@@ -16,43 +16,36 @@
 package org.openlmis.integration.dhis2;
 
 import java.util.UUID;
-import org.apache.commons.lang.RandomStringUtils;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.domain.server.Server;
 
-public class WidgetDataBuilder {
+public class ServerDataBuilder {
+
   private UUID id = UUID.randomUUID();
   private String name = "name";
-  private String code = RandomStringUtils.randomAlphanumeric(10);
+  private String url = "http://test.configuration";
+  private String username = "username";
+  private String password = "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG";
 
-  public WidgetDataBuilder withName(String name) {
+  public ServerDataBuilder withName(String name) {
     this.name = name;
     return this;
   }
 
-  public WidgetDataBuilder withCode(String code) {
-    this.code = code;
-    return this;
+  /**
+   * Builds new instance of Server (with id field).
+   */
+  public Server build() {
+    Server server = buildAsNew();
+    server.setId(id);
+
+    return server;
   }
 
   /**
-   * Builds new instance of Widget (with id field).
+   * Builds new instance of Server as a new object (without id field).
    */
-  public Widget build() {
-    Widget widget = buildAsNew();
-    widget.setId(id);
-
-    return widget;
-  }
-
-  /**
-   * Builds new instance of Widget as a new object (without id field).
-   */
-  public Widget buildAsNew() {
-    Widget widget = new Widget();
-    widget.setName(name);
-    widget.setCode(code);
-
-    return widget;
+  public Server buildAsNew() {
+    return new Server(name, url, username, password);
   }
 
 }

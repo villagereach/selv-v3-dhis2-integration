@@ -82,4 +82,5 @@ public class ConditionalUuidGeneratorTest {
         .isInstanceOf(UUID.class)
         .isEqualTo(expected);
   }
+
 }

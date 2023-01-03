@@ -13,30 +13,29 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web;
+package org.openlmis.integration.dhis2.repository;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
-import org.openlmis.integration.dhis2.web.widget.WidgetDto;
-import org.openlmis.integration.dhis2.ToStringTestUtils;
+import java.util.UUID;
+import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 
-public class BaseDtoTest {
+public class ServerRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Server> {
 
-  @Test
-  public void equalsContract() {
-    EqualsVerifier
-        .forClass(BaseDto.class)
-        .withRedefinedSubclass(WidgetDto.class)
-        .suppress(Warning.NONFINAL_FIELDS)
-        .verify();
+  @Autowired
+  private ServerRepository serverRepository;
+
+  @Override
+  public CrudRepository<Server, UUID> getRepository() {
+    return serverRepository;
   }
 
-  @Test
-  public void shouldImplementToString() {
-    BaseDto baseDto = new BaseDto() {};
-    ToStringTestUtils.verify(BaseDto.class, baseDto);
+  @Override
+  public Server generateInstance() {
+    return new ServerDataBuilder()
+            .buildAsNew();
   }
-
 
 }

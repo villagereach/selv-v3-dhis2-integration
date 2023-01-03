@@ -33,7 +33,7 @@ import org.javers.core.metamodel.object.InstanceId;
 import org.javers.repository.jql.QueryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openlmis.integration.dhis2.domain.Widget;
+import org.openlmis.integration.dhis2.domain.server.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -48,14 +48,14 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AuditLogInitializerIntegrationTest {
 
-  private static final String[] WIDGET_FIELDS = {
-      "id", "name"
+  private static final String[] SERVER_FIELDS = {
+      "id", "name", "url", "username", "password"
   };
 
-  private static final String INSERT_WIDGET_SQL = String.format(
-      "INSERT INTO template.widget (%s) VALUES (%s) ",
-      StringUtils.join(WIDGET_FIELDS, ", "),
-      StringUtils.repeat("?", ", ", WIDGET_FIELDS.length)
+  private static final String INSERT_SERVER_SQL = String.format(
+      "INSERT INTO dhis2.server (%s) VALUES (%s) ",
+      StringUtils.join(SERVER_FIELDS, ", "),
+      StringUtils.repeat("?", ", ", SERVER_FIELDS.length)
   );
 
   @Autowired
@@ -68,13 +68,13 @@ public class AuditLogInitializerIntegrationTest {
   private EntityManager entityManager;
 
   @Test
-  public void shouldCreateSnapshotForWidget() {
+  public void shouldCreateSnapshotForServer() {
     //given
-    UUID widgetId = UUID.randomUUID();
-    addWidget(widgetId);
+    UUID serverId = UUID.randomUUID();
+    addServer(serverId);
 
     //when
-    QueryBuilder jqlQuery = QueryBuilder.byInstanceId(widgetId, Widget.class);
+    QueryBuilder jqlQuery = QueryBuilder.byInstanceId(serverId, Server.class);
     List<CdoSnapshot> snapshots = javers.findSnapshots(jqlQuery.build());
 
     assertThat(snapshots, hasSize(0));
@@ -94,16 +94,20 @@ public class AuditLogInitializerIntegrationTest {
     assertThat(globalId, instanceOf(InstanceId.class));
 
     InstanceId instanceId = (InstanceId) globalId;
-    assertThat(instanceId.getCdoId(), is(widgetId));
-    assertThat(instanceId.getTypeName(), is("Widget"));
+    assertThat(instanceId.getCdoId(), is(serverId));
+    assertThat(instanceId.getTypeName(), is("Server"));
   }
 
-  private void addWidget(UUID id) {
+  private void addServer(UUID id) {
     entityManager.flush();
     entityManager
-        .createNativeQuery(INSERT_WIDGET_SQL)
-        .setParameter(1, id)
-        .setParameter(2, "name")
-        .executeUpdate();
+            .createNativeQuery(INSERT_SERVER_SQL)
+            .setParameter(1, id)
+            .setParameter(2, "name")
+            .setParameter(3, "url")
+            .setParameter(4, "username")
+            .setParameter(5, "password")
+            .executeUpdate();
   }
+
 }

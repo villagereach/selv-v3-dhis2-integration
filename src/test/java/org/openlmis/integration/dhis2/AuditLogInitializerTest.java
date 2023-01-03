@@ -37,8 +37,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.openlmis.integration.dhis2.domain.Widget;
-import org.openlmis.integration.dhis2.repository.WidgetRepository;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationContext;
@@ -58,7 +58,7 @@ public class AuditLogInitializerTest {
   private Javers javers;
 
   @Mock
-  private WidgetRepository tradeItemRepository;
+  private ServerRepository tradeItemRepository;
 
   @Mock
   private CdoSnapshot snapshot;
@@ -91,8 +91,8 @@ public class AuditLogInitializerTest {
   public void shouldNotCreateSecondSnapshot() {
     repositoryMap.put("tradeItemRepository", tradeItemRepository);
 
-    ArrayList<Widget> content = Lists.newArrayList(new WidgetDataBuilder().build());
-    Page<Widget> page = new PageImpl<>(content);
+    ArrayList<Server> content = Lists.newArrayList(new ServerDataBuilder().build());
+    Page<Server> page = new PageImpl<>(content);
 
     when(tradeItemRepository.findAllWithoutSnapshots(any(Pageable.class)))
         .thenReturn(page)
@@ -107,14 +107,13 @@ public class AuditLogInitializerTest {
 
   @Getter
   @AllArgsConstructor
-  class TestItem {
-
+  public class TestItem {
     UUID id;
   }
 
   @JaversSpringDataAuditable
-  interface TestItemRepository
+  public interface TestItemRepository
       extends PagingAndSortingRepository<TestItem, UUID> {
-
   }
+
 }

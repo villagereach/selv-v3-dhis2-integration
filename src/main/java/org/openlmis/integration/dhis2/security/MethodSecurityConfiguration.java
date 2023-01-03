@@ -29,4 +29,5 @@ public class MethodSecurityConfiguration extends GlobalMethodSecurityConfigurati
   protected MethodSecurityExpressionHandler createExpressionHandler() {
     return new OAuth2MethodSecurityExpressionHandler();
   }
+
 }

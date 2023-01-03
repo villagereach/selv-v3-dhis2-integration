@@ -18,12 +18,13 @@ package org.openlmis.integration.dhis2.i18n;
 import java.util.Arrays;
 
 public abstract class MessageKeys {
+
   private static final String DELIMITER = ".";
 
-  private static final String SERVICE_PREFIX = "template";
+  private static final String SERVICE_PREFIX = "integration.dhis2";
   private static final String ERROR = "error";
 
-  private static final String WIDGET = "widget";
+  private static final String SERVER = "server";
   private static final String JAVERS = "javers";
 
   private static final String ID = "id";
@@ -35,10 +36,10 @@ public abstract class MessageKeys {
 
   private static final String ERROR_PREFIX = join(SERVICE_PREFIX, ERROR);
 
-  public static final String ERROR_WIDGET_NOT_FOUND = join(ERROR_PREFIX, WIDGET, NOT_FOUND);
-  public static final String ERROR_WIDGET_ID_MISMATCH = join(ERROR_PREFIX, WIDGET, ID, MISMATCH);
-  public static final String ERROR_WIDGET_CODE_DUPLICATED =
-      join(ERROR_PREFIX, WIDGET, CODE, DUPLICATED);
+  public static final String ERROR_SERVER_NOT_FOUND = join(ERROR_PREFIX, SERVER, NOT_FOUND);
+  public static final String ERROR_SERVER_ID_MISMATCH = join(ERROR_PREFIX, SERVER, ID, MISMATCH);
+  public static final String ERROR_SERVER_CODE_DUPLICATED =
+      join(ERROR_PREFIX, SERVER, CODE, DUPLICATED);
 
   public static final String ERROR_JAVERS_EXISTING_ENTRY =
       join(ERROR_PREFIX, JAVERS, "entryAlreadyExists");
@@ -50,4 +51,5 @@ public abstract class MessageKeys {
   private static String join(String... params) {
     return String.join(DELIMITER, Arrays.asList(params));
   }
+
 }

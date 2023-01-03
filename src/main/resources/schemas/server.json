@@ -1,8 +1,8 @@
 {
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
-  "title": "Widget",
-  "description": "Single widget instance",
+  "title": "Server",
+  "description": "Single server instance",
   "properties": {
     "id": {
       "type": "string",
@@ -11,9 +11,14 @@
     "name": {
       "type": "string",
       "title": "name"
+    },
+    "url": {
+      "type": "string",
+      "title": "url"
     }
   },
   "required": [
-    "name"
+    "name",
+    "url"
   ]
 }

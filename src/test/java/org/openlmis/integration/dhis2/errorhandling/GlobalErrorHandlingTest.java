@@ -27,8 +27,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
+import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.i18n.MessageService;
 import org.openlmis.integration.dhis2.util.Message;
@@ -63,24 +63,24 @@ public class GlobalErrorHandlingTest {
   @Test
   public void shouldHandleDataIntegrityViolation() {
     // given
-    String constraintName = "unq_widget_code";
+    String constraintName = "unq_server_code";
     ConstraintViolationException constraintViolation = new ConstraintViolationException(
         null, null, constraintName);
     DataIntegrityViolationException exp = new DataIntegrityViolationException(
         null, constraintViolation);
 
     // when
-    mockMessage(MessageKeys.ERROR_WIDGET_CODE_DUPLICATED);
+    mockMessage(MessageKeys.ERROR_SERVER_CODE_DUPLICATED);
     LocalizedMessage message = errorHandler.handleDataIntegrityViolation(exp);
 
     // then
-    assertMessage(message, MessageKeys.ERROR_WIDGET_CODE_DUPLICATED);
+    assertMessage(message, MessageKeys.ERROR_SERVER_CODE_DUPLICATED);
   }
 
   @Test
   public void shouldHandleDataIntegrityViolationEvenIfMessageKeyNotExist() {
     // given
-    String constraintName = "unq_widget_code_def";
+    String constraintName = "unq_server_code_def";
     ConstraintViolationException constraintViolation = new ConstraintViolationException(
         null, null, constraintName);
     DataIntegrityViolationException exp = new DataIntegrityViolationException(
@@ -146,4 +146,5 @@ public class GlobalErrorHandlingTest {
     when(messageSource.getMessage(key, null, ENGLISH_LOCALE))
         .thenReturn(ERROR_MESSAGE);
   }
+
 }

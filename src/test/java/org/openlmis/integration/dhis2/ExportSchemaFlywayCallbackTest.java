@@ -60,14 +60,13 @@ public class ExportSchemaFlywayCallbackTest {
 
   @Test
   public void afterMigrateShouldProcessStreams() {
-
     callback.handle(AFTER_MIGRATE, mockContext);
   }
 
   @Test
   public void shouldNotProcessStreamsWithEventDifferentThanAfterMigrate() {
-
     callback.handle(BEFORE_MIGRATE, mockContext);
     verifyNoInteractions(proc);
   }
+
 }
