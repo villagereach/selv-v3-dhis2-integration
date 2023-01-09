@@ -17,6 +17,7 @@ package org.openlmis.integration.dhis2.domain.dataset;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -54,10 +55,10 @@ public class Dataset extends BaseEntity {
   @Setter
   private String cronExpression;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "serverId", nullable = false)
   @Getter
   @Setter
-  @ManyToOne
-  @JoinColumn(name = "serverId", nullable = false)
   private Server server;
 
   /**
@@ -88,7 +89,6 @@ public class Dataset extends BaseEntity {
     exporter.setName(name);
     exporter.setDhisDatasetId(dhisDatasetId);
     exporter.setCronExpression(cronExpression);
-    exporter.setServer(server);
   }
 
   public interface Exporter extends BaseExporter {
@@ -110,6 +110,8 @@ public class Dataset extends BaseEntity {
     String getDhisDatasetId();
 
     String getCronExpression();
+
+    Server getServer();
 
   }
 

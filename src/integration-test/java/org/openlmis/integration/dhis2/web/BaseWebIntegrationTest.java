@@ -122,7 +122,6 @@ public abstract class BaseWebIntegrationTest {
    * Constructor for test.
    */
   public BaseWebIntegrationTest() {
-
     // This mocks the auth check to always return valid admin credentials.
     wireMockRule.stubFor(post(urlEqualTo("/api/oauth/check_token"))
         .withRequestBody(equalTo("token=" + USER_ACCESS_TOKEN))

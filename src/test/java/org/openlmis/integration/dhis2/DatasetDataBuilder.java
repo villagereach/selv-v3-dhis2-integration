@@ -27,21 +27,6 @@ public class DatasetDataBuilder {
   private String cronExpression = "0 5 * * *";
   private Server server = new ServerDataBuilder().build();
 
-  public DatasetDataBuilder withName(String name) {
-    this.name = name;
-    return this;
-  }
-
-  public DatasetDataBuilder withDatasetId(String datasetId) {
-    this.dhisDatasetId = datasetId;
-    return this;
-  }
-
-  public DatasetDataBuilder withCronExpression(String cronExpression) {
-    this.cronExpression = cronExpression;
-    return this;
-  }
-
   public DatasetDataBuilder withServer(Server server) {
     this.server = server;
     return this;

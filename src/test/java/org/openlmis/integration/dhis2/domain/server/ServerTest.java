@@ -21,17 +21,23 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.openlmis.integration.dhis2.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
 public class ServerTest {
 
   @Test
   public void equalsContract() {
+    Dataset ds1 = new DatasetDataBuilder().build();
+    Dataset ds2 = new Dataset();
+
     EqualsVerifier
         .forClass(Server.class)
         .withRedefinedSuperclass()
+        .withPrefabValues(Dataset.class, ds1, ds2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }

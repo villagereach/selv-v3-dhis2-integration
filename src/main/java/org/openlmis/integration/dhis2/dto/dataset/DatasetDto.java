@@ -16,7 +16,6 @@
 package org.openlmis.integration.dhis2.dto.dataset;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,18 +46,19 @@ public final class DatasetDto extends BaseDto implements Dataset.Importer, Datas
   public static DatasetDto newInstance(Dataset dataset) {
     DatasetDto dto = new DatasetDto();
     dataset.export(dto);
+    dto.setServer(dataset.getServer());
     return dto;
   }
 
-  @JsonSetter("serverDto")
-  public void setServer(ServerDto serverDto) {
-    this.serverDto = serverDto;
+  @JsonIgnore
+  @Override
+  public void setServer(Server server) {
+    this.serverDto = ServerDto.newInstance(server);
   }
 
   @Override
-  @JsonIgnore
-  public void setServer(Server server) {
-    serverDto = ServerDto.newInstance(server);
+  public Server getServer() {
+    return Server.newInstance(serverDto);
   }
 
 }

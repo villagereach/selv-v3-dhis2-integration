@@ -61,7 +61,8 @@ public class DatasetController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DatasetController.class);
 
-  public static final String RESOURCE_PATH = ServerController.RESOURCE_PATH + "/datasets";
+  public static final String RESOURCE_PATH = ServerController.RESOURCE_PATH
+          + "/{serverId}" + "/datasets";
 
   @Autowired
   private DatasetRepository datasetRepository;
@@ -89,14 +90,18 @@ public class DatasetController extends BaseController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Page<DatasetDto> getAllDatasets(Pageable pageable) {
-    Page<Dataset> page = datasetRepository.findAll(pageable);
-    List<DatasetDto> content = page
-            .getContent()
+  public Page<DatasetDto> getAllDatasets(@PathVariable("serverId") UUID serverId,
+                                         Pageable pageable) {
+    Server server = serverRepository.findById(serverId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+
+    List<Dataset> datasets = server.getDatasetList();
+    List<DatasetDto> datasetDtos = datasets
             .stream()
             .map(DatasetDto::newInstance)
             .collect(Collectors.toList());
-    return Pagination.getPage(content, pageable, page.getTotalElements());
+
+    return Pagination.getPage(datasetDtos, pageable);
   }
 
   /**
@@ -105,15 +110,16 @@ public class DatasetController extends BaseController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public DatasetDto createDataset(@RequestBody DatasetDto datasetDto) {
+  public DatasetDto createDataset(@PathVariable("serverId") UUID serverId,
+                                  @RequestBody DatasetDto datasetDto) {
     LOGGER.debug("Creating new dataset");
     Dataset newDataset = Dataset.newInstance(datasetDto);
-    newDataset.setId(null);
 
-    Server server = serverRepository.findById(datasetDto.getServerDto().getId())
+    Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
-
     newDataset.setServer(server);
+
+    newDataset.setId(null);
     newDataset = datasetRepository.saveAndFlush(newDataset);
 
     return DatasetDto.newInstance(newDataset);

@@ -47,8 +47,6 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.web.dataset.DatasetController;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -58,6 +56,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   private static final String RESOURCE_URL = DatasetController.RESOURCE_PATH;
   private static final String ID_URL = RESOURCE_URL + "/{id}";
   private static final String AUDIT_LOG_URL = ID_URL + "/auditLog";
+  private static final String SERVER_ID = "serverId";
   private static final String NAME = "name";
 
   private Server server = new ServerDataBuilder().build();
@@ -75,16 +74,18 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   public void setUp() {
     given(datasetRepository.saveAndFlush(any(Dataset.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
+    server.setDatasetList(Collections.singletonList(dataset));
   }
 
   @Test
   public void shouldReturnPageOfDatasets() {
-    given(datasetRepository.findAll(any(Pageable.class)))
-        .willReturn(new PageImpl<>(Collections.singletonList(dataset)));
+    given(serverRepository.findById(datasetDto.getServerDto()
+            .getId())).willReturn(Optional.of(server));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .queryParam("page", pageable.getPageNumber())
         .queryParam("size", pageable.getPageSize())
         .when()
@@ -101,6 +102,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   @Test
   public void shouldReturnUnauthorizedForAllDatasetsEndpointIfUserIsNotAuthorized() {
     restAssured.given()
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .when()
         .get(RESOURCE_URL)
         .then()
@@ -111,13 +113,14 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldCreateDataset() {
-    given(serverRepository.findById(datasetDto.getServerDto().getId()))
-            .willReturn(Optional.of(server));
+    given(serverRepository.findById(datasetDto.getServerDto()
+            .getId())).willReturn(Optional.of(server));
 
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .body(datasetDto)
         .when()
         .post(RESOURCE_URL)
@@ -134,6 +137,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .body(datasetDto)
         .when()
         .post(RESOURCE_URL)
@@ -150,6 +154,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(ID_URL)
@@ -168,6 +173,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(ID_URL)
@@ -182,6 +188,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   public void shouldReturnUnauthorizedForGetDatasetEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(ID_URL)
@@ -199,6 +206,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .body(datasetDto)
         .when()
@@ -217,6 +225,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, UUID.randomUUID().toString())
         .body(datasetDto)
         .when()
@@ -233,6 +242,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .body(datasetDto)
         .when()
@@ -250,6 +260,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .delete(ID_URL)
@@ -266,6 +277,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .delete(ID_URL)
@@ -280,6 +292,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   public void shouldReturnUnauthorizedForDeleteDatasetEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .delete(ID_URL)
@@ -297,6 +310,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
@@ -324,6 +338,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .queryParam("author", commitMetadata.getAuthor())
         .queryParam("changedPropertyName", change.getPropertyName())
@@ -352,6 +367,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)
@@ -365,6 +381,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
     restAssured
         .given()
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(ID, datasetDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)

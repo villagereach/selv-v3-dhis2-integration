@@ -15,8 +15,12 @@
 
 package org.openlmis.integration.dhis2.domain.server;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,6 +30,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 
 @Entity
 @TypeName("Server")
@@ -55,6 +60,12 @@ public class Server extends BaseEntity {
   @Getter
   @Setter
   private String password;
+
+  @Column
+  @Getter
+  @Setter
+  @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "server")
+  private List<Dataset> datasetList = new ArrayList<>();
 
   /**
    * Creates new instance based on data from the importer.
