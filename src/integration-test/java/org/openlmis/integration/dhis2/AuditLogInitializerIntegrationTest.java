@@ -33,6 +33,7 @@ import org.javers.core.metamodel.object.InstanceId;
 import org.javers.repository.jql.QueryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,10 +53,20 @@ public class AuditLogInitializerIntegrationTest {
       "id", "name", "url", "username", "password"
   };
 
+  private static final String[] DATASET_FIELDS = {
+      "id", "name", "dhisDatasetId", "cronExpression", "serverId"
+  };
+
   private static final String INSERT_SERVER_SQL = String.format(
       "INSERT INTO dhis2.server (%s) VALUES (%s) ",
       StringUtils.join(SERVER_FIELDS, ", "),
       StringUtils.repeat("?", ", ", SERVER_FIELDS.length)
+  );
+
+  private static final String INSERT_DATASET_SQL = String.format(
+      "INSERT INTO dhis2.dataset (%s) VALUES (%s) ",
+      StringUtils.join(DATASET_FIELDS, ", "),
+      StringUtils.repeat("?", ", ", DATASET_FIELDS.length)
   );
 
   @Autowired
@@ -69,12 +80,26 @@ public class AuditLogInitializerIntegrationTest {
 
   @Test
   public void shouldCreateSnapshotForServer() {
-    //given
     UUID serverId = UUID.randomUUID();
     addServer(serverId);
 
+    executeTest(serverId, Server.class);
+  }
+
+  @Test
+  public void shouldCreateSnapshotForDataset() {
+    UUID serverId = UUID.randomUUID();
+    UUID datasetId = UUID.randomUUID();
+
+    addServer(serverId);
+    addDataset(datasetId, serverId);
+
+    executeTest(datasetId, Dataset.class);
+  }
+
+  private void executeTest(Object id, Class clazz) {
     //when
-    QueryBuilder jqlQuery = QueryBuilder.byInstanceId(serverId, Server.class);
+    QueryBuilder jqlQuery = QueryBuilder.byInstanceId(id, clazz);
     List<CdoSnapshot> snapshots = javers.findSnapshots(jqlQuery.build());
 
     assertThat(snapshots, hasSize(0));
@@ -94,8 +119,8 @@ public class AuditLogInitializerIntegrationTest {
     assertThat(globalId, instanceOf(InstanceId.class));
 
     InstanceId instanceId = (InstanceId) globalId;
-    assertThat(instanceId.getCdoId(), is(serverId));
-    assertThat(instanceId.getTypeName(), is("Server"));
+    assertThat(instanceId.getCdoId(), is(id));
+    assertThat(instanceId.getTypeName(), is(clazz.getSimpleName()));
   }
 
   private void addServer(UUID id) {
@@ -103,10 +128,22 @@ public class AuditLogInitializerIntegrationTest {
     entityManager
             .createNativeQuery(INSERT_SERVER_SQL)
             .setParameter(1, id)
-            .setParameter(2, "name")
-            .setParameter(3, "url")
-            .setParameter(4, "username")
-            .setParameter(5, "password")
+            .setParameter(2, "test-name")
+            .setParameter(3, "http://test.configuration")
+            .setParameter(4, "test-username")
+            .setParameter(5, "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG")
+            .executeUpdate();
+  }
+
+  private void addDataset(UUID id, UUID serverId) {
+    entityManager.flush();
+    entityManager
+            .createNativeQuery(INSERT_DATASET_SQL)
+            .setParameter(1, id)
+            .setParameter(2, "test-name")
+            .setParameter(3, "idXfoem")
+            .setParameter(4, "0 5 * * *")
+            .setParameter(5, serverId)
             .executeUpdate();
   }
 

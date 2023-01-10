@@ -62,12 +62,12 @@ public class JaVersIntegrationTest {
   @Test
   public void shouldAlwaysCommitWithUtcTimeZone() {
 
-    //given
+    // given
     Server server = new Server();
     server.setId(UUID.randomUUID());
     server.setName("name_1");
 
-    //when
+    // when
     DateTimeZone.setDefault(DateTimeZone.forID("UTC"));
     javers.commit(COMMIT_AUTHOR, server);
 
@@ -75,7 +75,7 @@ public class JaVersIntegrationTest {
     server.setName("name_2");
     javers.commit(COMMIT_AUTHOR, server);
 
-    //then
+    // then
     List<CdoSnapshot> snapshots = javers.findSnapshots(
         QueryBuilder.byClass(Server.class).build());
     assertEquals(2, snapshots.size());

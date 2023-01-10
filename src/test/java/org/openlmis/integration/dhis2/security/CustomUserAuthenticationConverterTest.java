@@ -39,7 +39,6 @@ public class CustomUserAuthenticationConverterTest {
   public void setUp() {
     userAuthenticationConverter = new CustomUserAuthenticationConverter();
     userId = UUID.randomUUID();
-
   }
 
   @Test(expected = IllegalArgumentException.class)

@@ -13,11 +13,11 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.repository.server;
+package org.openlmis.integration.dhis2.repository.dataset;
 
 import java.util.UUID;
 import org.javers.spring.annotation.JaversSpringDataAuditable;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.repository.BaseAuditableRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,24 +25,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 @JaversSpringDataAuditable
-public interface ServerRepository extends PagingAndSortingRepository<Server, UUID>,
-        BaseAuditableRepository<Server, UUID> {
+public interface DatasetRepository extends PagingAndSortingRepository<Dataset, UUID>,
+        BaseAuditableRepository<Dataset, UUID> {
 
   @Query(value = "SELECT\n"
-      + "    s.*\n"
+      + "    d.*\n"
       + "FROM\n"
-      + "    dhis2.server s\n"
+      + "    dhis2.dataset d\n"
       + "WHERE\n"
       + "    id NOT IN (\n"
       + "        SELECT\n"
       + "            id\n"
       + "        FROM\n"
-      + "            dhis2.server s\n"
+      + "            dhis2.dataset s\n"
       + "            INNER JOIN dhis2.jv_global_id g "
-      + "ON CAST(s.id AS varchar) = SUBSTRING(g.local_id, 2, 36)\n"
+      + "ON CAST(d.id AS varchar) = SUBSTRING(g.local_id, 2, 36)\n"
       + "            INNER JOIN dhis2.jv_snapshot jv ON g.global_id_pk = jv.global_id_fk\n"
       + "    )\n",
       nativeQuery = true)
-  Page<Server> findAllWithoutSnapshots(Pageable pageable);
+  Page<Dataset> findAllWithoutSnapshots(Pageable pageable);
 
 }

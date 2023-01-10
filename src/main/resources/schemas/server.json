@@ -15,10 +15,20 @@
     "url": {
       "type": "string",
       "title": "url"
+    },
+    "username": {
+      "type": "string",
+      "title": "username"
+    },
+    "password": {
+      "type": "string",
+      "title": "password"
     }
   },
   "required": [
     "name",
-    "url"
+    "url",
+    "username",
+    "password"
   ]
 }

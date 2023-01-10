@@ -33,6 +33,9 @@ public class TestDataInitializerTest {
   private Resource serverResource;
 
   @Mock
+  private Resource datasetResource;
+
+  @Mock
   private Resource2Db loader;
 
   @InjectMocks
@@ -42,6 +45,7 @@ public class TestDataInitializerTest {
   public void shouldLoadData() throws IOException {
     initializer.run();
     verify(loader).insertToDbFromCsv("dhis2.server", serverResource);
+    verify(loader).insertToDbFromCsv("dhis2.dataset", datasetResource);
   }
 
 }

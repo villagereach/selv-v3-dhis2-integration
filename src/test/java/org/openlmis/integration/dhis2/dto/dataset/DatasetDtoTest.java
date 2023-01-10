@@ -13,37 +13,28 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.server;
+package org.openlmis.integration.dhis2.dto.dataset;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.BaseDto;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
+import org.openlmis.integration.dhis2.ToStringTestUtils;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public final class ServerDto extends BaseDto implements Server.Importer, Server.Exporter {
+public class DatasetDtoTest {
 
-  private String name;
-  private String url;
-  private String username;
-  private String password;
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+        .forClass(DatasetDto.class)
+        .withRedefinedSuperclass()
+        .suppress(Warning.NONFINAL_FIELDS)
+        .verify();
+  }
 
-  /**
-   * Creates new instance based on domain object.
-   */
-  public static ServerDto newInstance(Server server) {
-    ServerDto dto = new ServerDto();
-    server.export(dto);
-    return dto;
+  @Test
+  public void shouldImplementToString() {
+    DatasetDto dataset = new DatasetDto();
+    ToStringTestUtils.verify(DatasetDto.class, dataset);
   }
 
 }

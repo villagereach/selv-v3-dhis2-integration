@@ -81,17 +81,17 @@ public final class Pagination {
     int fromIndex = pageNumber * pageSize;
     int toIndex = fromIndex + pageSize;
 
-    //Validate toIndex.
-    //Note that toIndex is exclusive, which is why we don't want originalList.size() - 1.
+    // Validate toIndex.
+    // Note that toIndex is exclusive, which is why we don't want originalList.size() - 1.
     int maxPossibleToIndex = originalList.size();
     if (toIndex > maxPossibleToIndex) {
       toIndex = maxPossibleToIndex;
     }
 
-    //Validate fromIndex
+    // Validate fromIndex
     int maxPossibleFromIndex = originalList.size() - 1;
     if (fromIndex > maxPossibleFromIndex) {
-      // If the fronIndex is out of bounds, set it and toIndex to the same value.
+      // If the fromIndex is out of bounds, set it and toIndex to the same value.
       // This will cause us to return an empty list.
       fromIndex = toIndex = 0;
     }

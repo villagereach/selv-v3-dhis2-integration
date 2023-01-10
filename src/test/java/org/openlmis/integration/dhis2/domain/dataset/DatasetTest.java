@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.server;
+package org.openlmis.integration.dhis2.domain.dataset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,50 +24,51 @@ import org.junit.Test;
 import org.openlmis.integration.dhis2.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.dto.server.ServerDto;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 
-public class ServerTest {
+
+public class DatasetTest {
 
   @Test
   public void equalsContract() {
-    Dataset ds1 = new DatasetDataBuilder().build();
-    Dataset ds2 = new Dataset();
+    Server sv1 = new ServerDataBuilder().build();
+    Server sv2 = new Server();
 
     EqualsVerifier
-        .forClass(Server.class)
+        .forClass(Dataset.class)
         .withRedefinedSuperclass()
-        .withPrefabValues(Dataset.class, ds1, ds2)
+        .withPrefabValues(Server.class, sv1, sv2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }
 
   @Test
   public void shouldImplementToString() {
-    Server server = new ServerDataBuilder().build();
-    ToStringTestUtils.verify(Server.class, server, "TEXT");
+    Dataset dataset = new DatasetDataBuilder().build();
+    ToStringTestUtils.verify(Dataset.class, dataset, "TEXT");
   }
 
   @Test
   public void shouldUpdateFrom() {
-    Server server = new ServerDataBuilder().build();
-    ServerDto dto = ServerDto.newInstance(server);
+    Dataset dataset = new DatasetDataBuilder().build();
+    DatasetDto dto = DatasetDto.newInstance(dataset);
     dto.setName("ala");
 
-    server.updateFrom(dto);
+    dataset.updateFrom(dto);
 
-    assertThat(server.getName()).isEqualTo("ala");
+    assertThat(dataset.getName()).isEqualTo("ala");
   }
 
   @Test
   public void shouldExportData() {
-    Server server = new ServerDataBuilder().build();
-    ServerDto dto = new ServerDto();
+    Dataset dataset = new DatasetDataBuilder().build();
+    DatasetDto dto = new DatasetDto();
 
-    server.export(dto);
+    dataset.export(dto);
 
-    Assertions.assertThat(dto.getId()).isEqualTo(server.getId());
-    assertThat(dto.getName()).isEqualTo(server.getName());
+    Assertions.assertThat(dto.getId()).isEqualTo(dataset.getId());
+    assertThat(dto.getName()).isEqualTo(dataset.getName());
   }
 
 }

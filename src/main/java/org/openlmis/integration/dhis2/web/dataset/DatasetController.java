@@ -13,21 +13,24 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web.server;
+package org.openlmis.integration.dhis2.web.dataset;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.server.ServerDto;
+import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
+import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
+import org.openlmis.integration.dhis2.web.server.ServerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,108 +55,117 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Controller used to expose Servers via HTTP.
  */
 @Controller
-@RequestMapping(ServerController.RESOURCE_PATH)
+@RequestMapping(DatasetController.RESOURCE_PATH)
 @Transactional
-public class ServerController extends BaseController {
+public class DatasetController extends BaseController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServerController.class);
-  public static final String RESOURCE_PATH = API_PATH + "/serverConfiguration";
+  private static final Logger LOGGER = LoggerFactory.getLogger(DatasetController.class);
 
-  public final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  public static final String RESOURCE_PATH = ServerController.RESOURCE_PATH
+          + "/{serverId}" + "/datasets";
+
+  @Autowired
+  private DatasetRepository datasetRepository;
 
   @Autowired
   private ServerRepository serverRepository;
 
   /**
-   * Retrieves the specified server.
+   * Retrieves the specified dataset.
    */
   @GetMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ServerDto getServer(@PathVariable("id") UUID id) {
-    Server server = serverRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+  public DatasetDto getDataset(@PathVariable("id") UUID id) {
+    Dataset dataset = datasetRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
-    return ServerDto.newInstance(server);
+    return DatasetDto.newInstance(dataset);
   }
 
   /**
-   * Retrieves all servers. Note that an empty collection rather than a 404 should be
-   * returned if no servers exist.
+   * Retrieves all datasets. Note that an empty collection rather than a 404 should be
+   * returned if no datasets exist.
    */
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Page<ServerDto> getAllServers(Pageable pageable) {
-    Page<Server> page = serverRepository.findAll(pageable);
-    List<ServerDto> content = page
-            .getContent()
+  public Page<DatasetDto> getAllDatasets(@PathVariable("serverId") UUID serverId,
+                                         Pageable pageable) {
+    Server server = serverRepository.findById(serverId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+
+    List<Dataset> datasets = server.getDatasetList();
+    List<DatasetDto> datasetDtos = datasets
             .stream()
-            .map(ServerDto::newInstance)
+            .map(DatasetDto::newInstance)
             .collect(Collectors.toList());
-    return Pagination.getPage(content, pageable, page.getTotalElements());
+
+    return Pagination.getPage(datasetDtos, pageable);
   }
 
   /**
-   * Allows the creation of a new server. If the id is specified, it will be ignored.
+   * Allows the creation of a new dataset. If the id is specified, it will be ignored.
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public ServerDto createServer(@RequestBody ServerDto serverDto) {
-    LOGGER.debug("Creating new server");
-    serverDto.setPassword(passwordEncoder.encode(serverDto.getPassword()));
+  public DatasetDto createDataset(@PathVariable("serverId") UUID serverId,
+                                  @RequestBody DatasetDto datasetDto) {
+    LOGGER.debug("Creating new dataset");
+    Dataset newDataset = Dataset.newInstance(datasetDto);
 
-    Server newServer = Server.newInstance(serverDto);
-    newServer.setId(null);
-    newServer = serverRepository.saveAndFlush(newServer);
+    Server server = serverRepository.findById(serverId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+    newDataset.setServer(server);
 
-    return ServerDto.newInstance(newServer);
+    newDataset.setId(null);
+    newDataset = datasetRepository.saveAndFlush(newDataset);
+
+    return DatasetDto.newInstance(newDataset);
   }
 
   /**
-   * Updates the specified server.
+   * Updates the specified dataset.
    */
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ServerDto updateServer(@PathVariable("id") UUID id, @RequestBody ServerDto serverDto) {
-    LOGGER.debug("Updating server");
-    serverDto.setPassword(passwordEncoder.encode(serverDto.getPassword()));
-
-    if (null != serverDto.getId() && !Objects.equals(serverDto.getId(), id)) {
-      throw new ValidationMessageException(MessageKeys.ERROR_SERVER_ID_MISMATCH);
+  public DatasetDto updateDataset(@PathVariable("id") UUID id, @RequestBody DatasetDto datasetDto) {
+    if (null != datasetDto.getId() && !Objects.equals(datasetDto.getId(), id)) {
+      throw new ValidationMessageException(MessageKeys.ERROR_DATASET_ID_MISMATCH);
     }
 
-    Server server;
-    Optional<Server> serverOptional = serverRepository.findById(id);
-    if (serverOptional.isPresent()) {
-      server = serverOptional.get();
-      server.updateFrom(serverDto);
+    LOGGER.debug("Updating dataset");
+    Dataset dataset;
+    Optional<Dataset> datasetOptional = datasetRepository.findById(id);
+    if (datasetOptional.isPresent()) {
+      dataset = datasetOptional.get();
+      dataset.updateFrom(datasetDto);
     } else {
-      server = Server.newInstance(serverDto);
-      server.setId(id);
+      dataset = Dataset.newInstance(datasetDto);
+      dataset.setId(id);
     }
 
-    serverRepository.saveAndFlush(server);
-    return ServerDto.newInstance(server);
+    datasetRepository.saveAndFlush(dataset);
+    return DatasetDto.newInstance(dataset);
   }
 
   /**
-   * Deletes the specified server.
+   * Deletes the specified dataset.
    */
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteServer(@PathVariable("id") UUID id) {
-    if (!serverRepository.existsById(id)) {
-      throw new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND);
+  public void deleteDataset(@PathVariable("id") UUID id) {
+    if (!datasetRepository.existsById(id)) {
+      throw new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND);
     }
 
-    serverRepository.deleteById(id);
+    datasetRepository.deleteById(id);
   }
 
   /**
-   * Retrieves audit information related to the specified server.
+   * Retrieves audit information related to the specified dataset.
    *
    * @param author The author of the changes which should be returned.
    *               If null or empty, changes are returned regardless of author.
@@ -167,17 +177,17 @@ public class ServerController extends BaseController {
   @GetMapping(value = "/{id}/auditLog")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ResponseEntity<String> getServerAuditLog(@PathVariable("id") UUID id,
+  public ResponseEntity<String> getDatasetAuditLog(@PathVariable("id") UUID id,
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
 
     // Return a 404 if the specified instance can't be found
-    if (!serverRepository.existsById(id)) {
-      throw new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND);
+    if (!datasetRepository.existsById(id)) {
+      throw new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND);
     }
 
-    return getAuditLogResponse(Server.class, id, author, changedPropertyName, page);
+    return getAuditLogResponse(Dataset.class, id, author, changedPropertyName, page);
   }
 
 }
