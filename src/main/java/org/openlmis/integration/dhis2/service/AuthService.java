@@ -15,25 +15,27 @@
 
 package org.openlmis.integration.dhis2.service;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
+import org.openlmis.integration.dhis2.exception.ResponseParsingException;
+import org.openlmis.integration.dhis2.exception.RestOperationException;
+import org.openlmis.integration.dhis2.util.messagekeys.AuthMessageKeys;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class AuthService {
 
-  static final String API_TOKEN_URL = "/api/apiToken";
-  static final String RESPONSE = "response";
-  static final String KEY = "key";
+  public static final String API_AUTH_URL = "/api/apiToken";
+  public static final String API_RESPONSE_DETAILS = "response";
+  public static final String API_KEY = "key";
 
   private final RestOperations restTemplate;
 
@@ -54,11 +56,8 @@ public class AuthService {
    * @return token.
    */
   public String obtainAccessToken(String username, String password, String serverUrl) {
-
-    String plainCreds = username + ":" + password;
-    byte[] plainCredsBytes = plainCreds.getBytes();
-    byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-    String base64Creds = new String(base64CredsBytes);
+    String base64Creds = getEncodedUserCreds(username, password);
+    String uri = serverUrl + API_AUTH_URL;
 
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.AUTHORIZATION, "Basic " + base64Creds);
@@ -67,18 +66,32 @@ public class AuthService {
 
     HttpEntity<?> request = new HttpEntity<>(emptyRequestBody, headers);
 
-    UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance().uri(URI.create(
-            serverUrl + API_TOKEN_URL
-    ));
-    URI uri = uriBuilder.build(true).toUri();
+    ResponseEntity<?> response;
 
-    ResponseEntity<?> response = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            request,
-            Object.class);
+    try {
+      response = restTemplate.exchange(
+              uri,
+              HttpMethod.POST,
+              request,
+              Object.class);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(AuthMessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    }
 
-    return ((Map<String, Map<String, String>>) response.getBody()).get(RESPONSE).get(KEY);
+    try {
+      return ((Map<String, Map<String, String>>) response.getBody()).get(API_RESPONSE_DETAILS)
+              .get(API_KEY);
+    } catch (NullPointerException ex) {
+      throw new ResponseParsingException(
+              AuthMessageKeys.ERROR_EXTERNAL_API_RESPONSE_UNABLE_TO_PARSE, ex);
+    }
+  }
+
+  private String getEncodedUserCreds(String username, String password) {
+    String plainCreds = username + ":" + password;
+    byte[] plainCredsBytes = plainCreds.getBytes();
+    byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+    return new String(base64CredsBytes);
   }
 
 }

@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.hibernate.exception.ConstraintViolationException;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
+import org.openlmis.integration.dhis2.exception.ResponseParsingException;
+import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.util.Message;
@@ -40,6 +42,32 @@ public class GlobalErrorHandling extends AbstractErrorHandling {
 
   static {
     CONSTRAINT_MAP.put("unq_server_code", MessageKeys.ERROR_SERVER_CODE_DUPLICATED);
+  }
+
+  /**
+   * Handles REST operation exceptions and returns status 503 Service Unavailable.
+   *
+   * @param ex the RestOperationException to handle
+   * @return the error response for the user
+   */
+  @ExceptionHandler(RestOperationException.class)
+  @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+  @ResponseBody
+  public Message.LocalizedMessage handleRestOperationException(RestOperationException ex) {
+    return getLocalizedMessage(ex);
+  }
+
+  /**
+   * Handles response parsing exceptions and returns status 424 Failed Dependency.
+   *
+   * @param ex the ResponseParsingException to handle
+   * @return the error response for the user
+   */
+  @ExceptionHandler(ResponseParsingException.class)
+  @ResponseStatus(HttpStatus.FAILED_DEPENDENCY)
+  @ResponseBody
+  public Message.LocalizedMessage handleResponseParsingException(ResponseParsingException ex) {
+    return getLocalizedMessage(ex);
   }
 
   @ExceptionHandler(NotFoundException.class)
