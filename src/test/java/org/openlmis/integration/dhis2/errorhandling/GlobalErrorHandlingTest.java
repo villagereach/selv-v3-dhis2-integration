@@ -28,6 +28,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
+import org.openlmis.integration.dhis2.exception.ResponseParsingException;
+import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.i18n.MessageService;
@@ -41,6 +43,7 @@ public class GlobalErrorHandlingTest {
 
   private static final Locale ENGLISH_LOCALE = Locale.ENGLISH;
   private static final String ERROR_MESSAGE = "error-message";
+  private static final String KEY = "key";
 
   @Mock
   private MessageService messageService;
@@ -110,29 +113,53 @@ public class GlobalErrorHandlingTest {
   @Test
   public void shouldHandleMessageException() {
     // given
-    String messageKey = "key";
-    ValidationMessageException exp = new ValidationMessageException(messageKey);
+    ValidationMessageException exp = new ValidationMessageException(KEY);
 
     // when
-    mockMessage(messageKey);
+    mockMessage(KEY);
     LocalizedMessage message = errorHandler.handleMessageException(exp);
 
     // then
-    assertMessage(message, messageKey);
+    assertMessage(message, KEY);
   }
 
   @Test
   public void shouldHandleNotFoundException() {
     // given
-    String messageKey = "key";
-    NotFoundException exp = new NotFoundException(messageKey);
+    NotFoundException exp = new NotFoundException(KEY);
 
     // when
-    mockMessage(messageKey);
+    mockMessage(KEY);
     LocalizedMessage message = errorHandler.handleNotFoundException(exp);
 
     // then
-    assertMessage(message, messageKey);
+    assertMessage(message, KEY);
+  }
+
+  @Test
+  public void shouldHandleRestOperationException() {
+    // given
+    RestOperationException exp = new RestOperationException(KEY);
+
+    // when
+    mockMessage(KEY);
+    LocalizedMessage message = errorHandler.handleRestOperationException(exp);
+
+    // then
+    assertMessage(message, KEY);
+  }
+
+  @Test
+  public void shouldHandleResponseParsingException() {
+    // given
+    ResponseParsingException exp = new ResponseParsingException(KEY);
+
+    // when
+    mockMessage(KEY);
+    LocalizedMessage message = errorHandler.handleResponseParsingException(exp);
+
+    // then
+    assertMessage(message, KEY);
   }
 
   private void assertMessage(LocalizedMessage localized, String key) {

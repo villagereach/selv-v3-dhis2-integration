@@ -15,44 +15,14 @@
 
 package org.openlmis.integration.dhis2.exception;
 
-import org.openlmis.integration.dhis2.util.Message;
+public class ResponseParsingException extends BaseMessageException {
 
-/**
- * Base class for exceptions using Message.
- */
-public class BaseMessageException extends RuntimeException {
-
-  private final transient Message message;
-
-  public BaseMessageException(Message message) {
-    this.message = message;
+  public ResponseParsingException(String messageKey, Throwable cause) {
+    super(messageKey, cause);
   }
 
-  public BaseMessageException(Message message, Throwable cause) {
-    super(cause);
-    this.message = message;
-  }
-
-  public BaseMessageException(String messageKey) {
-    this.message = new Message(messageKey);
-  }
-
-  public BaseMessageException(String messageKey, Throwable cause) {
-    this(new Message(messageKey), cause);
-  }
-
-  public Message asMessage() {
-    return message;
-  }
-
-  /**
-   * Overrides RuntimeException's public String getMessage().
-   *
-   * @return a localized string description
-   */
-  @Override
-  public String getMessage() {
-    return this.message.toString();
+  public ResponseParsingException(String messageKey) {
+    super(messageKey);
   }
 
 }
