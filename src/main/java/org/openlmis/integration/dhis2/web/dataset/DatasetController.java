@@ -17,7 +17,6 @@ package org.openlmis.integration.dhis2.web.dataset;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
@@ -62,7 +61,7 @@ public class DatasetController extends BaseController {
   private static final Logger LOGGER = LoggerFactory.getLogger(DatasetController.class);
 
   public static final String RESOURCE_PATH = ServerController.RESOURCE_PATH
-          + "/{serverId}" + "/datasets";
+          + "/{serverId}/datasets";
 
   @Autowired
   private DatasetRepository datasetRepository;
@@ -137,18 +136,13 @@ public class DatasetController extends BaseController {
     }
 
     LOGGER.debug("Updating dataset");
-    Dataset dataset;
-    Optional<Dataset> datasetOptional = datasetRepository.findById(id);
-    if (datasetOptional.isPresent()) {
-      dataset = datasetOptional.get();
+    Dataset datasetToSave = datasetRepository.findById(id).map(dataset -> {
       dataset.updateFrom(datasetDto);
-    } else {
-      dataset = Dataset.newInstance(datasetDto);
-      dataset.setId(id);
-    }
+      return dataset;
+    }).orElseGet(() -> Dataset.newInstance(datasetDto));
 
-    datasetRepository.saveAndFlush(dataset);
-    return DatasetDto.newInstance(dataset);
+    datasetRepository.saveAndFlush(datasetToSave);
+    return DatasetDto.newInstance(datasetToSave);
   }
 
   /**

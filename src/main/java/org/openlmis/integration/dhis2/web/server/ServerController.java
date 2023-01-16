@@ -17,7 +17,6 @@ package org.openlmis.integration.dhis2.web.server;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.openlmis.integration.dhis2.domain.server.Server;
@@ -35,8 +34,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,8 +57,6 @@ public class ServerController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServerController.class);
   public static final String RESOURCE_PATH = API_PATH + "/serverConfiguration";
-
-  public final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   @Autowired
   private ServerRepository serverRepository;
@@ -104,7 +99,6 @@ public class ServerController extends BaseController {
   @ResponseBody
   public ServerDto createServer(@RequestBody ServerDto serverDto) {
     LOGGER.debug("Creating new server");
-    serverDto.setPassword(passwordEncoder.encode(serverDto.getPassword()));
 
     Server newServer = Server.newInstance(serverDto);
     newServer.setId(null);
@@ -120,25 +114,18 @@ public class ServerController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public ServerDto updateServer(@PathVariable("id") UUID id, @RequestBody ServerDto serverDto) {
-    LOGGER.debug("Updating server");
-    serverDto.setPassword(passwordEncoder.encode(serverDto.getPassword()));
-
     if (null != serverDto.getId() && !Objects.equals(serverDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_SERVER_ID_MISMATCH);
     }
 
-    Server server;
-    Optional<Server> serverOptional = serverRepository.findById(id);
-    if (serverOptional.isPresent()) {
-      server = serverOptional.get();
+    LOGGER.debug("Updating server");
+    Server serverToSave = serverRepository.findById(id).map(server -> {
       server.updateFrom(serverDto);
-    } else {
-      server = Server.newInstance(serverDto);
-      server.setId(id);
-    }
+      return server;
+    }).orElseGet(() -> Server.newInstance(serverDto));
 
-    serverRepository.saveAndFlush(server);
-    return ServerDto.newInstance(server);
+    serverRepository.saveAndFlush(serverToSave);
+    return ServerDto.newInstance(serverToSave);
   }
 
   /**
