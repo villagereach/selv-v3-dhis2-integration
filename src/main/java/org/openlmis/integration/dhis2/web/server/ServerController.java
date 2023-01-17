@@ -122,7 +122,7 @@ public class ServerController extends BaseController {
     Server serverToSave = serverRepository.findById(id).map(server -> {
       server.updateFrom(serverDto);
       return server;
-    }).orElseGet(() -> Server.newInstance(serverDto));
+    }).orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
     serverRepository.saveAndFlush(serverToSave);
     return ServerDto.newInstance(serverToSave);

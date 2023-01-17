@@ -139,7 +139,7 @@ public class DatasetController extends BaseController {
     Dataset datasetToSave = datasetRepository.findById(id).map(dataset -> {
       dataset.updateFrom(datasetDto);
       return dataset;
-    }).orElseGet(() -> Dataset.newInstance(datasetDto));
+    }).orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
     datasetRepository.saveAndFlush(datasetToSave);
     return DatasetDto.newInstance(datasetToSave);
