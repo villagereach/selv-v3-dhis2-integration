@@ -48,7 +48,7 @@ public class JaVersDateProvider implements DateProvider {
     long epoch = localDateTime.toDateTime(DATE_TIME_ZONE).getMillis();
     Instant instant = Instant.ofEpochMilli(epoch);
 
-    //Convert the instant to a ZonedDateTime in UTC.
+    // Convert the instant to a ZonedDateTime in UTC.
     return ZonedDateTime.ofInstant(instant, ZONE_ID);
   }
 
@@ -61,7 +61,7 @@ public class JaVersDateProvider implements DateProvider {
        over a year to it. */
     Instant minInstant = Instant.MIN.plus(Duration.ofDays(366));
 
-    //Because we're returning such an extreme value, its timezone is irrelevant.
+    // Because we're returning such an extreme value, its timezone is irrelevant.
     return ZonedDateTime.ofInstant(minInstant, ZONE_ID);
   }
 

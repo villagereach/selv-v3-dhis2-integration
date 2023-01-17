@@ -65,11 +65,11 @@ public class AuditLogInitializer implements CommandLineRunner {
    * @param args Main method arguments.
    */
   public void run(String... args) {
-    //Get all JaVers repositories.
+    // Get all JaVers repositories.
     Map<String, Object> repositoryMap =
             applicationContext.getBeansWithAnnotation(JaversSpringDataAuditable.class);
 
-    //For each one...
+    // For each one...
     for (Object object : repositoryMap.values()) {
       if (object instanceof BaseAuditableRepository) {
         createSnapshots((BaseAuditableRepository<?, ?>) object);
@@ -97,7 +97,7 @@ public class AuditLogInitializer implements CommandLineRunner {
   }
 
   private void createSnapshot(Object object) {
-    //...check whether there exists a snapshot for it in the audit log.
+    // ...check whether there exists a snapshot for it in the audit log.
     // Note that we don't care about checking for logged changes, per se,
     // and thus use findSnapshots() rather than findChanges()
     BaseEntity baseEntity = (BaseEntity) object;
@@ -105,7 +105,7 @@ public class AuditLogInitializer implements CommandLineRunner {
     QueryBuilder jqlQuery = QueryBuilder.byInstanceId(baseEntity.getId(), object.getClass());
     List<CdoSnapshot> snapshots = javers.findSnapshots(jqlQuery.build());
 
-    //If there are no snapshots of the domain object, then take one
+    // If there are no snapshots of the domain object, then take one
     if (snapshots.isEmpty()) {
       javers.commit("System: AuditLogInitializer", baseEntity);
     } else {

@@ -13,16 +13,19 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.server;
+package org.openlmis.integration.dhis2.dto.dataset;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.BaseDto;
+import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
 @Getter
 @Setter
@@ -30,20 +33,32 @@ import org.openlmis.integration.dhis2.dto.BaseDto;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public final class ServerDto extends BaseDto implements Server.Importer, Server.Exporter {
+public final class DatasetDto extends BaseDto implements Dataset.Importer, Dataset.Exporter {
 
   private String name;
-  private String url;
-  private String username;
-  private String password;
+  private String dhisDatasetId;
+  private String cronExpression;
+  private ServerDto serverDto;
 
   /**
    * Creates new instance based on domain object.
    */
-  public static ServerDto newInstance(Server server) {
-    ServerDto dto = new ServerDto();
-    server.export(dto);
+  public static DatasetDto newInstance(Dataset dataset) {
+    DatasetDto dto = new DatasetDto();
+    dataset.export(dto);
+    dto.setServer(dataset.getServer());
     return dto;
+  }
+
+  @JsonIgnore
+  @Override
+  public void setServer(Server server) {
+    this.serverDto = ServerDto.newInstance(server);
+  }
+
+  @Override
+  public Server getServer() {
+    return Server.newInstance(serverDto);
   }
 
 }

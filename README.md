@@ -1,6 +1,12 @@
 # OpenLMIS Selv v3 DHIS2 Integration Service
 Service for integrating SELV3 OpenLMIS implementation with DHIS2.
 
+### Environment Variable Setup
+This repository requires an environment file called `.env` in the root folder of the project, with required project settings and credentials. For a template environment file, you can use [this one](https://raw.githubusercontent.com/OpenLMIS/openlmis-ref-distro/master/settings-sample.env). e.g.
+ ```shell
+ curl -o .env -L https://raw.githubusercontent.com/OpenLMIS/openlmis-ref-distro/master/settings-sample.env
+ ```
+
 ### Build Deployment Image
 Attached docker-compose.builder.yml allows automated docker image generation, run these two commands to 
 create local image used together with selv-v3-distro

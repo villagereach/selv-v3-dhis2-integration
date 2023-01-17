@@ -39,6 +39,9 @@ public class TestDataInitializer implements CommandLineRunner {
   @Value(value = DEMO_DATA_PATH + "server.csv")
   private Resource serverResource;
 
+  @Value(value = DEMO_DATA_PATH + "dataset.csv")
+  private Resource datasetResource;
+
   private Resource2Db loader;
   
   @Autowired
@@ -58,6 +61,7 @@ public class TestDataInitializer implements CommandLineRunner {
     XLOGGER.entry();
 
     loader.insertToDbFromCsv("dhis2.server", serverResource);
+    loader.insertToDbFromCsv("dhis2.dataset", datasetResource);
 
     XLOGGER.exit();
   }
