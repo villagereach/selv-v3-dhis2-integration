@@ -13,42 +13,36 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2;
+package org.openlmis.integration.dhis2.repository;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
+import org.openlmis.integration.dhis2.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 
-public class ServerDataBuilder {
+public class DatasetRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Dataset> {
 
-  private UUID id = UUID.randomUUID();
-  private String name = "test-name";
-  private String url = "http://test.configuration";
-  private String username = "test-username";
-  private String password = "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG";
-  private List<Dataset> datasets = Collections.emptyList();
+  @Autowired
+  private DatasetRepository datasetRepository;
 
-  public ServerDataBuilder withDatasets(List<Dataset> datasets) {
-    this.datasets = datasets;
-    return this;
+  @Autowired
+  private ServerRepository serverRepository;
+
+  @Override
+  public CrudRepository<Dataset, UUID> getRepository() {
+    return datasetRepository;
   }
 
-  /**
-   * Builds new instance of Server (with id field).
-   */
-  public Server build() {
-    Server server = buildAsNew();
-    server.setId(id);
-    return server;
-  }
-
-  /**
-   * Builds new instance of Server as a new object (without id field).
-   */
-  public Server buildAsNew() {
-    return new Server(name, url, username, password, datasets);
+  @Override
+  public Dataset generateInstance() {
+    Server server = new ServerDataBuilder().buildAsNew();
+    serverRepository.save(server);
+    return new DatasetDataBuilder().withServer(server).buildAsNew();
   }
 
 }

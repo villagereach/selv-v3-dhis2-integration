@@ -15,40 +15,37 @@
 
 package org.openlmis.integration.dhis2;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
-public class ServerDataBuilder {
+public class DatasetDataBuilder {
 
   private UUID id = UUID.randomUUID();
   private String name = "test-name";
-  private String url = "http://test.configuration";
-  private String username = "test-username";
-  private String password = "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG";
-  private List<Dataset> datasets = Collections.emptyList();
+  private String dhisDatasetId = "idXfoem";
+  private String cronExpression = "0 5 * * *";
+  private Server server = new ServerDataBuilder().build();
 
-  public ServerDataBuilder withDatasets(List<Dataset> datasets) {
-    this.datasets = datasets;
+  public DatasetDataBuilder withServer(Server server) {
+    this.server = server;
     return this;
   }
 
   /**
-   * Builds new instance of Server (with id field).
+   * Builds new instance of Dataset (with id field).
    */
-  public Server build() {
-    Server server = buildAsNew();
-    server.setId(id);
-    return server;
+  public Dataset build() {
+    Dataset dataset = buildAsNew();
+    dataset.setId(id);
+    return dataset;
   }
 
   /**
-   * Builds new instance of Server as a new object (without id field).
+   * Builds new instance of Dataset as a new object (without id field).
    */
-  public Server buildAsNew() {
-    return new Server(name, url, username, password, datasets);
+  public Dataset buildAsNew() {
+    return new Dataset(name, dhisDatasetId, cronExpression, server);
   }
 
 }

@@ -25,6 +25,7 @@ public abstract class MessageKeys {
   private static final String ERROR = "error";
 
   private static final String SERVER = "server";
+  private static final String DATASET = "dataset";
   private static final String JAVERS = "javers";
 
   private static final String ID = "id";
@@ -56,6 +57,11 @@ public abstract class MessageKeys {
           join(ERROR_EXTERNAL_API, CONNECTION, FAILED);
   public static final String ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED =
           join(ERROR_EXTERNAL_API, CLIENT, REQUEST, FAILED);
+
+  public static final String ERROR_DATASET_NOT_FOUND = join(ERROR_PREFIX, DATASET, NOT_FOUND);
+  public static final String ERROR_DATASET_ID_MISMATCH = join(ERROR_PREFIX, DATASET, ID, MISMATCH);
+  public static final String ERROR_DATASET_CODE_DUPLICATED =
+          join(ERROR_PREFIX, DATASET, CODE, DUPLICATED);
 
   public static final String ERROR_JAVERS_EXISTING_ENTRY =
           join(ERROR_PREFIX, JAVERS, "entryAlreadyExists");

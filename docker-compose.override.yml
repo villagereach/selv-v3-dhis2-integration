@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  selv-dhis2-integration:
+  dhis2-integration:
     image: openlmis/dev:6
     ports:
       - "5005:5005"
