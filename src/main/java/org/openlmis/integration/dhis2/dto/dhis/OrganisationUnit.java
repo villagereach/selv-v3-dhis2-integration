@@ -13,14 +13,18 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.util.messagekeys;
+package org.openlmis.integration.dhis2.dto.dhis;
 
-public abstract class AuthMessageKeys extends MessageKeys {
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-  private static final String ERROR = join(SERVICE_ERROR, AUTH);
+@Getter
+@Setter
+@ToString
+public class OrganisationUnit {
 
-  public static final String ERROR_EXTERNAL_API_RESPONSE_UNABLE_TO_PARSE =
-          join(ERROR, EXTERNAL, API, RESPONSE, UNABLE_TO_PARSE);
-  public static final String ERROR_EXTERNAL_API_CONNECTION_FAILED =
-          join(ERROR, EXTERNAL, API, CONNECTION, FAILED);
+  private String id;
+  private String name;
+
 }
