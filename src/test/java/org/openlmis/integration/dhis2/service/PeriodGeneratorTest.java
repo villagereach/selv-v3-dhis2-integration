@@ -35,23 +35,23 @@ public class PeriodGeneratorTest {
 
   private static final Instant mondayInstant = Instant.parse("2023-01-16T00:00:00.00Z");
   private static final Instant tuesdayInstant = Instant.parse("2023-01-17T00:00:00.00Z");
-  private static final Instant sundayInstant = Instant.parse("2023-01-22T00:00:00.00Z");
+  private static final Instant wednesdayInstant = Instant.parse("2023-01-18T00:00:00.00Z");
   private static final Instant januaryFirstInstant = Instant.parse("2023-01-01T00:00:00.00Z");
-  private static final Instant januaryLastInstant = Instant.parse("2023-01-31T00:00:00.00Z");
+  private static final Instant februaryFirstInstant = Instant.parse("2023-02-01T00:00:00.00Z");
 
-  private static final ZoneId zoneId = Clock.systemDefaultZone().getZone();
+  private static final ZoneId zoneId = ZoneId.of("UTC");
   private static final Clock clock = Clock.fixed(tuesdayInstant, zoneId);
 
   private static final ZonedDateTime mondayMidnight =
           ZonedDateTime.ofInstant(mondayInstant, zoneId);
   private static final ZonedDateTime tuesdayMidnight =
           ZonedDateTime.ofInstant(tuesdayInstant, zoneId);
-  private static final ZonedDateTime sundayMidnight =
-          ZonedDateTime.ofInstant(sundayInstant, zoneId);
+  private static final ZonedDateTime wednesdayMidnight =
+          ZonedDateTime.ofInstant(wednesdayInstant, zoneId);
   private static final ZonedDateTime januaryFirst =
           ZonedDateTime.ofInstant(januaryFirstInstant, zoneId);
-  private static final ZonedDateTime januaryLast =
-          ZonedDateTime.ofInstant(januaryLastInstant, zoneId);
+  private static final ZonedDateTime februaryFirst =
+          ZonedDateTime.ofInstant(februaryFirstInstant, zoneId);
 
   private PeriodGenerator periodGenerator;
 
@@ -66,10 +66,9 @@ public class PeriodGeneratorTest {
             periodGenerator.generateRange(DhisPeriods.DAILY, (long) 90);
 
     ZonedDateTime dayStart = tuesdayMidnight.with(LocalTime.of(1, 30));
-    ZonedDateTime dayEnd = tuesdayMidnight.with(LocalTime.of(23, 59));
 
     assertThat(range.getFirst(), is(dayStart));
-    assertThat(range.getSecond(), is(dayEnd));
+    assertThat(range.getSecond(), is(wednesdayMidnight));
   }
 
   @Test
@@ -78,7 +77,7 @@ public class PeriodGeneratorTest {
             periodGenerator.generateRange(DhisPeriods.WEEKLY_MONDAY, (long) 90);
 
     ZonedDateTime weekStart = mondayMidnight.with(LocalTime.of(1, 30));
-    ZonedDateTime weekEnd = sundayMidnight.with(LocalTime.of(23, 59));
+    ZonedDateTime weekEnd = mondayMidnight.plusDays(7);
 
     assertThat(range.getFirst(), is(weekStart));
     assertThat(range.getSecond(), is(weekEnd));
@@ -90,10 +89,9 @@ public class PeriodGeneratorTest {
             periodGenerator.generateRange(DhisPeriods.MONTHLY, (long) 90);
 
     ZonedDateTime monthStart = januaryFirst.with(LocalTime.of(1, 30));
-    ZonedDateTime monthEnd = januaryLast.with(LocalTime.of(23, 59));
 
     assertThat(range.getFirst(), is(monthStart));
-    assertThat(range.getSecond(), is(monthEnd));
+    assertThat(range.getSecond(), is(februaryFirst));
   }
 
 }

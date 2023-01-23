@@ -44,7 +44,7 @@ public enum DhisPeriods {
   private static Pair<ZonedDateTime, ZonedDateTime> generateForDaily(ZonedDateTime now) {
     ZoneId zoneId = now.getZone();
     LocalDateTime startDate = now.toLocalDate().atStartOfDay();
-    LocalDateTime endDate = now.toLocalDate().atTime(23, 59);
+    LocalDateTime endDate = now.plusDays(1).toLocalDate().atStartOfDay();
     return Pair.of(ZonedDateTime.of(startDate, zoneId), ZonedDateTime.of(endDate, zoneId));
   }
 
@@ -53,8 +53,8 @@ public enum DhisPeriods {
     ZoneId zoneId = now.getZone();
     LocalDateTime startDate = now.with(TemporalAdjusters.previousOrSame(dayOfWeek))
             .toLocalDate().atStartOfDay();
-    LocalDateTime endDate = now.with(TemporalAdjusters.nextOrSame(dayOfWeek.minus(1)))
-            .toLocalDate().atTime(23, 59);
+    LocalDateTime endDate = now.with(TemporalAdjusters.nextOrSame(dayOfWeek))
+            .toLocalDate().atStartOfDay();
     return Pair.of(ZonedDateTime.of(startDate, zoneId), ZonedDateTime.of(endDate, zoneId));
   }
 
@@ -62,8 +62,8 @@ public enum DhisPeriods {
     ZoneId zoneId = now.getZone();
     LocalDateTime startDate = now.with(TemporalAdjusters.firstDayOfMonth())
             .toLocalDate().atStartOfDay();
-    LocalDateTime endDate = now.with(TemporalAdjusters.lastDayOfMonth()).toLocalDate()
-            .atTime(23, 59);
+    LocalDateTime endDate = now.with(TemporalAdjusters.lastDayOfMonth()).plusDays(1)
+            .toLocalDate().atStartOfDay();
     return Pair.of(ZonedDateTime.of(startDate, zoneId), ZonedDateTime.of(endDate, zoneId));
   }
 
