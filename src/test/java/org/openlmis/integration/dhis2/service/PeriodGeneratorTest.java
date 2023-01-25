@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openlmis.integration.dhis2.domain.enumerators.DhisPeriods;
+import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.springframework.data.util.Pair;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,7 +63,7 @@ public class PeriodGeneratorTest {
   @Test
   public void shouldGenerateCorrectDailyTimeRange() {
     Pair<ZonedDateTime, ZonedDateTime> range =
-            periodGenerator.generateRange(DhisPeriods.DAILY, (long) 90);
+            periodGenerator.generateRange(DhisPeriod.DAILY, (long) 90);
 
     ZonedDateTime dayStart = tuesdayMidnight.with(LocalTime.of(1, 30));
 
@@ -74,7 +74,7 @@ public class PeriodGeneratorTest {
   @Test
   public void shouldGenerateCorrectWeeklyTimeRange() {
     Pair<ZonedDateTime, ZonedDateTime> range =
-            periodGenerator.generateRange(DhisPeriods.WEEKLY_MONDAY, (long) 90);
+            periodGenerator.generateRange(DhisPeriod.WEEKLY_MONDAY, (long) 90);
 
     ZonedDateTime weekStart = mondayMidnight.with(LocalTime.of(1, 30));
     ZonedDateTime weekEnd = mondayMidnight.plusDays(7);
@@ -86,7 +86,7 @@ public class PeriodGeneratorTest {
   @Test
   public void shouldGenerateCorrectMonthlyTimeRange() {
     Pair<ZonedDateTime, ZonedDateTime> range =
-            periodGenerator.generateRange(DhisPeriods.MONTHLY, (long) 90);
+            periodGenerator.generateRange(DhisPeriod.MONTHLY, (long) 90);
 
     ZonedDateTime monthStart = januaryFirst.with(LocalTime.of(1, 30));
 

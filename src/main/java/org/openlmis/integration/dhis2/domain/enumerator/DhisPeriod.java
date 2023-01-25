@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.enumerators;
+package org.openlmis.integration.dhis2.domain.enumerator;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -23,21 +23,21 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.function.Function;
 import org.springframework.data.util.Pair;
 
-public enum DhisPeriods {
+public enum DhisPeriod {
 
-  DAILY(DhisPeriods::generateForDaily),
-  WEEKLY_MONDAY(now -> DhisPeriods.generateForWeekly((ZonedDateTime) now, DayOfWeek.MONDAY)),
-  WEEKLY_TUESDAY(now -> DhisPeriods.generateForWeekly(now, DayOfWeek.TUESDAY)),
-  WEEKLY_WEDNESDAY(now -> DhisPeriods.generateForWeekly(now, DayOfWeek.WEDNESDAY)),
-  WEEKLY_THURSDAY(now -> DhisPeriods.generateForWeekly(now, DayOfWeek.THURSDAY)),
-  WEEKLY_FRIDAY(now -> DhisPeriods.generateForWeekly(now, DayOfWeek.FRIDAY)),
-  WEEKLY_SATURDAY(now -> DhisPeriods.generateForWeekly(now, DayOfWeek.SATURDAY)),
-  WEEKLY_SUNDAY(now -> DhisPeriods.generateForWeekly(now, DayOfWeek.SUNDAY)),
-  MONTHLY(DhisPeriods::generateForMonthly);
+  DAILY(DhisPeriod::generateForDaily),
+  WEEKLY_MONDAY(now -> DhisPeriod.generateForWeekly((ZonedDateTime) now, DayOfWeek.MONDAY)),
+  WEEKLY_TUESDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.TUESDAY)),
+  WEEKLY_WEDNESDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.WEDNESDAY)),
+  WEEKLY_THURSDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.THURSDAY)),
+  WEEKLY_FRIDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.FRIDAY)),
+  WEEKLY_SATURDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.SATURDAY)),
+  WEEKLY_SUNDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.SUNDAY)),
+  MONTHLY(DhisPeriod::generateForMonthly);
 
   private final Function<ZonedDateTime, Pair<ZonedDateTime, ZonedDateTime>> generator;
 
-  DhisPeriods(Function<ZonedDateTime, Pair<ZonedDateTime, ZonedDateTime>> generator) {
+  DhisPeriod(Function<ZonedDateTime, Pair<ZonedDateTime, ZonedDateTime>> generator) {
     this.generator = generator;
   }
 
@@ -67,6 +67,16 @@ public enum DhisPeriods {
     return Pair.of(ZonedDateTime.of(startDate, zoneId), ZonedDateTime.of(endDate, zoneId));
   }
 
+  /**
+   * Generates date range for a given period.
+   *
+   *<p>This will return full enumerator period, both dates will be recorded at 0:00 midnight.
+   *
+   *<p>e.g. DAILY.generate(ZonedDateTime.now())
+   *
+   * @param now Current date-time
+   * @return Pair containing starting date and end date
+   */
   public Pair<ZonedDateTime, ZonedDateTime> generate(ZonedDateTime now) {
     return this.generator.apply(now);
   }

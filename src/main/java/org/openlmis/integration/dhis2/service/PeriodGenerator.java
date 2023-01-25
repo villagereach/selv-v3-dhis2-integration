@@ -17,7 +17,7 @@ package org.openlmis.integration.dhis2.service;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import org.openlmis.integration.dhis2.domain.enumerators.DhisPeriods;
+import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class PeriodGenerator {
   }
 
   public Pair<ZonedDateTime, ZonedDateTime> generateRange(
-          DhisPeriods periodEnum, Long offsetMinutes) {
+          DhisPeriod periodEnum, Long offsetMinutes) {
     Pair<ZonedDateTime, ZonedDateTime> range = periodEnum.generate(ZonedDateTime.now(this.clock));
     return Pair.of(range.getFirst().plusMinutes(offsetMinutes), range.getSecond());
   }
