@@ -19,6 +19,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Objects of this class represent data retrieved from the DHIS2 API.
+ * Data element tells you <i>what</i> data was recorded. The name of the data element describes
+ * what is being collected or analysed. For instance, if the data element represents a count of
+ * something, its name describes what is being counted.
+ * Data element doesn't contain a calculated value.
+ * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
+ */
 @Getter
 @Setter
 @ToString

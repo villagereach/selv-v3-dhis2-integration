@@ -57,4 +57,5 @@ public class RequestHelperTest {
     assertThat(entity.getHeaders().get(HttpHeaders.AUTHORIZATION),
             is(singletonList("Prefix r4nd0m70k3n")));
   }
+
 }

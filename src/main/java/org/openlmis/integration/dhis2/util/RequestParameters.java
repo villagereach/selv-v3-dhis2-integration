@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class RequestParameters {
+
   private final Map<String, Object> params = Maps.newHashMap();
 
   private RequestParameters() {
