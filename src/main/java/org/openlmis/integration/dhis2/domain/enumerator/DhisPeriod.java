@@ -68,11 +68,11 @@ public enum DhisPeriod {
   }
 
   /**
-   * Generates date range for a given period.
+   * Generates date range for a given period enumerator and certain date
    *
-   *<p>This will return full enumerator period, both dates will be recorded at 0:00 midnight.
+   *<p>Both dates will be recorded at 0:00 midnight
    *
-   *<p>e.g. DAILY.generate(ZonedDateTime.now())
+   *<p>e.g. MONTHLY.generate(ZonedDateTime.now()) will generate full month for a given date
    *
    * @param now Current date-time
    * @return Pair containing starting date and end date
