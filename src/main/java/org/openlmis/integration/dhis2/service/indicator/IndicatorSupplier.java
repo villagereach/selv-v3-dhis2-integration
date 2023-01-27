@@ -4,6 +4,6 @@ public interface IndicatorSupplier {
 
   String getIndicatorName();
 
-  String calculateValue(Long databaseCount);
+  String calculateValue();
 
 }

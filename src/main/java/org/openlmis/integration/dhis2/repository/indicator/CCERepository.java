@@ -21,10 +21,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface CCERepository extends CrudRepository<IndicatorSupplier, UUID>, IndicatorSupplier {
+public interface CCERepository extends CrudRepository<IndicatorSupplier, UUID> {
 
   @Query(value = "SELECT COUNT(inventory.functionalstatus) FROM\n" +
           "cce.cce_inventory_items AS inventory\n" +
           "where functionalstatus = :status\n", nativeQuery = true)
   Long findCCECountByStatus(@Param("status") String status);
+
 }
