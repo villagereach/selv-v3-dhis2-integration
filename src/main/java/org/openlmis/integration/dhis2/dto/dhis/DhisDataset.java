@@ -17,6 +17,7 @@ package org.openlmis.integration.dhis2.dto.dhis;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,13 +30,30 @@ import lombok.ToString;
  *
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
-@Getter
-@Setter
 @ToString
 public class DhisDataset {
 
+  @Getter
+  @Setter
   private String periodType;
+
+  @Setter
   private List<Map<Object, DataElement>> dataSetElements;
+
+  @Getter
+  @Setter
   private List<OrganisationUnit> organisationUnits;
+
+
+  /**
+   * Returns a list of data elements for this dataset.
+   *
+   * @return list of data elements.
+   */
+  public List<DataElement> getDataSetElements() {
+    return dataSetElements.stream()
+            .flatMap(e -> e.values().stream())
+            .collect(Collectors.toList());
+  }
 
 }
