@@ -57,8 +57,8 @@ public class DhisDataService {
     RequestParameters params = RequestParameters
             .init()
             .set("fields", "periodType,"
-                    + "organisationUnits[id, name],"
-                    + "dataSetElements[dataElement[id, name]]");
+                    + "organisationUnits[id,code,name],"
+                    + "dataSetElements[dataElement[id,name]]");
 
     try {
       ResponseEntity<DhisDataset> response = restTemplate.exchange(

@@ -32,6 +32,7 @@ import lombok.ToString;
 public class OrganisationUnit {
 
   private String id;
+  private String code;
   private String name;
 
 }

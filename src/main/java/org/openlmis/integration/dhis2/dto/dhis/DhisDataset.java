@@ -16,6 +16,7 @@
 package org.openlmis.integration.dhis2.dto.dhis;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,6 +26,7 @@ import lombok.ToString;
  * Dataset is the collection of {@link DataElement}. A dataset doesn't store values,
  * it's just a grouped collection of data, so deleting a given dataset doesn't delete
  * the data values.
+ *
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
 @Getter
@@ -33,7 +35,7 @@ import lombok.ToString;
 public class DhisDataset {
 
   private String periodType;
-  private List<DataElement> dataSetElements;
+  private List<Map<Object, DataElement>> dataSetElements;
   private List<OrganisationUnit> organisationUnits;
 
 }
