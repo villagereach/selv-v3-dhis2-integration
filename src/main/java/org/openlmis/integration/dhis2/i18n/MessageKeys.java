@@ -26,6 +26,7 @@ public abstract class MessageKeys {
 
   private static final String SERVER = "server";
   private static final String DATASET = "dataset";
+  private static final String INDICATOR = "indicator";
   private static final String JAVERS = "javers";
 
   private static final String ID = "id";
@@ -46,6 +47,8 @@ public abstract class MessageKeys {
   public static final String ERROR_DATASET_ID_MISMATCH = join(ERROR_PREFIX, DATASET, ID, MISMATCH);
   public static final String ERROR_DATASET_CODE_DUPLICATED =
           join(ERROR_PREFIX, DATASET, CODE, DUPLICATED);
+
+  public static final String ERROR_INDICATOR_NOT_FOUND = join(ERROR_PREFIX, INDICATOR, NOT_FOUND);
 
   public static final String ERROR_JAVERS_EXISTING_ENTRY =
       join(ERROR_PREFIX, JAVERS, "entryAlreadyExists");

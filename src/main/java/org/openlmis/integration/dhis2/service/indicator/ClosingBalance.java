@@ -13,17 +13,28 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.enumerator;
+package org.openlmis.integration.dhis2.service.indicator;
 
-public enum IndicatorEnum {
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
+import org.openlmis.integration.dhis2.repository.indicator.RequisitionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 
-  OPENING_BALANCE,
-  RECEIVED,
-  CLOSING_BALANCE,
-  CCE_ALLOCATED,
-  CCE_OPERATIONAL,
-  NEGATIVE_ADJUSTMENTS,
-  POSITIVE_ADJUSTMENTS,
-  ADJUSTMENTS_BY_REASON
+public class ClosingBalance implements IndicatorSupplier {
+
+  public static final String NAME = IndicatorEnum.CLOSING_BALANCE.toString();
+
+  @Autowired
+  private RequisitionRepository requisitionRepository;
+
+  public String getIndicatorName() {
+    return NAME;
+  }
+
+  public BigDecimal calculateValue(Pair<ZonedDateTime, ZonedDateTime> period) {
+    return requisitionRepository.findClosingBalance(period.getFirst(), period.getSecond());
+  }
 
 }

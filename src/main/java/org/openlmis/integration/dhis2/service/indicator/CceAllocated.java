@@ -17,14 +17,25 @@ package org.openlmis.integration.dhis2.service.indicator;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
+import org.openlmis.integration.dhis2.repository.indicator.CceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Component;
 
-@Component
-public interface IndicatorSupplier {
+public class CceAllocated implements IndicatorSupplier {
 
-  String getIndicatorName();
+  public static final String STATUS = "IN_STORE_FOR_ALLOCATION";
+  public static final String NAME = IndicatorEnum.CCE_ALLOCATED.toString();
 
-  BigDecimal calculateValue(Pair<ZonedDateTime, ZonedDateTime> period);
+  @Autowired
+  private CceRepository cceRepository;
+
+  public String getIndicatorName() {
+    return NAME;
+  }
+
+  public BigDecimal calculateValue(Pair<ZonedDateTime, ZonedDateTime> period) {
+    return cceRepository.findCceCountByUtilization(STATUS, period.getFirst(), period.getSecond());
+  }
 
 }
