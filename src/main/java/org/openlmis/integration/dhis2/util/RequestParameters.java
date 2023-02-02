@@ -13,14 +13,36 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.util.messagekeys;
+package org.openlmis.integration.dhis2.util;
 
-public abstract class AuthMessageKeys extends MessageKeys {
+import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.function.Consumer;
 
-  private static final String ERROR = join(SERVICE_ERROR, AUTH);
+public class RequestParameters {
 
-  public static final String ERROR_EXTERNAL_API_RESPONSE_UNABLE_TO_PARSE =
-          join(ERROR, EXTERNAL, API, RESPONSE, UNABLE_TO_PARSE);
-  public static final String ERROR_EXTERNAL_API_CONNECTION_FAILED =
-          join(ERROR, EXTERNAL, API, CONNECTION, FAILED);
+  private final Map<String, Object> params = Maps.newHashMap();
+
+  private RequestParameters() {
+  }
+
+  public static RequestParameters init() {
+    return new RequestParameters();
+  }
+
+  /**
+   * Set parameter (key argument) with the value only if the value is not null.
+   */
+  public RequestParameters set(String key, Object value) {
+    if (null != value) {
+      params.put(key, value);
+    }
+
+    return this;
+  }
+
+  public void forEach(Consumer<Map.Entry<String, Object>> action) {
+    params.entrySet().forEach(action);
+  }
+
 }

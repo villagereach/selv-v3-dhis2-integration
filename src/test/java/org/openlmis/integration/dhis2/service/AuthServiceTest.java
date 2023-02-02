@@ -30,11 +30,11 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
@@ -59,16 +59,12 @@ public class AuthServiceTest {
   @Captor
   private ArgumentCaptor<HttpEntity<String>> entityStringCaptor;
 
+  @InjectMocks
   private AuthService authService;
-
-  @Before
-  public void setUp() throws Exception {
-    authService = new AuthService(restTemplate);
-  }
 
   @Test
   public void shouldObtainAccessToken() {
-    String token = "r4nd0m70k3n";
+    final String token = "r4nd0m70k3n";
 
     ResponseEntity<Object> response = mock(ResponseEntity.class);
     Map<String, String> tokenBody = ImmutableMap.of(AuthService.API_KEY, token);
