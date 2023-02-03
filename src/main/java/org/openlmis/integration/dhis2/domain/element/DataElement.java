@@ -13,17 +13,13 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.dataset;
+package org.openlmis.integration.dhis2.domain.element;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -33,19 +29,18 @@ import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
-import org.openlmis.integration.dhis2.domain.element.DataElement;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 
 @Entity
-@TypeName("Dataset")
-@Table(name = "dataset", schema = "dhis2")
+@TypeName("DataElement")
+@Table(name = "data_element", schema = "dhis2")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Dataset extends BaseEntity {
+public class DataElement extends BaseEntity {
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   @Getter
   @Setter
   private String name;
@@ -53,34 +48,38 @@ public class Dataset extends BaseEntity {
   @Column(nullable = false)
   @Getter
   @Setter
-  private String dhisDatasetId;
+  private String source;
 
   @Column(nullable = false)
   @Getter
   @Setter
-  private String cronExpression;
+  private String indicator;
+
+  @Column(nullable = false)
+  @Getter
+  @Setter
+  private String orderable;
+
+  @Column(nullable = false)
+  @Getter
+  @Setter
+  private String element;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "serverId", nullable = false)
+  @JoinColumn(name = "datasetId", nullable = false)
   @Getter
   @Setter
-  private Server server;
-
-  @Column
-  @Getter
-  @Setter
-  @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "dataset")
-  private List<DataElement> dataElementList = new ArrayList<>();
+  private Dataset dataset;
 
   /**
    * Creates new instance based on data from the importer.
    */
-  public static Dataset newInstance(Importer importer) {
-    Dataset dataset = new Dataset();
-    dataset.setId(importer.getId());
-    dataset.updateFrom(importer);
+  public static DataElement newInstance(Importer importer) {
+    DataElement dataElement = new DataElement();
+    dataElement.setId(importer.getId());
+    dataElement.updateFrom(importer);
 
-    return dataset;
+    return dataElement;
   }
 
   /**
@@ -88,8 +87,10 @@ public class Dataset extends BaseEntity {
    */
   public void updateFrom(Importer importer) {
     name = importer.getName();
-    dhisDatasetId = importer.getDhisDatasetId();
-    cronExpression = importer.getCronExpression();
+    source = importer.getSource();
+    indicator = importer.getIndicator();
+    orderable = importer.getOrderable();
+    element = importer.getElement();
   }
 
   /**
@@ -98,19 +99,25 @@ public class Dataset extends BaseEntity {
   public void export(Exporter exporter) {
     exporter.setId(getId());
     exporter.setName(name);
-    exporter.setDhisDatasetId(dhisDatasetId);
-    exporter.setCronExpression(cronExpression);
+    exporter.setSource(source);
+    exporter.setIndicator(indicator);
+    exporter.setOrderable(orderable);
+    exporter.setElement(element);
   }
 
   public interface Exporter extends BaseExporter {
 
     void setName(String name);
 
-    void setDhisDatasetId(String dhisDatasetId);
+    void setSource(String source);
 
-    void setCronExpression(String cronExpression);
+    void setIndicator(String indicator);
 
-    void setServer(Server server);
+    void setOrderable(String orderable);
+
+    void setElement(String element);
+
+    void setDataset(Dataset dataset);
 
   }
 
@@ -118,11 +125,15 @@ public class Dataset extends BaseEntity {
 
     String getName();
 
-    String getDhisDatasetId();
+    String getSource();
 
-    String getCronExpression();
+    String getIndicator();
 
-    Server getServer();
+    String getOrderable();
+
+    String getElement();
+
+    Dataset getDataset();
 
   }
 

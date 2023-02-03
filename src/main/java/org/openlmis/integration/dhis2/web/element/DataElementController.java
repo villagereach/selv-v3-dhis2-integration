@@ -13,23 +13,23 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.web.dataset;
+package org.openlmis.integration.dhis2.web.element;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
+import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.dto.element.DataElementDto;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
-import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
-import org.openlmis.integration.dhis2.web.server.ServerController;
+import org.openlmis.integration.dhis2.web.dataset.DatasetController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,115 +51,116 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Controller used to expose Datasets via HTTP.
+ * Controller used to expose Data Elements via HTTP.
  */
 @Controller
-@RequestMapping(DatasetController.RESOURCE_PATH)
+@RequestMapping(DataElementController.RESOURCE_PATH)
 @Transactional
-public class DatasetController extends BaseController {
+public class DataElementController extends BaseController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DatasetController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataElementController.class);
 
-  public static final String RESOURCE_PATH = ServerController.RESOURCE_PATH
-          + "/{serverId}/datasets";
+  public static final String RESOURCE_PATH = DatasetController.RESOURCE_PATH
+          + "/{datasetId}/elements";
+
+  @Autowired
+  private DataElementRepository dataElementRepository;
 
   @Autowired
   private DatasetRepository datasetRepository;
 
-  @Autowired
-  private ServerRepository serverRepository;
-
   /**
-   * Retrieves the specified dataset.
+   * Retrieves the specified data element.
    */
   @GetMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public DatasetDto getDataset(@PathVariable("id") UUID id) {
-    Dataset dataset = datasetRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+  public DataElementDto getDataElement(@PathVariable("id") UUID id) {
+    DataElement dataElement = dataElementRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
 
-    return DatasetDto.newInstance(dataset);
+    return DataElementDto.newInstance(dataElement);
   }
 
   /**
-   * Retrieves all datasets. Note that an empty collection rather than a 404 should be
-   * returned if no datasets exist.
+   * Retrieves all data elements. Note that an empty collection rather than a 404 should be
+   * returned if no data elements exist.
    */
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Page<DatasetDto> getAllDatasets(@PathVariable("serverId") UUID serverId,
+  public Page<DataElementDto> getAllDataElements(@PathVariable("datasetId") UUID datasetId,
                                          Pageable pageable) {
-    Server server = serverRepository.findById(serverId)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+    Dataset dataset = datasetRepository.findById(datasetId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
 
-    List<Dataset> datasets = server.getDatasetList();
-    List<DatasetDto> datasetDtos = datasets
+    List<DataElement> dataElements = dataset.getDataElementList();
+    List<DataElementDto> dataElementDtos = dataElements
             .stream()
-            .map(DatasetDto::newInstance)
+            .map(DataElementDto::newInstance)
             .collect(Collectors.toList());
 
-    return Pagination.getPage(datasetDtos, pageable);
+    return Pagination.getPage(dataElementDtos, pageable);
   }
 
   /**
-   * Allows the creation of a new dataset. If the id is specified, it will be ignored.
+   * Allows the creation of a new data element. If the id is specified, it will be ignored.
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public DatasetDto createDataset(@PathVariable("serverId") UUID serverId,
-                                  @RequestBody DatasetDto datasetDto) {
-    LOGGER.debug("Creating new dataset");
-    Dataset newDataset = Dataset.newInstance(datasetDto);
+  public DataElementDto createDataElement(@PathVariable("datasetId") UUID datasetId,
+                                  @RequestBody DataElementDto dataElementDto) {
+    LOGGER.debug("Creating new data element");
+    DataElement newDataElement = DataElement.newInstance(dataElementDto);
 
-    Server server = serverRepository.findById(serverId)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
-    newDataset.setServer(server);
+    Dataset dataset = datasetRepository.findById(datasetId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
+    newDataElement.setDataset(dataset);
 
-    newDataset.setId(null);
-    newDataset = datasetRepository.saveAndFlush(newDataset);
+    newDataElement.setId(null);
+    newDataElement = dataElementRepository.saveAndFlush(newDataElement);
 
-    return DatasetDto.newInstance(newDataset);
+    return DataElementDto.newInstance(newDataElement);
   }
 
   /**
-   * Updates the specified dataset.
+   * Updates the specified data element.
    */
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public DatasetDto updateDataset(@PathVariable("id") UUID id, @RequestBody DatasetDto datasetDto) {
-    if (null != datasetDto.getId() && !Objects.equals(datasetDto.getId(), id)) {
-      throw new ValidationMessageException(MessageKeys.ERROR_DATASET_ID_MISMATCH);
+  public DataElementDto updateDataElement(@PathVariable("id") UUID id,
+                                          @RequestBody DataElementDto dataElementDto) {
+    if (null != dataElementDto.getId() && !Objects.equals(dataElementDto.getId(), id)) {
+      throw new ValidationMessageException(MessageKeys.ERROR_DATAELEMENT_ID_MISMATCH);
     }
 
-    LOGGER.debug("Updating dataset");
-    Dataset datasetToSave = datasetRepository.findById(id).map(dataset -> {
-      dataset.updateFrom(datasetDto);
-      return dataset;
-    }).orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+    LOGGER.debug("Updating data element");
+    DataElement dataElementToSave = dataElementRepository.findById(id).map(dataElement -> {
+      dataElement.updateFrom(dataElementDto);
+      return dataElement;
+    }).orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
 
-    datasetRepository.saveAndFlush(datasetToSave);
-    return DatasetDto.newInstance(datasetToSave);
+    dataElementRepository.saveAndFlush(dataElementToSave);
+    return DataElementDto.newInstance(dataElementToSave);
   }
 
   /**
-   * Deletes the specified dataset.
+   * Deletes the specified data element.
    */
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteDataset(@PathVariable("id") UUID id) {
-    if (!datasetRepository.existsById(id)) {
-      throw new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND);
+  public void deleteDataElement(@PathVariable("id") UUID id) {
+    if (!dataElementRepository.existsById(id)) {
+      throw new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND);
     }
 
-    datasetRepository.deleteById(id);
+    dataElementRepository.deleteById(id);
   }
 
   /**
-   * Retrieves audit information related to the specified dataset.
+   * Retrieves audit information related to the specified data element.
    *
    * @param author The author of the changes which should be returned.
    *               If null or empty, changes are returned regardless of author.
@@ -171,17 +172,17 @@ public class DatasetController extends BaseController {
   @GetMapping(value = "/{id}/auditLog")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public ResponseEntity<String> getDatasetAuditLog(@PathVariable("id") UUID id,
+  public ResponseEntity<String> getDataElementAuditLog(@PathVariable("id") UUID id,
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
 
     // Return a 404 if the specified instance can't be found
-    if (!datasetRepository.existsById(id)) {
-      throw new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND);
+    if (!dataElementRepository.existsById(id)) {
+      throw new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND);
     }
 
-    return getAuditLogResponse(Dataset.class, id, author, changedPropertyName, page);
+    return getAuditLogResponse(DataElement.class, id, author, changedPropertyName, page);
   }
 
 }
