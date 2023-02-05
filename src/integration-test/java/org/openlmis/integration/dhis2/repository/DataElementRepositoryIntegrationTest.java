@@ -18,10 +18,13 @@ package org.openlmis.integration.dhis2.repository;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.DataElementDataBuilder;
 import org.openlmis.integration.dhis2.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
+import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
@@ -34,6 +37,9 @@ public class DataElementRepositoryIntegrationTest extends
   @Autowired
   private DatasetRepository datasetRepository;
 
+  @Autowired
+  private ServerRepository serverRepository;
+
   @Override
   public CrudRepository<DataElement, UUID> getRepository() {
     return dataElementRepository;
@@ -41,7 +47,10 @@ public class DataElementRepositoryIntegrationTest extends
 
   @Override
   public DataElement generateInstance() {
-    Dataset dataset = new DatasetDataBuilder().buildAsNew();
+    Server server = new ServerDataBuilder().buildAsNew();
+    serverRepository.save(server);
+
+    Dataset dataset = new DatasetDataBuilder().withServer(server).buildAsNew();
     datasetRepository.save(dataset);
     return new DataElementDataBuilder().withDataset(dataset).buildAsNew();
   }

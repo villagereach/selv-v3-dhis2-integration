@@ -62,6 +62,6 @@
       "indicator",
       "orderable",
       "element",
-      "serverDto"
+      "datasetDto"
     ]
 }
