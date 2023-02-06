@@ -56,8 +56,26 @@ public final class RequestHelper {
    * @param tokenPrefix The string that will be placed in the auth header value before the token.
    * @return the {@link HttpEntity} to use
    */
-  public static HttpEntity createEntity(String token, String tokenPrefix) {
-    return new HttpEntity(createHeadersWithAuth(token, tokenPrefix));
+  public static <E> HttpEntity<E> createEntity(String token, String tokenPrefix) {
+    return new HttpEntity<>(createHeadersWithAuth(token, tokenPrefix));
+  }
+
+  /**
+   * Creates an {@link HttpEntity} with the given payload as a body, token and tokenPrefix.
+   */
+  public static <E> HttpEntity<E> createEntity(E payload, String token, String tokenPrefix) {
+    if (payload == null) {
+      return createEntity(token, tokenPrefix);
+    } else {
+      return createEntity(payload, createHeadersWithAuth(token, tokenPrefix));
+    }
+  }
+
+  /**
+   * Creates an {@link HttpEntity} with the given payload as a body and headers.
+   */
+  public static <E> HttpEntity<E> createEntity(E payload, HttpHeaders headers) {
+    return new HttpEntity<>(payload, headers);
   }
 
   private static HttpHeaders createHeadersWithAuth(String token, String tokenPrefix) {
