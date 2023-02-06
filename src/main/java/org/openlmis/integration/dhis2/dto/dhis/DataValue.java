@@ -15,44 +15,25 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Objects of this class represent data retrieved from the DHIS2 API.
- * Dataset is the collection of {@link DataElement}. A dataset doesn't store values,
- * it's just a grouped collection of data, so deleting a given dataset doesn't delete
- * the data values.
+ * Objects of this class represent data sent to the DHIS2 API.
+ * Data Value is the single recorded value of Data Element. It is described by at least three
+ * dimensions: data element, organisation unit and period.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
+@AllArgsConstructor
+@Getter
+@Setter
 @ToString
-public class DhisDataset {
+public class DataValue {
 
-  @Getter
-  @Setter
-  private String periodType;
-
-  @Setter
-  private List<Map<Object, DataElement>> dataSetElements;
-
-  @Getter
-  @Setter
-  private List<OrganisationUnit> organisationUnits;
-
-
-  /**
-   * Returns a list of data elements for this dataset.
-   *
-   * @return list of data elements.
-   */
-  public List<DataElement> getDataSetElements() {
-    return dataSetElements.stream()
-            .flatMap(e -> e.values().stream())
-            .collect(Collectors.toList());
-  }
+  private String dataElement;
+  private BigDecimal value;
 
 }
