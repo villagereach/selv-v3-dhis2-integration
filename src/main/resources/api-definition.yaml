@@ -522,3 +522,28 @@ resourceTypes:
                 Keep-Alive:
               body:
                 application/json:
+  /execution:
+    post:
+      is: [ secured ]
+      description: Run execution
+      body:
+        application/json:
+      responses:
+        201:
+          headers:
+            Keep-Alive:
+          body:
+            application/json:
+        400:
+          body:
+            application/json:
+              schema: localizedErrorResponse
+        401:
+          headers:
+            Keep-Alive:
+          body:
+            application/json:
+        403:
+          body:
+            application/json:
+              schema: localizedErrorResponse

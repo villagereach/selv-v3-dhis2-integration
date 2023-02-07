@@ -15,26 +15,34 @@
 
 package org.openlmis.integration.dhis2.service.indicator;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
+import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.openlmis.integration.dhis2.repository.indicator.RequisitionRepository;
+import org.openlmis.integration.dhis2.service.PeriodGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 
-public class OpeningBalance implements IndicatorSupplier {
-
-  public static final String NAME = IndicatorEnum.OPENING_BALANCE.toString();
+@Service
+public class SimpleIndicatorService {
 
   @Autowired
-  private RequisitionRepository requisitionRepository;
+  RequisitionRepository requisitionRepository;
 
-  public String getIndicatorName() {
-    return NAME;
-  }
-
-  public BigDecimal calculateValue(Pair<ZonedDateTime, ZonedDateTime> period) {
-    return requisitionRepository.findOpeningBalance(period.getFirst(), period.getSecond());
+  /**
+   * Counts opening balance for opening balance indicator within certain period.
+   *
+   * @param periodEnum Enumerator used to calculate a pair of starting and end date
+   * @param offset Offset date in seconds
+   * @param orderable Product code
+   * @param facility Facility code
+   * @return String with generated indicator value for a given period
+   */
+  public String generateOpeningBalance(DhisPeriod periodEnum, Long offset,
+                                       String orderable, String facility) {
+    Pair<ZonedDateTime, ZonedDateTime> period = new PeriodGenerator()
+            .generateRange(periodEnum, offset);
+    return requisitionRepository.findOpeningBalance(period.getFirst(), orderable, facility);
   }
 
 }
