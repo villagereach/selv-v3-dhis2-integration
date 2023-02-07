@@ -15,39 +15,43 @@
 
 package org.openlmis.integration.dhis2.service;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
-import java.net.URI;
 import java.util.Map;
-import org.junit.Before;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AuthServiceTest {
-  private static final String TOKEN = "random-token";
-  private static final String AUTHORIZATION_URL = "http://localhost/auth/oauth/token";
-  private static final URI AUTHORIZATION_URI = URI.create(
-          AUTHORIZATION_URL + "?grant_type=client_credentials"
-  );
+public class DhisAuthServiceTest {
+
+  private static final String SERVER_URL = "https://play.dhis2.org/2.39.0.1";
+  private static final String AUTHORIZATION_URL = SERVER_URL + DhisAuthService.API_AUTH_URL;
+  private static final String USERNAME = "username";
+  private static final String PASSWORD = "p@ssw0rd";
 
   @Mock
   private RestTemplate restTemplate;
@@ -55,41 +59,49 @@ public class AuthServiceTest {
   @Captor
   private ArgumentCaptor<HttpEntity<String>> entityStringCaptor;
 
-  private ReferenceDataAuthService authService;
-
-  @Before
-  public void setUp() throws Exception {
-    authService = new ReferenceDataAuthService();
-    authService.setRestTemplate(restTemplate);
-
-    ReflectionTestUtils.setField(authService, "clientId", "trusted-client");
-    ReflectionTestUtils.setField(authService, "clientSecret", "secret");
-    ReflectionTestUtils.setField(authService, "authorizationUrl", AUTHORIZATION_URL);
-  }
+  @InjectMocks
+  private DhisAuthService authService;
 
   @Test
-  public void shouldObtainAccessToken() throws Exception {
+  public void shouldObtainAccessToken() {
+    final String token = "r4nd0m70k3n";
+
     ResponseEntity<Object> response = mock(ResponseEntity.class);
-    Map<String, String> body = ImmutableMap.of("access_token", TOKEN);
+    Map<String, String> tokenBody = ImmutableMap.of(DhisAuthService.API_KEY, token);
+    Map<String, Map> body = ImmutableMap.of(DhisAuthService.API_RESPONSE_DETAILS, tokenBody);
 
     when(restTemplate.exchange(
-            eq(AUTHORIZATION_URI), eq(HttpMethod.POST), any(HttpEntity.class), eq(Object.class)
+            eq(AUTHORIZATION_URL), eq(HttpMethod.POST),
+            any(HttpEntity.class), eq(Object.class)
     )).thenReturn(response);
 
     when(response.getBody()).thenReturn(body);
 
-    String token = authService.obtainAccessToken();
-    assertThat(token, is(equalTo(TOKEN)));
+    String obtainedToken = authService.obtainAccessToken(USERNAME, PASSWORD, SERVER_URL);
+    assertThat(obtainedToken, is(equalTo(token)));
 
     verify(restTemplate).exchange(
-            eq(AUTHORIZATION_URI), eq(HttpMethod.POST),
+            eq(AUTHORIZATION_URL), eq(HttpMethod.POST),
             entityStringCaptor.capture(), eq(Object.class)
     );
 
     HttpEntity<String> entity = entityStringCaptor.getValue();
+    Pattern pattern = Pattern.compile("^Basic (.*)");
     assertThat(
-            entity.getHeaders().get("Authorization"),
-            contains("Basic dHJ1c3RlZC1jbGllbnQ6c2VjcmV0")
+            entity.getHeaders().get(HttpHeaders.AUTHORIZATION),
+            hasItem(matchesPattern(pattern))
     );
   }
+
+  @Test(expected = RestOperationException.class)
+  public void shouldThrowRestOperationException() {
+    when(restTemplate.exchange(
+            eq(AUTHORIZATION_URL), eq(HttpMethod.POST),
+            any(HttpEntity.class), eq(Object.class)
+    )).thenThrow(RestClientException.class);
+
+    String obtainedToken = authService.obtainAccessToken(USERNAME, PASSWORD, SERVER_URL);
+    assertNull(obtainedToken);
+  }
+
 }

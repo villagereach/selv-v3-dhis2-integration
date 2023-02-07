@@ -54,7 +54,7 @@ public class DhisDataServiceTest {
   private RestTemplate restTemplate;
 
   @Mock
-  private AuthService authService;
+  private DhisAuthService authService;
 
   @InjectMocks
   private DhisDataService dhisDataService;

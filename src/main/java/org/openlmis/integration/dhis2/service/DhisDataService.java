@@ -39,7 +39,7 @@ public class DhisDataService {
   public static final String API_DATA_VALUE_SETS_URL = "/api/dataValueSets";
 
   @Autowired
-  private AuthService authService;
+  private DhisAuthService authService;
 
   @Autowired
   private RestTemplate restTemplate;
