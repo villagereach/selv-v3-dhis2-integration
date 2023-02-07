@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.dataset;
+package org.openlmis.integration.dhis2.domain.element;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,58 +23,51 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.DataElementDataBuilder;
 import org.openlmis.integration.dhis2.DatasetDataBuilder;
-import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
-import org.openlmis.integration.dhis2.domain.element.DataElement;
-import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.dto.element.DataElementDto;
 
-
-public class DatasetTest {
+public class DataElementTest {
 
   @Test
   public void equalsContract() {
-    Server sv1 = new ServerDataBuilder().build();
-    Server sv2 = new Server();
-
-    DataElement de1 = new DataElementDataBuilder().build();
-    DataElement de2 = new DataElement();
+    Dataset ds1 = new DatasetDataBuilder().build();
+    Dataset ds2 = new Dataset();
 
     EqualsVerifier
-        .forClass(Dataset.class)
+        .forClass(DataElement.class)
         .withRedefinedSuperclass()
-        .withPrefabValues(Server.class, sv1, sv2)
-        .withPrefabValues(DataElement.class, de1, de2)
+        .withPrefabValues(Dataset.class, ds1, ds2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }
 
   @Test
   public void shouldImplementToString() {
-    Dataset dataset = new DatasetDataBuilder().build();
-    ToStringTestUtils.verify(Dataset.class, dataset, "TEXT");
+    DataElement dataElement = new DataElementDataBuilder().build();
+    ToStringTestUtils.verify(DataElement.class, dataElement, "TEXT");
   }
 
   @Test
   public void shouldUpdateFrom() {
-    Dataset dataset = new DatasetDataBuilder().build();
-    DatasetDto dto = DatasetDto.newInstance(dataset);
+    DataElement dataElement = new DataElementDataBuilder().build();
+    DataElementDto dto = DataElementDto.newInstance(dataElement);
     dto.setName("ala");
 
-    dataset.updateFrom(dto);
+    dataElement.updateFrom(dto);
 
-    assertThat(dataset.getName()).isEqualTo("ala");
+    assertThat(dataElement.getName()).isEqualTo("ala");
   }
 
   @Test
   public void shouldExportData() {
-    Dataset dataset = new DatasetDataBuilder().build();
-    DatasetDto dto = new DatasetDto();
+    DataElement dataElement = new DataElementDataBuilder().build();
+    DataElementDto dto = new DataElementDto();
 
-    dataset.export(dto);
+    dataElement.export(dto);
 
-    Assertions.assertThat(dto.getId()).isEqualTo(dataset.getId());
-    assertThat(dto.getName()).isEqualTo(dataset.getName());
+    Assertions.assertThat(dto.getId()).isEqualTo(dataElement.getId());
+    assertThat(dto.getName()).isEqualTo(dataElement.getName());
   }
 
 }

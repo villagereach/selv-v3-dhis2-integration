@@ -30,7 +30,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DataElement {
+public class DhisDataElement {
 
   private String id;
   private String name;
