@@ -24,7 +24,7 @@ import lombok.ToString;
 
 /**
  * Objects of this class represent data retrieved from the DHIS2 API.
- * Dataset is the collection of {@link DataElement}. A dataset doesn't store values,
+ * Dataset is the collection of {@link DhisDataElement}. A dataset doesn't store values,
  * it's just a grouped collection of data, so deleting a given dataset doesn't delete
  * the data values.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
@@ -37,7 +37,7 @@ public class DhisDataset {
   private String periodType;
 
   @Setter
-  private List<Map<Object, DataElement>> dataSetElements;
+  private List<Map<Object, DhisDataElement>> dataSetElements;
 
   @Getter
   @Setter
@@ -49,7 +49,7 @@ public class DhisDataset {
    *
    * @return list of data elements.
    */
-  public List<DataElement> getDataSetElements() {
+  public List<DhisDataElement> getDataSetElements() {
     return dataSetElements.stream()
             .flatMap(e -> e.values().stream())
             .collect(Collectors.toList());
