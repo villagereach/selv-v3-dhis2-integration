@@ -33,6 +33,7 @@ import org.openlmis.integration.dhis2.web.dataset.DatasetController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -119,7 +120,11 @@ public class DataElementController extends BaseController {
     newDataElement.setDataset(dataset);
 
     newDataElement.setId(null);
-    newDataElement = dataElementRepository.saveAndFlush(newDataElement);
+    try {
+      newDataElement = dataElementRepository.saveAndFlush(newDataElement);
+    } catch (DataIntegrityViolationException e) {
+      throw new ValidationMessageException(MessageKeys.ERROR_DATAELEMENT_CODE_DUPLICATED, e);
+    }
 
     return DataElementDto.newInstance(newDataElement);
   }
@@ -142,7 +147,12 @@ public class DataElementController extends BaseController {
       return dataElement;
     }).orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
 
-    dataElementRepository.saveAndFlush(dataElementToSave);
+    try {
+      dataElementRepository.saveAndFlush(dataElementToSave);
+    } catch (DataIntegrityViolationException e) {
+      throw new ValidationMessageException(MessageKeys.ERROR_DATAELEMENT_CODE_DUPLICATED, e);
+    }
+
     return DataElementDto.newInstance(dataElementToSave);
   }
 
