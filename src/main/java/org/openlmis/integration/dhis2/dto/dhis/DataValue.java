@@ -13,14 +13,27 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.util.messagekeys;
+package org.openlmis.integration.dhis2.dto.dhis;
 
-public abstract class AuthMessageKeys extends MessageKeys {
+import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-  private static final String ERROR = join(SERVICE_ERROR, AUTH);
+/**
+ * Objects of this class represent data sent to the DHIS2 API.
+ * Data Value is the single recorded value of Data Element. It is described by at least three
+ * dimensions: data element, organisation unit and period.
+ * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
+ */
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+public class DataValue {
 
-  public static final String ERROR_EXTERNAL_API_RESPONSE_UNABLE_TO_PARSE =
-          join(ERROR, EXTERNAL, API, RESPONSE, UNABLE_TO_PARSE);
-  public static final String ERROR_EXTERNAL_API_CONNECTION_FAILED =
-          join(ERROR, EXTERNAL, API, CONNECTION, FAILED);
+  private String dataElement;
+  private BigDecimal value;
+
 }
