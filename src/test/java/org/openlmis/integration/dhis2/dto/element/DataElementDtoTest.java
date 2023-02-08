@@ -13,30 +13,28 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.dhis;
+package org.openlmis.integration.dhis2.dto.element;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
+import org.openlmis.integration.dhis2.ToStringTestUtils;
 
-/**
- * Objects of this class represent data sent to the DHIS2 API.
- * Data value set is the collection of {@link DataValue}.
- * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
- */
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-public class DataValueSet {
+public class DataElementDtoTest {
 
-  private String dataSet;
-  private String period;
-  private String orgUnit;
-  private List<DataValue> dataValues;
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+        .forClass(DataElementDto.class)
+        .withRedefinedSuperclass()
+        .suppress(Warning.NONFINAL_FIELDS)
+        .verify();
+  }
+
+  @Test
+  public void shouldImplementToString() {
+    DataElementDto dataElementDto = new DataElementDto();
+    ToStringTestUtils.verify(DataElementDto.class, dataElementDto);
+  }
 
 }

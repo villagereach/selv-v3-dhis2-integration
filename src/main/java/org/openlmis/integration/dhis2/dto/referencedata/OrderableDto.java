@@ -13,30 +13,22 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.dhis;
+package org.openlmis.integration.dhis2.dto.referencedata;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import org.openlmis.integration.dhis2.dto.BaseDto;
 
 /**
- * Objects of this class represent data sent to the DHIS2 API.
- * Data value set is the collection of {@link DataValue}.
- * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
+ * Objects of this class represent OrderableDto data retrieved from the referencedata.
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
-public class DataValueSet {
+@EqualsAndHashCode(callSuper = true)
+public class OrderableDto extends BaseDto {
 
-  private String dataSet;
-  private String period;
-  private String orgUnit;
-  private List<DataValue> dataValues;
+  private String productCode;
+  private String fullProductName;
 
 }

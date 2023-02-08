@@ -70,6 +70,12 @@ public class GlobalErrorHandling extends AbstractErrorHandling {
     return getLocalizedMessage(ex);
   }
 
+  /**
+   * Handles Message exceptions and returns status 404 NOT_FOUND.
+   *
+   * @param ex the ResourceNotFoundException to handle
+   * @return the error response for the user
+   */
   @ExceptionHandler(NotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody

@@ -31,7 +31,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class AuthService {
+public class DhisAuthService {
 
   public static final String API_AUTH_URL = "/api/apiToken";
   public static final String API_RESPONSE_DETAILS = "response";

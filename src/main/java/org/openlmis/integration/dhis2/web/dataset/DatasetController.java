@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Controller used to expose Servers via HTTP.
+ * Controller used to expose Datasets via HTTP.
  */
 @Controller
 @RequestMapping(DatasetController.RESOURCE_PATH)

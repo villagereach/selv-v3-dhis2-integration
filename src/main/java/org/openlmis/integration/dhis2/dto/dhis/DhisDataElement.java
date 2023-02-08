@@ -15,28 +15,24 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Objects of this class represent data sent to the DHIS2 API.
- * Data value set is the collection of {@link DataValue}.
+ * Objects of this class represent data retrieved from the DHIS2 API.
+ * Data element tells you <i>what</i> data was recorded. The name of the data element describes
+ * what is being collected or analysed. For instance, if the data element represents a count of
+ * something, its name describes what is being counted.
+ * Data element doesn't contain a calculated value.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class DataValueSet {
+public class DhisDataElement {
 
-  private String dataSet;
-  private String period;
-  private String orgUnit;
-  private List<DataValue> dataValues;
+  private String id;
+  private String name;
 
 }
