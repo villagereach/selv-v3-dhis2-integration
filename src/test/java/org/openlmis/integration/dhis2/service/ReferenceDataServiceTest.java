@@ -69,7 +69,7 @@ public class ReferenceDataServiceTest {
             })
     )).thenReturn(response);
     when(authService.obtainAccessToken()).thenReturn(TOKEN);
-    PageDto<MinimalFacilityDto> result = referenceDataService.finaAllFacilities();
+    PageDto<MinimalFacilityDto> result = referenceDataService.findAllFacilities();
 
     assertThat(result, is(equalTo(minimalFacilityDtos)));
   }
@@ -85,7 +85,7 @@ public class ReferenceDataServiceTest {
             eq(new ParameterizedTypeReference<PageDto<OrderableDto>>() {})
     )).thenReturn(response);
     when(authService.obtainAccessToken()).thenReturn(TOKEN);
-    PageDto<OrderableDto> result = referenceDataService.finaAllOrderables();
+    PageDto<OrderableDto> result = referenceDataService.findAllOrderables();
 
     assertThat(result, is(equalTo(orderableDtos)));
   }
@@ -96,7 +96,7 @@ public class ReferenceDataServiceTest {
             eq(new ParameterizedTypeReference<PageDto<OrderableDto>>() {})
     )).thenThrow(HttpClientErrorException.class);
 
-    referenceDataService.finaAllOrderables();
+    referenceDataService.findAllOrderables();
   }
 
   private <T> PageDto<T> createPageDto(List<T> content) {

@@ -18,6 +18,7 @@ package org.openlmis.integration.dhis2.dto.dhis;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -27,6 +28,7 @@ import lombok.ToString;
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString

@@ -55,7 +55,7 @@ public class ReferenceDataService {
    *
    * @return page of MinimalFacilityDto objects.
    */
-  public PageDto<MinimalFacilityDto> finaAllFacilities() {
+  public PageDto<MinimalFacilityDto> findAllFacilities() {
 
     try {
       ResponseEntity<PageDto<MinimalFacilityDto>> response = restTemplate.exchange(
@@ -85,7 +85,7 @@ public class ReferenceDataService {
    *
    * @return page of OrderableDto objects.
    */
-  public PageDto<OrderableDto> finaAllOrderables() {
+  public PageDto<OrderableDto> findAllOrderables() {
 
     try {
       ResponseEntity<PageDto<OrderableDto>> response = restTemplate.exchange(
