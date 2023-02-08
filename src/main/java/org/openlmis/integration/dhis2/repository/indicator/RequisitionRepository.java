@@ -32,8 +32,8 @@ public class RequisitionRepository {
    * Retrieves opening balance from requisition for a given period.
    */
   public String findOpeningBalance(@Param("startDate") ZonedDateTime startDate,
-                                   @Param("orderable") String orderableName,
-                                   @Param("facility") String facilityCode) {
+                                   @Param("orderable") String orderable,
+                                   @Param("facility") String facility) {
     Query query = entityManager.createNativeQuery(
             "SELECT SUM(line_items.beginningbalance) "
                     + "FROM requisition.requisition_line_items AS line_items "
@@ -49,8 +49,8 @@ public class RequisitionRepository {
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility");
     return query.setParameter("startDate", startDate)
-            .setParameter("orderable", orderableName)
-            .setParameter("facility", facilityCode)
+            .setParameter("orderable", orderable)
+            .setParameter("facility", facility)
             .getSingleResult().toString();
   }
 
