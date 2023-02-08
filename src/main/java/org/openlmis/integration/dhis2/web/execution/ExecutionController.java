@@ -59,7 +59,7 @@ public class ExecutionController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionController.class);
 
-  public static final String RESOURCE_PATH = API_PATH + "/execution";
+  public static final String RESOURCE_PATH = API_PATH + "/execute";
 
   @Autowired
   SimpleIndicatorService simpleIndicatorService;

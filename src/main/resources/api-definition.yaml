@@ -714,7 +714,7 @@ resourceTypes:
                 Keep-Alive:
               body:
                 application/json:
-  /execution:
+  /execute:
     post:
       is: [ secured ]
       description: Run execution
