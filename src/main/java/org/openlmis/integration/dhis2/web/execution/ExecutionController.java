@@ -98,17 +98,14 @@ public class ExecutionController extends BaseController {
       for (Dataset dataset: datasetList) {
         DataValueSet dataValueSet = new DataValueSet();
 
-        // DVS DataSetId
         dataValueSet.setDataSet(dataset.getDhisDatasetId());
 
-        // Period
         DhisPeriod periodEnumerator = DhisPeriod.valueOf(dataset.getCronExpression());
         Pair<ZonedDateTime, ZonedDateTime> periodRange =
                 periodGenerator.generateRange(periodEnumerator, offset);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMM");
         String formattedStartDate = periodRange.getFirst().format(dateTimeFormatter);
 
-        // DVS Period
         dataValueSet.setPeriod(formattedStartDate);
 
         List<DataElement> dataElementList = dataElementRepository.findAll();
@@ -129,33 +126,25 @@ public class ExecutionController extends BaseController {
 
         for (String orgUnit: orgUnits) {
 
-          // DVS OrgUnit
           dataValueSet.setOrgUnit(orgUnit);
 
-          // DV (LIST)
           List<DataValue> dataValues = new ArrayList<>();
 
           for (DataElement dataElement: dataElementList) {
             DataValue dataValue = new DataValue();
             String orderable = dataElement.getOrderable();
 
-            // DV DataElement
             dataValue.setDataElement(orderable);
 
-            // Indicator
             String openingBalance = simpleIndicatorService.generateOpeningBalance(
                     periodEnumerator, offset, orderable, orgUnit);
 
-            // DV Value
             dataValue.setValue(new BigDecimal(openingBalance));
 
-            // ADD DV LIST TO DVS
             dataValues.add(dataValue);
 
-            // SET DV LIST AS DVS-DataValues
             dataValueSet.setDataValues(dataValues);
 
-            // SEND
             dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
                     server.getUsername(), server.getPassword());
           }

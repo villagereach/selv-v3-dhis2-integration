@@ -34,7 +34,7 @@ public class SimpleIndicatorService {
    *
    * @param periodEnum Enumerator used to calculate a pair of starting and end date
    * @param offset Offset date in seconds
-   * @param orderable Product code
+   * @param orderable Product name
    * @param facility Facility code
    * @return String with generated indicator value for a given period
    */
