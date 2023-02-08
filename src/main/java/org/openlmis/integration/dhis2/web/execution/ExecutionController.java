@@ -144,11 +144,10 @@ public class ExecutionController extends BaseController {
             dataValues.add(dataValue);
 
             dataValueSet.setDataValues(dataValues);
-
-            dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
-                    server.getUsername(), server.getPassword());
           }
 
+          dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
+                  server.getUsername(), server.getPassword());
         }
 
       }

@@ -48,10 +48,16 @@ public class RequisitionRepository {
                     + "AND req.createddate < :startDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility");
-    return query.setParameter("startDate", startDate)
+
+    Object result = query.setParameter("startDate", startDate)
             .setParameter("orderable", orderable)
             .setParameter("facility", facility)
-            .getSingleResult().toString();
+            .getSingleResult();
+
+    if (result == null) {
+      return "0";
+    }
+    return result.toString();
   }
 
 }

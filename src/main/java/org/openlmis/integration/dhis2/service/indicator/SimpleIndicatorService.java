@@ -42,7 +42,9 @@ public class SimpleIndicatorService {
                                        String orderable, String facility) {
     Pair<ZonedDateTime, ZonedDateTime> period = new PeriodGenerator()
             .generateRange(periodEnum, offset);
-    return requisitionRepository.findOpeningBalance(period.getFirst(), orderable, facility);
+
+    return requisitionRepository.findOpeningBalance(
+            period.getFirst(), orderable, facility);
   }
 
 }
