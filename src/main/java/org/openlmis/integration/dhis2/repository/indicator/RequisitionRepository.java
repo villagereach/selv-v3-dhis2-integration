@@ -16,6 +16,7 @@
 package org.openlmis.integration.dhis2.repository.indicator;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -35,7 +36,7 @@ public class RequisitionRepository {
                                    @Param("orderable") String orderable,
                                    @Param("facility") String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT SUM(line_items.beginningbalance) "
+            "SELECT line_items.stockonhand AS soh "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
@@ -45,19 +46,20 @@ public class RequisitionRepository {
                     + "WHERE products.versionnumber = "
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
-                    + "AND req.createddate < :startDate "
+                    + "AND req.createddate <= :startDate "
                     + "AND products.fullproductname = :orderable "
-                    + "AND facilities.code = :facility");
+                    + "AND facilities.code = :facility "
+                    + "ORDER BY req.createddate DESC LIMIT 1");
 
-    Object result = query.setParameter("startDate", startDate)
+    List<?> result = query.setParameter("startDate", startDate)
             .setParameter("orderable", orderable)
             .setParameter("facility", facility)
-            .getSingleResult();
+            .getResultList();
 
-    if (result == null) {
+    if (result == null || result.isEmpty() || result.get(0) == null) {
       return "0";
     }
-    return result.toString();
+    return result.get(0).toString();
   }
 
 }
