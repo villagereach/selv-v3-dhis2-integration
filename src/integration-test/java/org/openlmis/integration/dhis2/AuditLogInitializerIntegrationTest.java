@@ -34,6 +34,7 @@ import org.javers.repository.jql.QueryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.element.DataElement;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +58,10 @@ public class AuditLogInitializerIntegrationTest {
       "id", "name", "dhisDatasetId", "cronExpression", "serverId"
   };
 
+  private static final String[] DATAELEMENT_FIELDS = {
+      "id", "name", "source", "indicator", "orderable", "element", "datasetId"
+  };
+
   private static final String INSERT_SERVER_SQL = String.format(
       "INSERT INTO dhis2.server (%s) VALUES (%s) ",
       StringUtils.join(SERVER_FIELDS, ", "),
@@ -67,6 +72,12 @@ public class AuditLogInitializerIntegrationTest {
       "INSERT INTO dhis2.dataset (%s) VALUES (%s) ",
       StringUtils.join(DATASET_FIELDS, ", "),
       StringUtils.repeat("?", ", ", DATASET_FIELDS.length)
+  );
+
+  private static final String INSERT_DATAELEMENT_SQL = String.format(
+          "INSERT INTO dhis2.data_element (%s) VALUES (%s) ",
+          StringUtils.join(DATAELEMENT_FIELDS, ", "),
+          StringUtils.repeat("?", ", ", DATAELEMENT_FIELDS.length)
   );
 
   @Autowired
@@ -95,6 +106,19 @@ public class AuditLogInitializerIntegrationTest {
     addDataset(datasetId, serverId);
 
     executeTest(datasetId, Dataset.class);
+  }
+
+  @Test
+  public void shouldCreateSnapshotForDataElement() {
+    UUID serverId = UUID.randomUUID();
+    UUID datasetId = UUID.randomUUID();
+    UUID dataElementId = UUID.randomUUID();
+
+    addServer(serverId);
+    addDataset(datasetId, serverId);
+    addDataElement(dataElementId, datasetId);
+
+    executeTest(dataElementId, DataElement.class);
   }
 
   private void executeTest(Object id, Class clazz) {
@@ -144,6 +168,20 @@ public class AuditLogInitializerIntegrationTest {
             .setParameter(3, "idXfoem")
             .setParameter(4, "0 5 * * *")
             .setParameter(5, serverId)
+            .executeUpdate();
+  }
+
+  private void addDataElement(UUID id, UUID datasetId) {
+    entityManager.flush();
+    entityManager
+            .createNativeQuery(INSERT_DATAELEMENT_SQL)
+            .setParameter(1, id)
+            .setParameter(2, "test-name")
+            .setParameter(3, "test-source")
+            .setParameter(4, "test-indicator")
+            .setParameter(5, "test-orderable")
+            .setParameter(6, "test-element")
+            .setParameter(7, datasetId)
             .executeUpdate();
   }
 

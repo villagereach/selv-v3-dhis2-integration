@@ -26,32 +26,53 @@ public abstract class MessageKeys {
 
   private static final String SERVER = "server";
   private static final String DATASET = "dataset";
-  private static final String INDICATOR = "indicator";
+  private static final String ELEMENT = "element";
   private static final String JAVERS = "javers";
 
   private static final String ID = "id";
   private static final String CODE = "code";
+  private static final String API = "api";
+  private static final String RESPONSE = "response";
+  private static final String REQUEST = "request";
+  private static final String CONNECTION = "connection";
+  private static final String BODY = "body";
+  private static final String CLIENT = "client";
 
   private static final String MISMATCH = "mismatch";
   private static final String NOT_FOUND = "notFound";
   private static final String DUPLICATED = "duplicated";
+  private static final String EXTERNAL = "external";
+  private static final String FAILED = "failed";
+  private static final String UNABLE_TO_PARSE = "unableToParse";
 
   private static final String ERROR_PREFIX = join(SERVICE_PREFIX, ERROR);
 
   public static final String ERROR_SERVER_NOT_FOUND = join(ERROR_PREFIX, SERVER, NOT_FOUND);
   public static final String ERROR_SERVER_ID_MISMATCH = join(ERROR_PREFIX, SERVER, ID, MISMATCH);
   public static final String ERROR_SERVER_CODE_DUPLICATED =
-      join(ERROR_PREFIX, SERVER, CODE, DUPLICATED);
+          join(ERROR_PREFIX, SERVER, CODE, DUPLICATED);
+  private static final String ERROR_EXTERNAL_API = join(ERROR_PREFIX, EXTERNAL, API);
+  public static final String ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE =
+          join(ERROR_EXTERNAL_API, RESPONSE, BODY, UNABLE_TO_PARSE);
+  public static final String ERROR_EXTERNAL_API_CONNECTION_FAILED =
+          join(ERROR_EXTERNAL_API, CONNECTION, FAILED);
+  public static final String ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED =
+          join(ERROR_EXTERNAL_API, CLIENT, REQUEST, FAILED);
 
   public static final String ERROR_DATASET_NOT_FOUND = join(ERROR_PREFIX, DATASET, NOT_FOUND);
   public static final String ERROR_DATASET_ID_MISMATCH = join(ERROR_PREFIX, DATASET, ID, MISMATCH);
   public static final String ERROR_DATASET_CODE_DUPLICATED =
           join(ERROR_PREFIX, DATASET, CODE, DUPLICATED);
 
-  public static final String ERROR_INDICATOR_NOT_FOUND = join(ERROR_PREFIX, INDICATOR, NOT_FOUND);
+  public static final String ERROR_DATAELEMENT_NOT_FOUND =
+          join(ERROR_PREFIX, ELEMENT, NOT_FOUND);
+  public static final String ERROR_DATAELEMENT_ID_MISMATCH =
+          join(ERROR_PREFIX, ELEMENT, ID, MISMATCH);
+  public static final String ERROR_DATAELEMENT_CODE_DUPLICATED =
+          join(ERROR_PREFIX, ELEMENT, CODE, DUPLICATED);
 
   public static final String ERROR_JAVERS_EXISTING_ENTRY =
-      join(ERROR_PREFIX, JAVERS, "entryAlreadyExists");
+          join(ERROR_PREFIX, JAVERS, "entryAlreadyExists");
 
   private MessageKeys() {
     throw new UnsupportedOperationException();

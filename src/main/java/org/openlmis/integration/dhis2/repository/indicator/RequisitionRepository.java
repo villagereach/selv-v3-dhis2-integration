@@ -15,46 +15,51 @@
 
 package org.openlmis.integration.dhis2.repository.indicator;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import org.springframework.data.jpa.repository.Query;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RequisitionRepository {
+public class RequisitionRepository {
 
-  @Query(value = "SELECT SUM(line_items.beginningbalance)"
-          + "FROM requisition.requisition_line_items AS line_items"
-          + "JOIN referencedata.orderables AS products ON line_items.orderableid = products.id"
-          + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id"
-          + "WHERE products.versionnumber = ("
-          + "SELECT MAX(versionnumber) FROM referencedata.orderables o2 WHERE o2.id = products.id"
-          + ") AND req.createddate >= :startDate"
-          + "AND req.createddate < :endDate", nativeQuery = true)
-  BigDecimal findOpeningBalance(@Param("startDate") ZonedDateTime startDate,
-                          @Param("endDate") ZonedDateTime endDate);
+  @PersistenceContext
+  EntityManager entityManager;
 
-  @Query(value = "SELECT SUM(line_items.totalreceivedquantity)"
-          + "FROM requisition.requisition_line_items AS line_items"
-          + "JOIN referencedata.orderables AS products ON line_items.orderableid = products.id"
-          + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id"
-          + "WHERE products.versionnumber = ("
-          + "SELECT MAX(versionnumber) FROM referencedata.orderables o2 WHERE o2.id = products.id"
-          + ") AND req.createddate >= :startDate"
-          + "AND req.createddate < :endDate", nativeQuery = true)
-  BigDecimal findReceivedBalance(@Param("startDate") ZonedDateTime startDate,
-                                 @Param("endDate") ZonedDateTime endDate);
+  /**
+   * Retrieves opening balance from requisition for a given period.
+   */
+  public String findOpeningBalance(@Param("startDate") ZonedDateTime startDate,
+                                   @Param("orderable") String orderable,
+                                   @Param("facility") String facility) {
+    Query query = entityManager.createNativeQuery(
+            "SELECT line_items.stockonhand AS soh "
+                    + "FROM requisition.requisition_line_items AS line_items "
+                    + "JOIN referencedata.orderables AS products "
+                    + "ON line_items.orderableid = products.id "
+                    + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id "
+                    + "JOIN referencedata.facilities AS facilities "
+                    + "ON facilities.id = req.facilityid "
+                    + "WHERE products.versionnumber = "
+                    + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
+                    + "WHERE o2.id = products.id) "
+                    + "AND req.createddate <= :startDate "
+                    + "AND products.fullproductname = :orderable "
+                    + "AND facilities.code = :facility "
+                    + "ORDER BY req.createddate DESC LIMIT 1");
 
-  @Query(value = "SELECT SUM(line_items.stockonhand)"
-          + "FROM requisition.requisition_line_items AS line_items"
-          + "JOIN referencedata.orderables AS products ON line_items.orderableid = products.id"
-          + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id"
-          + "WHERE products.versionnumber = ("
-          + "SELECT MAX(versionnumber) FROM referencedata.orderables o2 WHERE o2.id = products.id"
-          + ") AND req.createddate >= :startDate"
-          + "AND req.createddate < :endDate", nativeQuery = true)
-  BigDecimal findClosingBalance(@Param("startDate") ZonedDateTime startDate,
-                          @Param("endDate") ZonedDateTime endDate);
+    List<?> result = query.setParameter("startDate", startDate)
+            .setParameter("orderable", orderable)
+            .setParameter("facility", facility)
+            .getResultList();
+
+    if (result == null || result.isEmpty() || result.get(0) == null) {
+      return "0";
+    }
+    return result.get(0).toString();
+  }
 
 }

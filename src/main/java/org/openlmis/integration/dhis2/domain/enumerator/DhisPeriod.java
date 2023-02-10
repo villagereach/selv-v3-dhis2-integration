@@ -26,7 +26,7 @@ import org.springframework.data.util.Pair;
 public enum DhisPeriod {
 
   DAILY(DhisPeriod::generateForDaily),
-  WEEKLY_MONDAY(now -> DhisPeriod.generateForWeekly((ZonedDateTime) now, DayOfWeek.MONDAY)),
+  WEEKLY_MONDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.MONDAY)),
   WEEKLY_TUESDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.TUESDAY)),
   WEEKLY_WEDNESDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.WEDNESDAY)),
   WEEKLY_THURSDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.THURSDAY)),

@@ -13,14 +13,20 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.util.messagekeys;
+package org.openlmis.integration.dhis2.dto.referencedata;
 
-public abstract class AuthMessageKeys extends MessageKeys {
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
 
-  private static final String ERROR = join(SERVICE_ERROR, AUTH);
+public class PageDtoTest {
 
-  public static final String ERROR_EXTERNAL_API_RESPONSE_UNABLE_TO_PARSE =
-          join(ERROR, EXTERNAL, API, RESPONSE, UNABLE_TO_PARSE);
-  public static final String ERROR_EXTERNAL_API_CONNECTION_FAILED =
-          join(ERROR, EXTERNAL, API, CONNECTION, FAILED);
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+            .forClass(PageDto.class)
+            .suppress(Warning.NONFINAL_FIELDS)
+            .verify();
+  }
+
 }

@@ -20,32 +20,25 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
-import org.openlmis.integration.dhis2.util.messagekeys.AuthMessageKeys;
+import org.openlmis.integration.dhis2.i18n.MessageKeys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class AuthService {
+public class DhisAuthService {
 
   public static final String API_AUTH_URL = "/api/apiToken";
   public static final String API_RESPONSE_DETAILS = "response";
   public static final String API_KEY = "key";
 
-  private final RestOperations restTemplate;
-
-  public AuthService() {
-    this(new RestTemplate());
-  }
-
-  public AuthService(RestTemplate restTemplate) {
-    this.restTemplate = restTemplate;
-  }
+  @Autowired
+  private RestTemplate restTemplate;
 
   /**
    * Retrieves access token from the auth service.
@@ -75,7 +68,7 @@ public class AuthService {
               request,
               Object.class);
     } catch (RestClientException ex) {
-      throw new RestOperationException(AuthMessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
     }
 
     try {
@@ -83,7 +76,7 @@ public class AuthService {
               .get(API_KEY);
     } catch (NullPointerException ex) {
       throw new ResponseParsingException(
-              AuthMessageKeys.ERROR_EXTERNAL_API_RESPONSE_UNABLE_TO_PARSE, ex);
+              MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
     }
   }
 
