@@ -15,13 +15,18 @@
 
 package org.openlmis.integration.dhis2.service.indicator;
 
-import java.math.BigDecimal;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_ENUMERATOR_NOT_EXIST;
+
 import java.time.ZonedDateTime;
 import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
+import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.repository.indicator.RequisitionRepository;
+import org.openlmis.integration.dhis2.repository.indicator.StockmanagementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReceivedBalance implements IndicatorSupplier {
 
   public static final String NAME = IndicatorEnum.RECEIVED.toString();
@@ -29,12 +34,26 @@ public class ReceivedBalance implements IndicatorSupplier {
   @Autowired
   private RequisitionRepository requisitionRepository;
 
+  @Autowired
+  private StockmanagementRepository stockmanagementRepository;
+
   public String getIndicatorName() {
     return NAME;
   }
 
-  public BigDecimal calculateValue(Pair<ZonedDateTime, ZonedDateTime> period) {
-    return requisitionRepository.findReceivedBalance(period.getFirst(), period.getSecond());
+  /**
+   * Calculate received balance.
+   */
+  public String calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
+                                   String orderable, String facility) {
+    if (source.equals(STOCKMANAGEMENT)) {
+      return stockmanagementRepository.findReceived(period.getFirst(),
+              period.getSecond(), orderable, facility);
+    } else if (source.equals(REQUISITION)) {
+      return requisitionRepository.findReceived(period.getSecond(), orderable, facility);
+    } else {
+      throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
+    }
   }
 
 }

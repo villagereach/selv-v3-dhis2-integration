@@ -44,6 +44,8 @@ public abstract class MessageKeys {
   private static final String EXTERNAL = "external";
   private static final String FAILED = "failed";
   private static final String UNABLE_TO_PARSE = "unableToParse";
+  private static final String ENUMERATOR = "enumerator";
+  private static final String NOT_EXIST = "notExist";
 
   private static final String ERROR_PREFIX = join(SERVICE_PREFIX, ERROR);
 
@@ -70,6 +72,9 @@ public abstract class MessageKeys {
           join(ERROR_PREFIX, ELEMENT, ID, MISMATCH);
   public static final String ERROR_DATAELEMENT_CODE_DUPLICATED =
           join(ERROR_PREFIX, ELEMENT, CODE, DUPLICATED);
+
+  public static final String ERROR_ENUMERATOR_NOT_EXIST =
+          join(ERROR_PREFIX, ENUMERATOR, NOT_EXIST);
 
   public static final String ERROR_JAVERS_EXISTING_ENTRY =
           join(ERROR_PREFIX, JAVERS, "entryAlreadyExists");

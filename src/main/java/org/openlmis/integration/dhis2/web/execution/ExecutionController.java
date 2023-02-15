@@ -17,13 +17,11 @@ package org.openlmis.integration.dhis2.web.execution;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
-import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.DataValue;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
@@ -34,9 +32,9 @@ import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
-import org.openlmis.integration.dhis2.service.PeriodGenerator;
+import org.openlmis.integration.dhis2.service.PeriodGeneratorService;
 import org.openlmis.integration.dhis2.service.ReferenceDataService;
-import org.openlmis.integration.dhis2.service.indicator.SimpleIndicatorService;
+import org.openlmis.integration.dhis2.service.indicator.IndicatorService;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,9 +60,6 @@ public class ExecutionController extends BaseController {
   public static final String RESOURCE_PATH = API_PATH + "/execute";
 
   @Autowired
-  SimpleIndicatorService simpleIndicatorService;
-
-  @Autowired
   private ServerRepository serverRepository;
 
   @Autowired
@@ -77,10 +72,13 @@ public class ExecutionController extends BaseController {
   private DhisDataService dhisDataService;
 
   @Autowired
-  private PeriodGenerator periodGenerator;
+  private PeriodGeneratorService periodGeneratorService;
 
   @Autowired
   private ReferenceDataService referenceDataService;
+
+  @Autowired
+  private IndicatorService indicatorService;
 
   /**
    * Run manual execution.
@@ -100,11 +98,10 @@ public class ExecutionController extends BaseController {
 
         dataValueSet.setDataSet(dataset.getDhisDatasetId());
 
-        DhisPeriod periodEnumerator = DhisPeriod.valueOf(dataset.getCronExpression());
         Pair<ZonedDateTime, ZonedDateTime> periodRange =
-                periodGenerator.generateRange(periodEnumerator, offset);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMM");
-        String formattedStartDate = periodRange.getFirst().format(dateTimeFormatter);
+                periodGeneratorService.generateRange(dataset.getCronExpression(), offset);
+        String formattedStartDate = periodGeneratorService.formatDate(
+                periodRange.getFirst(), dataset.getCronExpression());
 
         dataValueSet.setPeriod(formattedStartDate);
 
@@ -136,10 +133,10 @@ public class ExecutionController extends BaseController {
 
             dataValue.setDataElement(orderable);
 
-            String openingBalance = simpleIndicatorService.generateOpeningBalance(
-                    periodEnumerator, offset, orderable, orgUnit);
+            BigDecimal calculatedIndicator = indicatorService.generate(dataElement.getSource(),
+                    dataElement.getIndicator(), periodRange, orderable, orgUnit);
 
-            dataValue.setValue(new BigDecimal(openingBalance));
+            dataValue.setValue(calculatedIndicator);
 
             dataValues.add(dataValue);
 

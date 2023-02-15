@@ -15,27 +15,39 @@
 
 package org.openlmis.integration.dhis2.service.indicator;
 
-import java.math.BigDecimal;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_ENUMERATOR_NOT_EXIST;
+
 import java.time.ZonedDateTime;
 import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
-import org.openlmis.integration.dhis2.repository.indicator.CceRepository;
+import org.openlmis.integration.dhis2.exception.ValidationMessageException;
+import org.openlmis.integration.dhis2.repository.indicator.StockmanagementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Component;
 
-public class CceOperational implements IndicatorSupplier {
+@Component
+public class PositiveAdjustment implements IndicatorSupplier {
 
-  public static final String STATUS = "FUNCTIONING";
-  public static final String NAME = IndicatorEnum.CCE_OPERATIONAL.toString();
+  public static final String NAME = IndicatorEnum.POSITIVE_ADJUSTMENTS.toString();
 
   @Autowired
-  private CceRepository cceRepository;
+  private StockmanagementRepository stockmanagementRepository;
 
   public String getIndicatorName() {
     return NAME;
   }
 
-  public BigDecimal calculateValue(Pair<ZonedDateTime, ZonedDateTime> period) {
-    return cceRepository.findCceCountByStatus(STATUS, period.getFirst(), period.getSecond());
+  /**
+   * Calculate positive adjustments.
+   */
+  public String calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
+                                   String orderable, String facility) {
+    if (source.equals(STOCKMANAGEMENT)) {
+      return stockmanagementRepository.findPositiveAdjustments(period.getFirst(),
+              period.getSecond(), orderable, facility);
+    } else {
+      throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
+    }
   }
 
 }

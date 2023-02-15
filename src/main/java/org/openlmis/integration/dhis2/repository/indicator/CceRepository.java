@@ -15,27 +15,45 @@
 
 package org.openlmis.integration.dhis2.repository.indicator;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import org.springframework.data.jpa.repository.Query;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CceRepository {
+public class CceRepository {
 
-  @Query(value = "SELECT COUNT(inventory.functionalstatus) FROM"
-          + "cce.cce_inventory_items AS inventory"
-          + "WHERE functionalstatus = :status", nativeQuery = true)
-  BigDecimal findCceCountByStatus(@Param("status") String status,
-                                  @Param("startDate") ZonedDateTime startDate,
-                                  @Param("endDate") ZonedDateTime endDate);
+  static final String STATUS = "status";
+  static final String UTILIZATION = "utilization";
 
-  @Query(value = "SELECT COUNT(inventory.utilization) FROM"
-          + "cce.cce_inventory_items AS inventory"
-          + "WHERE utilization = :utilization", nativeQuery = true)
-  BigDecimal findCceCountByUtilization(@Param("utilization") String utilization,
-                                 @Param("startDate") ZonedDateTime startDate,
-                                 @Param("endDate") ZonedDateTime endDate);
+  @PersistenceContext
+  EntityManager entityManager;
+
+  /**
+   * Retrieves CCE count for a given status.
+   */
+  public String findCceCountByStatus(@Param(STATUS) String status) {
+    Query query = entityManager.createNativeQuery(
+            "SELECT COUNT(inventory.functionalstatus) FROM "
+                    + "cce.cce_inventory_items AS inventory "
+                    + "WHERE functionalstatus = :status");
+
+    return query.setParameter(status, status)
+            .getSingleResult().toString();
+  }
+
+  /**
+   * Retrieves CCE count for a given utilization.
+   */
+  public String findCceCountByUtilization(@Param(UTILIZATION) String utilization) {
+    Query query = entityManager.createNativeQuery(
+            "SELECT COUNT(inventory.utilization) FROM "
+                    + "cce.cce_inventory_items AS inventory "
+                    + "WHERE utilization = :utilization");
+
+    return query.setParameter(utilization, utilization)
+            .getSingleResult().toString();
+  }
 
 }
