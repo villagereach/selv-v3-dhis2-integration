@@ -110,7 +110,7 @@ public class StockmanagementRepository {
                              @Param(ORDERABLE) String orderable,
                              @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT SUM(line_items.quantity) AS quantity "
+            "SELECT COALESCE(SUM(line_items.quantity), 0) AS quantity "
                     + "FROM stockmanagement.stock_card_line_items AS line_items  "
                     + "JOIN stockmanagement.stock_cards AS cards "
                     + "ON line_items.stockcardid = cards.id "
@@ -146,7 +146,7 @@ public class StockmanagementRepository {
                                         @Param(ORDERABLE) String orderable,
                                         @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT SUM(line_items.quantity) AS quantity "
+            "SELECT COALESCE(SUM(line_items.quantity), 0) AS quantity "
                     + "FROM stockmanagement.stock_card_line_items AS line_items  "
                     + "JOIN stockmanagement.stock_cards AS cards "
                     + "ON line_items.stockcardid = cards.id "
@@ -182,7 +182,7 @@ public class StockmanagementRepository {
                                         @Param(ORDERABLE) String orderable,
                                         @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT SUM(line_items.quantity) AS quantity "
+            "SELECT COALESCE(SUM(line_items.quantity), 0) AS quantity "
                     + "FROM stockmanagement.stock_card_line_items AS line_items  "
                     + "JOIN stockmanagement.stock_cards AS cards "
                     + "ON line_items.stockcardid = cards.id "
