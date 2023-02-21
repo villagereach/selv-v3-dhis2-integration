@@ -55,7 +55,7 @@ public class AuditLogInitializerIntegrationTest {
   };
 
   private static final String[] DATASET_FIELDS = {
-      "id", "name", "dhisDatasetId", "cronExpression", "serverId"
+      "id", "name", "dhisDatasetId", "cronExpression", "timeOffset", "serverId"
   };
 
   private static final String[] DATAELEMENT_FIELDS = {
@@ -166,8 +166,9 @@ public class AuditLogInitializerIntegrationTest {
             .setParameter(1, id)
             .setParameter(2, "test-name")
             .setParameter(3, "idXfoem")
-            .setParameter(4, "0 5 * * *")
-            .setParameter(5, serverId)
+            .setParameter(4, "DAILY")
+            .setParameter(5, "90")
+            .setParameter(6, serverId)
             .executeUpdate();
   }
 

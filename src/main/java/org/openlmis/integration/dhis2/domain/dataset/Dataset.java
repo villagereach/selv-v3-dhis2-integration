@@ -60,6 +60,11 @@ public class Dataset extends BaseEntity {
   @Setter
   private String cronExpression;
 
+  @Column(nullable = false)
+  @Getter
+  @Setter
+  private Integer timeOffset;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "serverId", nullable = false)
   @Getter
@@ -90,6 +95,7 @@ public class Dataset extends BaseEntity {
     name = importer.getName();
     dhisDatasetId = importer.getDhisDatasetId();
     cronExpression = importer.getCronExpression();
+    timeOffset = importer.getTimeOffset();
   }
 
   /**
@@ -100,6 +106,7 @@ public class Dataset extends BaseEntity {
     exporter.setName(name);
     exporter.setDhisDatasetId(dhisDatasetId);
     exporter.setCronExpression(cronExpression);
+    exporter.setTimeOffset(timeOffset);
   }
 
   public interface Exporter extends BaseExporter {
@@ -109,6 +116,8 @@ public class Dataset extends BaseEntity {
     void setDhisDatasetId(String dhisDatasetId);
 
     void setCronExpression(String cronExpression);
+
+    void setTimeOffset(Integer timeOffset);
 
     void setServer(Server server);
 
@@ -121,6 +130,8 @@ public class Dataset extends BaseEntity {
     String getDhisDatasetId();
 
     String getCronExpression();
+
+    Integer getTimeOffset();
 
     Server getServer();
 

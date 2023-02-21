@@ -36,6 +36,9 @@ public class TestDataInitializerTest {
   private Resource datasetResource;
 
   @Mock
+  private Resource elementResource;
+
+  @Mock
   private Resource2Db loader;
 
   @InjectMocks
@@ -46,6 +49,7 @@ public class TestDataInitializerTest {
     initializer.run();
     verify(loader).insertToDbFromCsv("dhis2.server", serverResource);
     verify(loader).insertToDbFromCsv("dhis2.dataset", datasetResource);
+    verify(loader).insertToDbFromCsv("dhis2.data_element", elementResource);
   }
 
 }

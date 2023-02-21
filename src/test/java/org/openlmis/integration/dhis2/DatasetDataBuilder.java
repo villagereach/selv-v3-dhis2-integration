@@ -27,7 +27,8 @@ public class DatasetDataBuilder {
   private UUID id = UUID.randomUUID();
   private String name = "test-name";
   private String dhisDatasetId = "idXfoem";
-  private String cronExpression = "0 5 * * *";
+  private String cronExpression = "DAILY";
+  private Integer timeOffset = 150;
   private Server server = new ServerDataBuilder().build();
   private List<DataElement> dataElements = Collections.emptyList();
 
@@ -49,7 +50,7 @@ public class DatasetDataBuilder {
    * Builds new instance of Dataset as a new object (without id field).
    */
   public Dataset buildAsNew() {
-    return new Dataset(name, dhisDatasetId, cronExpression, server, dataElements);
+    return new Dataset(name, dhisDatasetId, cronExpression, timeOffset, server, dataElements);
   }
 
 }
