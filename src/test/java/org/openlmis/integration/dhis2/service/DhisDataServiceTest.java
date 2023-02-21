@@ -97,14 +97,12 @@ public class DhisDataServiceTest {
 
   @Test
   public void getDhisDataElementsShouldReturnDhisDatasetList() {
-    final ResponseEntity<LinkedHashMap<String, ArrayList<DhisDataset>>> response =
+    final ResponseEntity<LinkedHashMap<String, ArrayList<Object>>> response =
             mock(ResponseEntity.class);
-    LinkedHashMap<String, ArrayList<DhisDataset>> extractedResponse =
+    final LinkedHashMap<String, ArrayList<Object>> extractedResponse =
             mock(LinkedHashMap.class);
-    final DhisDataset dhisDataset1 = mock(DhisDataset.class);
-    final DhisDataset dhisDataset2 = mock(DhisDataset.class);
-    ArrayList<DhisDataset> dhisDataset =
-            new ArrayList<>(Arrays.asList(dhisDataset1, dhisDataset2));
+    final ArrayList<Object> dhisDataset = new ArrayList<>(
+            Arrays.asList(mock(DhisDataset.class), mock(DhisDataset.class)));
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
             any(ParameterizedTypeReference.class))
