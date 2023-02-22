@@ -16,6 +16,7 @@
 package org.openlmis.integration.dhis2.service.indicator;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.time.ZonedDateTime;
 import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
@@ -51,7 +52,7 @@ public class IndicatorService {
    */
   public BigDecimal generate(String source, IndicatorEnum indicatorEnum, Pair<ZonedDateTime,
           ZonedDateTime> period, String orderable, String facility) {
-    String calculatedIndicator = "";
+    BigDecimal calculatedIndicator = new BigDecimal("0", MathContext.DECIMAL64);
     switch (indicatorEnum) {
       case OPENING_BALANCE:
         calculatedIndicator = openingBalance.calculateValue(
@@ -83,7 +84,7 @@ public class IndicatorService {
         throw new ValidationMessageException(MessageKeys.ERROR_ENUMERATOR_NOT_EXIST);
     }
 
-    return new BigDecimal(calculatedIndicator);
+    return calculatedIndicator;
   }
 
   /**

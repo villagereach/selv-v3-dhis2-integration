@@ -15,6 +15,7 @@
 
 package org.openlmis.integration.dhis2.service.indicator;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public interface IndicatorSupplier {
 
   String getIndicatorName();
 
-  String calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
+  BigDecimal calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
                             String facility, String orderable);
 
 }

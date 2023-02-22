@@ -17,6 +17,8 @@ package org.openlmis.integration.dhis2.service.indicator;
 
 import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_ENUMERATOR_NOT_EXIST;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.time.ZonedDateTime;
 import org.openlmis.integration.dhis2.domain.enumerator.IndicatorEnum;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
@@ -44,15 +46,20 @@ public class OpeningBalance implements IndicatorSupplier {
   /**
    * Calculate opening balance.
    */
-  public String calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
+  public BigDecimal calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
                                    String orderable, String facility) {
+    String calculatedIndicator;
     if (source.equals(STOCKMANAGEMENT)) {
-      return stockmanagementRepository.findOpeningBalance(period.getFirst(), orderable, facility);
+      calculatedIndicator = stockmanagementRepository.findOpeningBalance(
+              period.getFirst(), orderable, facility);
     } else if (source.equals(REQUISITION)) {
-      return requisitionRepository.findOpeningBalance(period.getFirst(), orderable, facility);
+      calculatedIndicator = requisitionRepository.findOpeningBalance(
+              period.getFirst(), orderable, facility);
     } else {
       throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
     }
+
+    return new BigDecimal(calculatedIndicator, MathContext.DECIMAL64);
   }
 
 }

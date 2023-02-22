@@ -19,16 +19,18 @@ import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PeriodGeneratorService {
 
-  private final Clock clock;
+  @Autowired
+  private Clock clock;
 
   public PeriodGeneratorService() {
-    this.clock = Clock.systemDefaultZone();
+
   }
 
   public PeriodGeneratorService(Clock clock) {
