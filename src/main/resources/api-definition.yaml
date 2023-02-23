@@ -25,6 +25,7 @@ schemas:
 - datasetPage: !include schemas/datasetPage.json
 - dataElement: !include schemas/dataElement.json
 - dataElementPage: !include schemas/dataElementPage.json
+- dhisDatasetList: !include schemas/dhisDatasetList.json
 
 traits:
 - secured:
@@ -655,6 +656,27 @@ resourceTypes:
                     Keep-Alive:
                   body:
                     application/json:
+      /dhisDatasets:
+        displayName: dhis datasets
+        get:
+          is: [ secured ]
+          description: Get all dhis datasets.
+          responses:
+            200:
+              headers:
+                Keep-Alive:
+              body:
+                application/json:
+                  schema: dhisDatasetList
+            401:
+              headers:
+                Keep-Alive:
+              body:
+                application/json:
+            403:
+              body:
+                application/json:
+                  schema: localizedErrorResponse
       /auditLog:
         description: This represents the audit log for all <<resourcePathName|!singularize>> resources.
         get:
