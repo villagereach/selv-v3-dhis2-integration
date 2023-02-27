@@ -15,7 +15,6 @@
 
 package org.openlmis.integration.dhis2.web.dataset;
 
-import java.util.List;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
@@ -23,9 +22,12 @@ import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
+import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.server.ServerController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,12 +60,13 @@ public class DhisDatasetController extends BaseController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<DhisDataset> getAllDatasets(@PathVariable("serverId") UUID serverId) {
+  public Page<DhisDataset> getAllDatasets(@PathVariable("serverId") UUID serverId,
+                                          Pageable pageable) {
     Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
-    return dhisDataService.getDhisDatasets(server.getUrl(),
-            server.getUsername(), server.getPassword());
+    return Pagination.getPage(dhisDataService.getDhisDatasets(server.getUrl(),
+            server.getUsername(), server.getPassword()), pageable);
   }
 
 }
