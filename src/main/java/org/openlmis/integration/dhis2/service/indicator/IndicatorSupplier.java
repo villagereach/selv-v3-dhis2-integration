@@ -13,31 +13,22 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.indicator;
 
-import java.time.Clock;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class PeriodGenerator {
+@Component
+public interface IndicatorSupplier {
 
-  private final Clock clock;
+  String STOCKMANAGEMENT = "Stock Management";
+  String REQUISITION = "Requisition";
 
-  public PeriodGenerator() {
-    this.clock = Clock.systemDefaultZone();
-  }
+  String getIndicatorName();
 
-  public PeriodGenerator(Clock clock) {
-    this.clock = clock;
-  }
-
-  public Pair<ZonedDateTime, ZonedDateTime> generateRange(
-          DhisPeriod periodEnum, Long offsetMinutes) {
-    Pair<ZonedDateTime, ZonedDateTime> range = periodEnum.generate(ZonedDateTime.now(this.clock));
-    return Pair.of(range.getFirst().plusMinutes(offsetMinutes), range.getSecond());
-  }
+  BigDecimal calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
+                            String facility, String orderable);
 
 }
