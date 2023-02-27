@@ -16,7 +16,6 @@
 package org.openlmis.integration.dhis2.repository.indicator;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -26,15 +25,49 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RequisitionRepository {
 
+  static final String START_DATE = "startDate";
+  static final String END_DATE = "endDate";
+  static final String ORDERABLE = "orderable";
+  static final String FACILITY = "facility";
+
   @PersistenceContext
   EntityManager entityManager;
 
   /**
    * Retrieves opening balance from requisition for a given period.
    */
-  public String findOpeningBalance(@Param("startDate") ZonedDateTime startDate,
-                                   @Param("orderable") String orderable,
-                                   @Param("facility") String facility) {
+  public Long findOpeningBalance(@Param(START_DATE) ZonedDateTime startDate,
+                                   @Param(ORDERABLE) String orderable,
+                                   @Param(FACILITY) String facility) {
+    Query query = entityManager.createNativeQuery(
+            "SELECT line_items.beginningbalance AS bb "
+                    + "FROM requisition.requisition_line_items AS line_items "
+                    + "JOIN referencedata.orderables AS products "
+                    + "ON line_items.orderableid = products.id "
+                    + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id "
+                    + "JOIN referencedata.facilities AS facilities "
+                    + "ON facilities.id = req.facilityid "
+                    + "WHERE products.versionnumber = "
+                    + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
+                    + "WHERE o2.id = products.id) "
+                    + "AND line_items.beginningbalance NOTNULL "
+                    + "AND req.createddate <= :startDate "
+                    + "AND products.fullproductname = :orderable "
+                    + "AND facilities.code = :facility "
+                    + "ORDER BY req.createddate DESC LIMIT 1");
+
+    return Long.parseLong(query.setParameter(START_DATE, startDate)
+            .setParameter(ORDERABLE, orderable)
+            .setParameter(FACILITY, facility)
+            .getSingleResult().toString());
+  }
+
+  /**
+   * Retrieves closing balance from requisition for a given period.
+   */
+  public Long findClosingBalance(@Param(END_DATE) ZonedDateTime endDate,
+                                   @Param(ORDERABLE) String orderable,
+                                   @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
             "SELECT line_items.stockonhand AS soh "
                     + "FROM requisition.requisition_line_items AS line_items "
@@ -46,20 +79,45 @@ public class RequisitionRepository {
                     + "WHERE products.versionnumber = "
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
-                    + "AND req.createddate <= :startDate "
+                    + "AND line_items.stockonhand NOTNULL "
+                    + "AND req.createddate <= :endDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility "
                     + "ORDER BY req.createddate DESC LIMIT 1");
 
-    List<?> result = query.setParameter("startDate", startDate)
-            .setParameter("orderable", orderable)
-            .setParameter("facility", facility)
-            .getResultList();
+    return Long.parseLong(query.setParameter(END_DATE, endDate)
+            .setParameter(ORDERABLE, orderable)
+            .setParameter(FACILITY, facility)
+            .getSingleResult().toString());
+  }
 
-    if (result == null || result.isEmpty() || result.get(0) == null) {
-      return "0";
-    }
-    return result.get(0).toString();
+  /**
+   * Retrieves received amount of products from requisition for a given period.
+   */
+  public Double findReceived(@Param(END_DATE) ZonedDateTime endDate,
+                                   @Param(ORDERABLE) String orderable,
+                                   @Param(FACILITY) String facility) {
+    Query query = entityManager.createNativeQuery(
+            "SELECT line_items.totalreceivedquantity AS received "
+                    + "FROM requisition.requisition_line_items AS line_items "
+                    + "JOIN referencedata.orderables AS products "
+                    + "ON line_items.orderableid = products.id "
+                    + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id "
+                    + "JOIN referencedata.facilities AS facilities "
+                    + "ON facilities.id = req.facilityid "
+                    + "WHERE products.versionnumber = "
+                    + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
+                    + "WHERE o2.id = products.id) "
+                    + "AND line_items.totalreceivedquantity NOTNULL "
+                    + "AND req.createddate <= :endDate "
+                    + "AND products.fullproductname = :orderable "
+                    + "AND facilities.code = :facility "
+                    + "ORDER BY req.createddate desc LIMIT 1");
+
+    return Double.parseDouble(query.setParameter(END_DATE, endDate)
+            .setParameter(ORDERABLE, orderable)
+            .setParameter(FACILITY, facility)
+            .getSingleResult().toString());
   }
 
 }

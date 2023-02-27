@@ -34,6 +34,14 @@ public class DhisDataset {
 
   @Getter
   @Setter
+  private String id;
+
+  @Getter
+  @Setter
+  private String displayName;
+
+  @Getter
+  @Setter
   private String periodType;
 
   @Setter
@@ -42,7 +50,6 @@ public class DhisDataset {
   @Getter
   @Setter
   private List<OrganisationUnit> organisationUnits;
-
 
   /**
    * Returns a list of data elements for this dataset.

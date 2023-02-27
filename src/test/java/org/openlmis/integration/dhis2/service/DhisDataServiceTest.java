@@ -25,6 +25,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +38,7 @@ import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +93,37 @@ public class DhisDataServiceTest {
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisDataSetById(DATASET_ID, SERVER_URL, USERNAME, PASSWORD);
+  }
+
+  @Test
+  public void getDhisDataElementsShouldReturnDhisDatasetList() {
+    final ResponseEntity<LinkedHashMap<String, ArrayList<Object>>> response =
+            mock(ResponseEntity.class);
+    final LinkedHashMap<String, ArrayList<Object>> extractedResponse =
+            mock(LinkedHashMap.class);
+    final ArrayList<Object> dhisDataset = new ArrayList<>(
+            Arrays.asList(mock(DhisDataset.class), mock(DhisDataset.class)));
+
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            any(ParameterizedTypeReference.class))
+    ).thenReturn(response);
+
+    when(response.getBody()).thenReturn(extractedResponse);
+    when(extractedResponse.get("dataSets")).thenReturn(dhisDataset);
+
+    ArrayList<DhisDataset> newDhisDatasets = dhisDataService.getDhisDatasets(SERVER_URL,
+            USERNAME, PASSWORD);
+    assertThat(newDhisDatasets, is(equalTo(dhisDataset)));
+  }
+
+  @Test(expected = RestOperationException.class)
+  public void getDhisDatasetsShouldThrowNotFoundException() {
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            eq(new ParameterizedTypeReference
+                    <LinkedHashMap<String, ArrayList<Object>>>() {}))
+    ).thenThrow(HttpClientErrorException.class);
+
+    dhisDataService.getDhisDatasets(SERVER_URL, USERNAME, PASSWORD);
   }
 
   @Test
