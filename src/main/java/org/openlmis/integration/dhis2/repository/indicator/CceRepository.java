@@ -33,27 +33,27 @@ public class CceRepository {
   /**
    * Retrieves CCE count for a given status.
    */
-  public String findCceCountByStatus(@Param(STATUS) String status) {
+  public Long findCceCountByStatus(@Param(STATUS) String status) {
     Query query = entityManager.createNativeQuery(
             "SELECT COUNT(inventory.functionalstatus) FROM "
                     + "cce.cce_inventory_items AS inventory "
                     + "WHERE functionalstatus = :status");
 
-    return query.setParameter(status, status)
-            .getSingleResult().toString();
+    return Long.parseLong(query.setParameter(status, status)
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves CCE count for a given utilization.
    */
-  public String findCceCountByUtilization(@Param(UTILIZATION) String utilization) {
+  public Long findCceCountByUtilization(@Param(UTILIZATION) String utilization) {
     Query query = entityManager.createNativeQuery(
             "SELECT COUNT(inventory.utilization) FROM "
                     + "cce.cce_inventory_items AS inventory "
                     + "WHERE utilization = :utilization");
 
-    return query.setParameter(utilization, utilization)
-            .getSingleResult().toString();
+    return Long.parseLong(query.setParameter(utilization, utilization)
+            .getSingleResult().toString());
   }
 
 }

@@ -48,7 +48,7 @@ public class OpeningBalance implements IndicatorSupplier {
    */
   public BigDecimal calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
                                    String orderable, String facility) {
-    String calculatedIndicator;
+    Long calculatedIndicator;
     if (source.equals(STOCKMANAGEMENT)) {
       calculatedIndicator = stockmanagementRepository.findOpeningBalance(
               period.getFirst(), orderable, facility);
@@ -59,7 +59,7 @@ public class OpeningBalance implements IndicatorSupplier {
       throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
     }
 
-    return new BigDecimal(calculatedIndicator, MathContext.DECIMAL64);
+    return new BigDecimal(calculatedIndicator.toString(), MathContext.DECIMAL64);
   }
 
 }

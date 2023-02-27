@@ -37,7 +37,7 @@ public class StockmanagementRepository {
   /**
    * Retrieves opening balance from stockmanagement for a given period.
    */
-  public String findOpeningBalance(@Param(START_DATE) ZonedDateTime startDate,
+  public Long findOpeningBalance(@Param(START_DATE) ZonedDateTime startDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
@@ -62,16 +62,16 @@ public class StockmanagementRepository {
                     + "AND facilities.code = :facility  "
                     + "ORDER BY line_items.occurreddate DESC LIMIT 1");
 
-    return query.setParameter(START_DATE, startDate)
+    return Long.parseLong(query.setParameter(START_DATE, startDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves closing balance from stockmanagement for a given period.
    */
-  public String findClosingBalance(@Param(END_DATE) ZonedDateTime endDate,
+  public Long findClosingBalance(@Param(END_DATE) ZonedDateTime endDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
@@ -96,16 +96,16 @@ public class StockmanagementRepository {
                     + "AND facilities.code = :facility  "
                     + "ORDER BY line_items.occurreddate DESC LIMIT 1");
 
-    return query.setParameter(END_DATE, endDate)
+    return Long.parseLong(query.setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves received amount of products from stockmanagement for a given period.
    */
-  public String findReceived(@Param(START_DATE) ZonedDateTime startDate,
+  public Double findReceived(@Param(START_DATE) ZonedDateTime startDate,
                              @Param(END_DATE) ZonedDateTime endDate,
                              @Param(ORDERABLE) String orderable,
                              @Param(FACILITY) String facility) {
@@ -131,17 +131,17 @@ public class StockmanagementRepository {
                     + "AND products.fullproductname = :orderable  "
                     + "AND facilities.code = :facility ");
 
-    return query.setParameter(START_DATE, startDate)
+    return Double.parseDouble(query.setParameter(START_DATE, startDate)
             .setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves sum of all positive adjustments from stockmanagement for a given period.
    */
-  public String findPositiveAdjustments(@Param(START_DATE) ZonedDateTime startDate,
+  public Double findPositiveAdjustments(@Param(START_DATE) ZonedDateTime startDate,
                                         @Param(END_DATE) ZonedDateTime endDate,
                                         @Param(ORDERABLE) String orderable,
                                         @Param(FACILITY) String facility) {
@@ -167,17 +167,17 @@ public class StockmanagementRepository {
                     + "AND products.fullproductname = :orderable  "
                     + "AND facilities.code = :facility ");
 
-    return query.setParameter(START_DATE, startDate)
+    return Double.parseDouble(query.setParameter(START_DATE, startDate)
             .setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves sum of all negative adjustments from stockmanagement for a given period.
    */
-  public String findNegativeAdjustments(@Param(START_DATE) ZonedDateTime startDate,
+  public Double findNegativeAdjustments(@Param(START_DATE) ZonedDateTime startDate,
                                         @Param(END_DATE) ZonedDateTime endDate,
                                         @Param(ORDERABLE) String orderable,
                                         @Param(FACILITY) String facility) {
@@ -203,11 +203,11 @@ public class StockmanagementRepository {
                     + "AND products.fullproductname = :orderable  "
                     + "AND facilities.code = :facility ");
 
-    return query.setParameter(START_DATE, startDate)
+    return Double.parseDouble(query.setParameter(START_DATE, startDate)
             .setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
 }

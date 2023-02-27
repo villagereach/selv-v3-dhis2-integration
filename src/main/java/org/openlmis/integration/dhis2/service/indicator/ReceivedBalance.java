@@ -48,7 +48,7 @@ public class ReceivedBalance implements IndicatorSupplier {
    */
   public BigDecimal calculateValue(String source, Pair<ZonedDateTime, ZonedDateTime> period,
                                    String orderable, String facility) {
-    String calculatedIndicator;
+    Double calculatedIndicator;
     if (source.equals(STOCKMANAGEMENT)) {
       calculatedIndicator = stockmanagementRepository.findReceived(
               period.getFirst(), period.getSecond(), orderable, facility);
@@ -59,7 +59,7 @@ public class ReceivedBalance implements IndicatorSupplier {
       throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
     }
 
-    return new BigDecimal(calculatedIndicator, MathContext.DECIMAL64);
+    return new BigDecimal(calculatedIndicator.toString(), MathContext.DECIMAL64);
   }
 
 }

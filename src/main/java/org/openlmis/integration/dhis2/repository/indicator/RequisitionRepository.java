@@ -36,7 +36,7 @@ public class RequisitionRepository {
   /**
    * Retrieves opening balance from requisition for a given period.
    */
-  public String findOpeningBalance(@Param(START_DATE) ZonedDateTime startDate,
+  public Long findOpeningBalance(@Param(START_DATE) ZonedDateTime startDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
@@ -56,16 +56,16 @@ public class RequisitionRepository {
                     + "AND facilities.code = :facility "
                     + "ORDER BY req.createddate DESC LIMIT 1");
 
-    return query.setParameter(START_DATE, startDate)
+    return Long.parseLong(query.setParameter(START_DATE, startDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves closing balance from requisition for a given period.
    */
-  public String findClosingBalance(@Param(END_DATE) ZonedDateTime endDate,
+  public Long findClosingBalance(@Param(END_DATE) ZonedDateTime endDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
@@ -85,16 +85,16 @@ public class RequisitionRepository {
                     + "AND facilities.code = :facility "
                     + "ORDER BY req.createddate DESC LIMIT 1");
 
-    return query.setParameter(END_DATE, endDate)
+    return Long.parseLong(query.setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
   /**
    * Retrieves received amount of products from requisition for a given period.
    */
-  public String findReceived(@Param(END_DATE) ZonedDateTime endDate,
+  public Double findReceived(@Param(END_DATE) ZonedDateTime endDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
@@ -114,10 +114,10 @@ public class RequisitionRepository {
                     + "AND facilities.code = :facility "
                     + "ORDER BY req.createddate desc LIMIT 1");
 
-    return query.setParameter(END_DATE, endDate)
+    return Double.parseDouble(query.setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
-            .getSingleResult().toString();
+            .getSingleResult().toString());
   }
 
 }
