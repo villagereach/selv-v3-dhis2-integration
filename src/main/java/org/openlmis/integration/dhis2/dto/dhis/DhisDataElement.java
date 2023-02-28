@@ -15,51 +15,24 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
  * Objects of this class represent data retrieved from the DHIS2 API.
- * Dataset is the collection of {@link DhisDataElement}. A dataset doesn't store values,
- * it's just a grouped collection of data, so deleting a given dataset doesn't delete
- * the data values.
+ * Data element tells you <i>what</i> data was recorded. The name of the data element describes
+ * what is being collected or analysed. For instance, if the data element represents a count of
+ * something, its name describes what is being counted.
+ * Data element doesn't contain a calculated value.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
+@Getter
+@Setter
 @ToString
-public class DhisDataset {
+public class DhisDataElement {
 
-  @Getter
-  @Setter
   private String id;
-
-  @Getter
-  @Setter
-  private String displayName;
-
-  @Getter
-  @Setter
-  private String periodType;
-
-  @Setter
-  private List<Map<Object, DhisDataElement>> dataSetElements;
-
-  @Getter
-  @Setter
-  private List<OrganisationUnit> organisationUnits;
-
-  /**
-   * Returns a list of data elements for this dataset.
-   *
-   * @return list of data elements.
-   */
-  public List<DhisDataElement> getDataSetElements() {
-    return dataSetElements.stream()
-            .flatMap(e -> e.values().stream())
-            .collect(Collectors.toList());
-  }
+  private String name;
 
 }

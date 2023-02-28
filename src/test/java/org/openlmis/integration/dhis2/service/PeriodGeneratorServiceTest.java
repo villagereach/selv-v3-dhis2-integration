@@ -31,7 +31,7 @@ import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.springframework.data.util.Pair;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PeriodGeneratorTest {
+public class PeriodGeneratorServiceTest {
 
   private static final Instant mondayInstant = Instant.parse("2023-01-16T00:00:00.00Z");
   private static final Instant tuesdayInstant = Instant.parse("2023-01-17T00:00:00.00Z");
@@ -53,17 +53,17 @@ public class PeriodGeneratorTest {
   private static final ZonedDateTime februaryFirst =
           ZonedDateTime.ofInstant(februaryFirstInstant, zoneId);
 
-  private PeriodGenerator periodGenerator;
+  private PeriodGeneratorService periodGeneratorService;
 
   @Before
   public void setUp() {
-    periodGenerator = new PeriodGenerator(clock);
+    periodGeneratorService = new PeriodGeneratorService(clock);
   }
 
   @Test
   public void shouldGenerateCorrectDailyTimeRange() {
     Pair<ZonedDateTime, ZonedDateTime> range =
-            periodGenerator.generateRange(DhisPeriod.DAILY, (long) 90);
+            periodGeneratorService.generateRange(DhisPeriod.DAILY, (long) 90);
 
     ZonedDateTime dayStart = tuesdayMidnight.with(LocalTime.of(1, 30));
 
@@ -74,7 +74,7 @@ public class PeriodGeneratorTest {
   @Test
   public void shouldGenerateCorrectWeeklyTimeRange() {
     Pair<ZonedDateTime, ZonedDateTime> range =
-            periodGenerator.generateRange(DhisPeriod.WEEKLY_MONDAY, (long) 90);
+            periodGeneratorService.generateRange(DhisPeriod.WEEKLY_MONDAY, (long) 90);
 
     ZonedDateTime weekStart = mondayMidnight.with(LocalTime.of(1, 30));
     ZonedDateTime weekEnd = mondayMidnight.plusDays(7);
@@ -86,7 +86,7 @@ public class PeriodGeneratorTest {
   @Test
   public void shouldGenerateCorrectMonthlyTimeRange() {
     Pair<ZonedDateTime, ZonedDateTime> range =
-            periodGenerator.generateRange(DhisPeriod.MONTHLY, (long) 90);
+            periodGeneratorService.generateRange(DhisPeriod.MONTHLY, (long) 90);
 
     ZonedDateTime monthStart = januaryFirst.with(LocalTime.of(1, 30));
 

@@ -15,41 +15,39 @@
 
 package org.openlmis.integration.dhis2;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
-import org.openlmis.integration.dhis2.domain.server.Server;
 
-public class DatasetDataBuilder {
+public class DataElementDataBuilder {
 
   private UUID id = UUID.randomUUID();
   private String name = "test-name";
-  private String dhisDatasetId = "idXfoem";
-  private String cronExpression = "0 5 * * *";
-  private Server server = new ServerDataBuilder().build();
-  private List<DataElement> dataElements = Collections.emptyList();
+  private String source = "test-source";
+  private String indicator = "test-indicator";
+  private String orderable = "test-orderable";
+  private String element = "test-element";
+  private Dataset dataset = new DatasetDataBuilder().build();
 
-  public DatasetDataBuilder withServer(Server server) {
-    this.server = server;
+  public DataElementDataBuilder withDataset(Dataset dataset) {
+    this.dataset = dataset;
     return this;
   }
 
   /**
    * Builds new instance of Dataset (with id field).
    */
-  public Dataset build() {
-    Dataset dataset = buildAsNew();
-    dataset.setId(id);
-    return dataset;
+  public DataElement build() {
+    DataElement dataElement = buildAsNew();
+    dataElement.setId(id);
+    return dataElement;
   }
 
   /**
    * Builds new instance of Dataset as a new object (without id field).
    */
-  public Dataset buildAsNew() {
-    return new Dataset(name, dhisDatasetId, cronExpression, server, dataElements);
+  public DataElement buildAsNew() {
+    return new DataElement(name, source, indicator, orderable, element, dataset);
   }
 
 }

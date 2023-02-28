@@ -25,14 +25,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
+import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +52,7 @@ public class DhisDataServiceTest {
   private static final String USERNAME = "username";
   private static final String PASSWORD = "p@ssw0rd";
   private static final String DATASET_ID = "dataset-id";
+  private DataValueSet dataValueSet;
 
   @Mock
   private RestTemplate restTemplate;
@@ -59,12 +66,13 @@ public class DhisDataServiceTest {
   @Before
   public void setUp() {
     final String token = "r4nd0m70k3n";
+    dataValueSet = mock(DataValueSet.class);
     when(authService.obtainAccessToken(anyString(), anyString(), anyString())).thenReturn(token);
   }
 
   @Test
-  public void shouldReturnDhisDataset() {
-    ResponseEntity<DhisDataset> response = mock(ResponseEntity.class);
+  public void getDhisDataSetByIdShouldReturnDhisDataset() {
+    final ResponseEntity<DhisDataset> response = mock(ResponseEntity.class);
     final DhisDataset dhisDataset = mock(DhisDataset.class);
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
@@ -79,13 +87,68 @@ public class DhisDataServiceTest {
   }
 
   @Test(expected = RestOperationException.class)
-  public void shouldThrowNotFoundException() {
+  public void getDhisDataSetByIdShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
             eq(DhisDataset.class))
     ).thenThrow(HttpClientErrorException.class);
 
-    dhisDataService.getDhisDataSetById(DATASET_ID, SERVER_URL,
+    dhisDataService.getDhisDataSetById(DATASET_ID, SERVER_URL, USERNAME, PASSWORD);
+  }
+
+  @Test
+  public void getDhisDataElementsShouldReturnDhisDatasetList() {
+    final ResponseEntity<LinkedHashMap<String, ArrayList<Object>>> response =
+            mock(ResponseEntity.class);
+    final LinkedHashMap<String, ArrayList<Object>> extractedResponse =
+            mock(LinkedHashMap.class);
+    final ArrayList<Object> dhisDataset = new ArrayList<>(
+            Arrays.asList(mock(DhisDataset.class), mock(DhisDataset.class)));
+
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            any(ParameterizedTypeReference.class))
+    ).thenReturn(response);
+
+    when(response.getBody()).thenReturn(extractedResponse);
+    when(extractedResponse.get("dataSets")).thenReturn(dhisDataset);
+
+    ArrayList<DhisDataset> newDhisDatasets = dhisDataService.getDhisDatasets(SERVER_URL,
             USERNAME, PASSWORD);
+    assertThat(newDhisDatasets, is(equalTo(dhisDataset)));
+  }
+
+  @Test(expected = RestOperationException.class)
+  public void getDhisDatasetsShouldThrowNotFoundException() {
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            eq(new ParameterizedTypeReference
+                    <LinkedHashMap<String, ArrayList<Object>>>() {}))
+    ).thenThrow(HttpClientErrorException.class);
+
+    dhisDataService.getDhisDatasets(SERVER_URL, USERNAME, PASSWORD);
+  }
+
+  @Test
+  public void createDataValueSetShouldReturnDhisResponseBody() {
+    final ResponseEntity<DhisResponseBody> response = mock(ResponseEntity.class);
+    final DhisResponseBody dhisResponseBody = mock(DhisResponseBody.class);
+
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class),
+            eq(DhisResponseBody.class))
+    ).thenReturn(response);
+
+    when(response.getBody()).thenReturn(dhisResponseBody);
+
+    DhisResponseBody newDhisResponseBody = dhisDataService.createDataValueSet(dataValueSet,
+            SERVER_URL, USERNAME, PASSWORD);
+    assertThat(newDhisResponseBody, is(equalTo(dhisResponseBody)));
+  }
+
+  @Test(expected = RestOperationException.class)
+  public void createDataValueSetShouldThrowNotFoundException() {
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class),
+            eq(DhisResponseBody.class))
+    ).thenThrow(HttpClientErrorException.class);
+
+    dhisDataService.createDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
   }
 
 }

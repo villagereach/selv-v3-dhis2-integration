@@ -15,6 +15,8 @@
 
 package org.openlmis.integration.dhis2;
 
+import java.time.Clock;
+import java.time.ZoneId;
 import java.util.Locale;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.callback.Callback;
@@ -51,6 +53,9 @@ public class Application {
 
   @Value("${defaultLocale}")
   private Locale locale;
+
+  @Value("${time.zoneId}")
+  private String timeZoneId;
 
   @Autowired
   private DialectName dialectName;
@@ -98,6 +103,16 @@ public class Application {
   @Bean
   public Callback flywayCallback() {
     return new ExportSchemaFlywayCallback();
+  }
+
+  /**
+   * Creates new Clock.
+   *
+   * @return Created clock.
+   */
+  @Bean
+  public Clock clock() {
+    return Clock.system(ZoneId.of(timeZoneId));
   }
 
   /**

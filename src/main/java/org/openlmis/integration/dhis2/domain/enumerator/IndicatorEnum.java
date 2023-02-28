@@ -13,26 +13,17 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.dhis;
+package org.openlmis.integration.dhis2.domain.enumerator;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+public enum IndicatorEnum {
 
-/**
- * Objects of this class represent data retrieved from the DHIS2 API.
- * Data element tells you <i>what</i> data was recorded. The name of the data element describes
- * what is being collected or analysed. For instance, if the data element represents a count of
- * something, its name describes what is being counted.
- * Data element doesn't contain a calculated value.
- * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
- */
-@Getter
-@Setter
-@ToString
-public class DataElement {
-
-  private String id;
-  private String name;
+  OPENING_BALANCE,
+  RECEIVED,
+  CLOSING_BALANCE,
+  CCE_ALLOCATED,
+  CCE_OPERATIONAL,
+  NEGATIVE_ADJUSTMENTS,
+  POSITIVE_ADJUSTMENTS,
+  ADJUSTMENTS_BY_REASON
 
 }

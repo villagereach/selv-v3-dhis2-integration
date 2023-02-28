@@ -20,13 +20,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.EnumMap;
 import java.util.function.Function;
 import org.springframework.data.util.Pair;
 
 public enum DhisPeriod {
 
   DAILY(DhisPeriod::generateForDaily),
-  WEEKLY_MONDAY(now -> DhisPeriod.generateForWeekly((ZonedDateTime) now, DayOfWeek.MONDAY)),
+  WEEKLY_MONDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.MONDAY)),
   WEEKLY_TUESDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.TUESDAY)),
   WEEKLY_WEDNESDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.WEDNESDAY)),
   WEEKLY_THURSDAY(now -> DhisPeriod.generateForWeekly(now, DayOfWeek.THURSDAY)),
@@ -79,6 +80,27 @@ public enum DhisPeriod {
    */
   public Pair<ZonedDateTime, ZonedDateTime> generate(ZonedDateTime now) {
     return this.generator.apply(now);
+  }
+
+  /**
+   * Returns ISO code for a given period enumerator.
+   *
+   * @param periodKey Period enumerator
+   * @return ISO date format
+   */
+  public static String getIsoPattern(DhisPeriod periodKey) {
+    EnumMap<DhisPeriod, String> isoPatternMap
+            = new EnumMap<>(DhisPeriod.class);
+    isoPatternMap.put(DAILY, "yyyyMMdd");
+    isoPatternMap.put(WEEKLY_MONDAY, "yyyyMonWn");
+    isoPatternMap.put(WEEKLY_TUESDAY, "yyyyTueWn");
+    isoPatternMap.put(WEEKLY_WEDNESDAY, "yyyyWedWn");
+    isoPatternMap.put(WEEKLY_THURSDAY, "yyyyThuWn");
+    isoPatternMap.put(WEEKLY_FRIDAY, "yyyyFriWn");
+    isoPatternMap.put(WEEKLY_SATURDAY, "yyyySatWn");
+    isoPatternMap.put(WEEKLY_SUNDAY, "yyyySunWn");
+    isoPatternMap.put(MONTHLY, "yyyyMM");
+    return isoPatternMap.get(periodKey);
   }
 
 }

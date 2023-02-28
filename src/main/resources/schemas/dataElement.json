@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DataElement",
+  "description": "Single data element instance",
+  "properties": {
+    "id": {
+      "type": "string",
+      "title": "id"
+    },
+    "name": {
+      "type": "string",
+      "title": "name"
+    },
+    "source": {
+      "type": "string",
+      "title": "source"
+    },
+    "indicator": {
+      "type": "string",
+      "title": "indicator"
+    },
+    "orderable": {
+      "type": "string",
+      "title": "orderable"
+    },
+    "element": {
+      "type": "string",
+      "title": "element"
+    },
+    "datasetDto": {
+      "type": "object",
+      "title": "datasetDto",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "id"
+        },
+        "name": {
+          "type": "string",
+          "title": "name"
+        },
+        "url": {
+          "type": "string",
+          "title": "url"
+        },
+        "username": {
+          "type": "string",
+          "title": "username"
+        },
+        "password": {
+          "type": "string",
+          "title": "password"
+        }
+      },
+      "required": ["id"]
+    }
+  },
+    "required": [
+      "name",
+      "source",
+      "indicator",
+      "orderable",
+      "element",
+      "datasetDto"
+    ]
+}

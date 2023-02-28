@@ -24,6 +24,16 @@ import org.openlmis.integration.dhis2.util.Message;
 public class ValidationMessageException extends BaseMessageException {
 
   /**
+   * Create new validation exception with the given message key and original error.
+   * Helper method that uses {@link #ValidationMessageException(Message)}.
+   * @param messageKey the messageKey of a {@link Message}.
+   * @param cause original error.
+   */
+  public ValidationMessageException(String messageKey, Throwable cause) {
+    super(messageKey, cause);
+  }
+
+  /**
    * Create new validation exception with the given message key.  Helper method that
    * uses {@link #ValidationMessageException(Message)}.
    * @param messageKey the messageKey of a {@link Message}.
