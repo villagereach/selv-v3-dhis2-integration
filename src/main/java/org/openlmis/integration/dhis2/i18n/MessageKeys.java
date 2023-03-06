@@ -27,6 +27,8 @@ public abstract class MessageKeys {
   private static final String SERVER = "server";
   private static final String DATASET = "dataset";
   private static final String ELEMENT = "element";
+  private static final String SCHEDULE = "schedule";
+  private static final String FACILITY = "facility";
   private static final String JAVERS = "javers";
 
   private static final String ID = "id";
@@ -63,8 +65,6 @@ public abstract class MessageKeys {
 
   public static final String ERROR_DATASET_NOT_FOUND = join(ERROR_PREFIX, DATASET, NOT_FOUND);
   public static final String ERROR_DATASET_ID_MISMATCH = join(ERROR_PREFIX, DATASET, ID, MISMATCH);
-  public static final String ERROR_DATASET_CODE_DUPLICATED =
-          join(ERROR_PREFIX, DATASET, CODE, DUPLICATED);
 
   public static final String ERROR_DATAELEMENT_NOT_FOUND =
           join(ERROR_PREFIX, ELEMENT, NOT_FOUND);
@@ -72,6 +72,10 @@ public abstract class MessageKeys {
           join(ERROR_PREFIX, ELEMENT, ID, MISMATCH);
   public static final String ERROR_DATAELEMENT_CODE_DUPLICATED =
           join(ERROR_PREFIX, ELEMENT, CODE, DUPLICATED);
+
+  public static final String ERROR_SCHEDULE_NOT_FOUND = join(ERROR_PREFIX, SCHEDULE, NOT_FOUND);
+
+  public static final String ERROR_FACILITY_NOT_FOUND = join(ERROR_PREFIX, FACILITY, NOT_FOUND);
 
   public static final String ERROR_ENUMERATOR_NOT_EXIST =
           join(ERROR_PREFIX, ENUMERATOR, NOT_EXIST);

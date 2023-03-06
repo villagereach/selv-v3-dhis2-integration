@@ -28,7 +28,7 @@ public class DatasetDataBuilder {
   private String name = "test-name";
   private String dhisDatasetId = "idXfoem";
   private String cronExpression = "DAILY";
-  private Integer timeOffset = 150;
+  private int timeOffset = 150;
   private Server server = new ServerDataBuilder().build();
   private List<DataElement> dataElements = Collections.emptyList();
 

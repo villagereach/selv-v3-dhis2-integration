@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.schedule;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -30,7 +30,6 @@ public class PeriodGeneratorService {
   private Clock clock;
 
   public PeriodGeneratorService() {
-
   }
 
   public PeriodGeneratorService(Clock clock) {
@@ -45,14 +44,14 @@ public class PeriodGeneratorService {
    * @return Pair of starting and end date
    */
   public Pair<ZonedDateTime, ZonedDateTime> generateRange(
-          DhisPeriod periodEnum, Long offsetMinutes) {
+          DhisPeriod periodEnum, int offsetMinutes) {
     Pair<ZonedDateTime, ZonedDateTime> range =
             periodEnum.generate(ZonedDateTime.now(this.clock));
     return Pair.of(range.getFirst().plusMinutes(offsetMinutes), range.getSecond());
   }
 
   public Pair<ZonedDateTime, ZonedDateTime> generateRange(
-          String periodName, Long offsetMinutes) {
+          String periodName, int offsetMinutes) {
     return generateRange(fromString(periodName), offsetMinutes);
   }
 

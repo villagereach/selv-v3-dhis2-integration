@@ -13,17 +13,13 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.dataset;
+package org.openlmis.integration.dhis2.domain.schedule;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -33,32 +29,23 @@ import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 @Entity
-@TypeName("Dataset")
-@Table(name = "dataset", schema = "dhis2")
+@TypeName("Schedule")
+@Table(name = "schedule", schema = "dhis2")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Dataset extends BaseEntity {
+public class Schedule extends BaseEntity {
 
   @Column(nullable = false)
   @Getter
   @Setter
-  private String name;
-
-  @Column(nullable = false)
-  @Getter
-  @Setter
-  private String dhisDatasetId;
-
-  @Column(nullable = false)
-  @Getter
-  @Setter
-  private String cronExpression;
+  private String periodEnumerator;
 
   @Column(nullable = false)
   @Getter
@@ -71,30 +58,34 @@ public class Dataset extends BaseEntity {
   @Setter
   private Server server;
 
-  @Column
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "datasetId", nullable = false)
   @Getter
   @Setter
-  @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "dataset")
-  private List<DataElement> dataElementList = new ArrayList<>();
+  private Dataset dataset;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "elementId", nullable = false)
+  @Getter
+  @Setter
+  private DataElement dataElement;
 
   /**
    * Creates new instance based on data from the importer.
    */
-  public static Dataset newInstance(Importer importer) {
-    Dataset dataset = new Dataset();
-    dataset.setId(importer.getId());
-    dataset.updateFrom(importer);
+  public static Schedule newInstance(Importer importer) {
+    Schedule schedule = new Schedule();
+    schedule.setId(importer.getId());
+    schedule.updateFrom(importer);
 
-    return dataset;
+    return schedule;
   }
 
   /**
    * Updates entity from the importer.
    */
   public void updateFrom(Importer importer) {
-    name = importer.getName();
-    dhisDatasetId = importer.getDhisDatasetId();
-    cronExpression = importer.getCronExpression();
+    periodEnumerator = importer.getPeriodEnumerator();
     timeOffset = importer.getTimeOffset();
   }
 
@@ -103,37 +94,23 @@ public class Dataset extends BaseEntity {
    */
   public void export(Exporter exporter) {
     exporter.setId(getId());
-    exporter.setName(name);
-    exporter.setDhisDatasetId(dhisDatasetId);
-    exporter.setCronExpression(cronExpression);
-    exporter.setTimeOffset(timeOffset);
+    exporter.setPeriodEnumerator(getPeriodEnumerator());
+    exporter.setTimeOffset(getTimeOffset());
   }
 
   public interface Exporter extends BaseExporter {
 
-    void setName(String name);
-
-    void setDhisDatasetId(String dhisDatasetId);
-
-    void setCronExpression(String cronExpression);
+    void setPeriodEnumerator(String periodEnumerator);
 
     void setTimeOffset(int timeOffset);
-
-    void setServer(Server server);
 
   }
 
   public interface Importer extends BaseImporter {
 
-    String getName();
-
-    String getDhisDatasetId();
-
-    String getCronExpression();
+    String getPeriodEnumerator();
 
     int getTimeOffset();
-
-    Server getServer();
 
   }
 

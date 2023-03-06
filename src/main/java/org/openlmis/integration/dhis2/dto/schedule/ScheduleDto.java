@@ -13,19 +13,17 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.dataset;
+package org.openlmis.integration.dhis2.dto.schedule;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.dto.BaseDto;
-import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
 @Getter
 @Setter
@@ -33,33 +31,21 @@ import org.openlmis.integration.dhis2.dto.server.ServerDto;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public final class DatasetDto extends BaseDto implements Dataset.Importer, Dataset.Exporter {
+public final class ScheduleDto extends BaseDto implements Schedule.Importer, Schedule.Exporter {
 
-  private String name;
-  private String dhisDatasetId;
-  private String cronExpression;
+  private String periodEnumerator;
   private int timeOffset;
-  private ServerDto serverDto;
+  private UUID serverId;
+  private UUID datasetId;
+  private UUID elementId;
 
   /**
    * Creates new instance based on domain object.
    */
-  public static DatasetDto newInstance(Dataset dataset) {
-    DatasetDto dto = new DatasetDto();
-    dataset.export(dto);
-    dto.setServer(dataset.getServer());
+  public static ScheduleDto newInstance(Schedule schedule) {
+    ScheduleDto dto = new ScheduleDto();
+    schedule.export(dto);
     return dto;
-  }
-
-  @JsonIgnore
-  @Override
-  public void setServer(Server server) {
-    this.serverDto = ServerDto.newInstance(server);
-  }
-
-  @Override
-  public Server getServer() {
-    return Server.newInstance(serverDto);
   }
 
 }

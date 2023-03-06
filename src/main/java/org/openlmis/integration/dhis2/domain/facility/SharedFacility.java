@@ -13,17 +13,14 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.dataset;
+package org.openlmis.integration.dhis2.domain.facility;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -33,37 +30,26 @@ import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
-import org.openlmis.integration.dhis2.domain.element.DataElement;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 @Entity
-@TypeName("Dataset")
-@Table(name = "dataset", schema = "dhis2")
+@TypeName("SharedFacility")
+@Table(name = "shared_facility", schema = "dhis2")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Dataset extends BaseEntity {
+public class SharedFacility extends BaseEntity {
 
   @Column(nullable = false)
-  @Getter
-  @Setter
-  private String name;
+  private String code;
+  @Column(nullable = false)
+  private UUID facilityId;
 
   @Column(nullable = false)
-  @Getter
-  @Setter
-  private String dhisDatasetId;
-
-  @Column(nullable = false)
-  @Getter
-  @Setter
-  private String cronExpression;
-
-  @Column(nullable = false)
-  @Getter
-  @Setter
-  private int timeOffset;
+  private UUID orgUnitId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "serverId", nullable = false)
@@ -71,31 +57,24 @@ public class Dataset extends BaseEntity {
   @Setter
   private Server server;
 
-  @Column
-  @Getter
-  @Setter
-  @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "dataset")
-  private List<DataElement> dataElementList = new ArrayList<>();
-
   /**
    * Creates new instance based on data from the importer.
    */
-  public static Dataset newInstance(Importer importer) {
-    Dataset dataset = new Dataset();
-    dataset.setId(importer.getId());
-    dataset.updateFrom(importer);
+  public static SharedFacility newInstance(Importer importer) {
+    SharedFacility sharedFacility = new SharedFacility();
+    sharedFacility.setId(importer.getId());
+    sharedFacility.updateFrom(importer);
 
-    return dataset;
+    return sharedFacility;
   }
 
   /**
    * Updates entity from the importer.
    */
   public void updateFrom(Importer importer) {
-    name = importer.getName();
-    dhisDatasetId = importer.getDhisDatasetId();
-    cronExpression = importer.getCronExpression();
-    timeOffset = importer.getTimeOffset();
+    code = importer.getCode();
+    facilityId = importer.getFacilityId();
+    orgUnitId = importer.getOrgUnitId();
   }
 
   /**
@@ -103,37 +82,28 @@ public class Dataset extends BaseEntity {
    */
   public void export(Exporter exporter) {
     exporter.setId(getId());
-    exporter.setName(name);
-    exporter.setDhisDatasetId(dhisDatasetId);
-    exporter.setCronExpression(cronExpression);
-    exporter.setTimeOffset(timeOffset);
+    exporter.setCode(getCode());
+    exporter.setFacilityId(getFacilityId());
+    exporter.setOrgUnitId(getOrgUnitId());
   }
 
   public interface Exporter extends BaseExporter {
 
-    void setName(String name);
+    void setCode(String code);
 
-    void setDhisDatasetId(String dhisDatasetId);
+    void setFacilityId(UUID facilityId);
 
-    void setCronExpression(String cronExpression);
-
-    void setTimeOffset(int timeOffset);
-
-    void setServer(Server server);
+    void setOrgUnitId(UUID orgUnitId);
 
   }
 
   public interface Importer extends BaseImporter {
 
-    String getName();
+    String getCode();
 
-    String getDhisDatasetId();
+    UUID getFacilityId();
 
-    String getCronExpression();
-
-    int getTimeOffset();
-
-    Server getServer();
+    UUID getOrgUnitId();
 
   }
 

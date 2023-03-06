@@ -24,6 +24,7 @@ import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
+import org.openlmis.integration.dhis2.service.auth.ReferenceDataAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;

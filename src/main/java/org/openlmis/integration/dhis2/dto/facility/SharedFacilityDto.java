@@ -13,17 +13,16 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.dataset;
+package org.openlmis.integration.dhis2.dto.facility;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.dto.BaseDto;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
@@ -33,33 +32,21 @@ import org.openlmis.integration.dhis2.dto.server.ServerDto;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public final class DatasetDto extends BaseDto implements Dataset.Importer, Dataset.Exporter {
+public final class SharedFacilityDto extends BaseDto implements
+        SharedFacility.Importer, SharedFacility.Exporter {
 
-  private String name;
-  private String dhisDatasetId;
-  private String cronExpression;
-  private int timeOffset;
+  private String code;
+  private UUID facilityId;
+  private UUID orgUnitId;
   private ServerDto serverDto;
 
   /**
    * Creates new instance based on domain object.
    */
-  public static DatasetDto newInstance(Dataset dataset) {
-    DatasetDto dto = new DatasetDto();
-    dataset.export(dto);
-    dto.setServer(dataset.getServer());
+  public static SharedFacilityDto newInstance(SharedFacility sharedFacility) {
+    SharedFacilityDto dto = new SharedFacilityDto();
+    sharedFacility.export(dto);
     return dto;
-  }
-
-  @JsonIgnore
-  @Override
-  public void setServer(Server server) {
-    this.serverDto = ServerDto.newInstance(server);
-  }
-
-  @Override
-  public Server getServer() {
-    return Server.newInstance(serverDto);
   }
 
 }
