@@ -22,9 +22,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openlmis.integration.dhis2.service.ReferenceDataService.API_URL;
+import static org.openlmis.integration.dhis2.service.ReferenceDataService.FACILITIES_RESOUCE_PATH;
+import static org.openlmis.integration.dhis2.service.ReferenceDataService.ORDERABLES_RESOUCE_PATH;
 
 import java.net.URI;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -40,6 +44,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,6 +52,7 @@ import org.springframework.web.client.RestTemplate;
 public class ReferenceDataServiceTest {
 
   private static final String TOKEN = "4u7h-70k3n";
+  private static final String SERVICE_URL = "http://localhost";
 
   @Mock
   private RestTemplate restTemplate;
@@ -57,16 +63,22 @@ public class ReferenceDataServiceTest {
   @InjectMocks
   private ReferenceDataService referenceDataService;
 
+  @Before
+  public void setUp() throws Exception {
+    ReflectionTestUtils.setField(referenceDataService, "serviceUrl", SERVICE_URL);
+  }
+
   @Test
   public void shouldReturnPageOfMinimalFacilityDtos() {
     final List<MinimalFacilityDto> dtos = (List<MinimalFacilityDto>) mock(List.class);
     final PageDto<MinimalFacilityDto> minimalFacilityDtos = createPageDto(dtos);
     ResponseEntity<PageDto<MinimalFacilityDto>> response =
             new ResponseEntity<>(minimalFacilityDtos, HttpStatus.OK);
+    URI uri = URI.create(SERVICE_URL + API_URL + FACILITIES_RESOUCE_PATH);
 
-    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-            eq(new ParameterizedTypeReference<PageDto<MinimalFacilityDto>>() {
-            })
+    when(restTemplate.exchange(eq(uri),
+            eq(HttpMethod.GET), any(HttpEntity.class),
+            any(ParameterizedTypeReference.class)
     )).thenReturn(response);
     when(authService.obtainAccessToken()).thenReturn(TOKEN);
     PageDto<MinimalFacilityDto> result = referenceDataService.findAllFacilities();
@@ -80,9 +92,11 @@ public class ReferenceDataServiceTest {
     final PageDto<OrderableDto> orderableDtos = createPageDto(dtos);
     ResponseEntity<PageDto<OrderableDto>> response =
             new ResponseEntity<>(orderableDtos, HttpStatus.OK);
+    URI uri = URI.create(SERVICE_URL + API_URL + ORDERABLES_RESOUCE_PATH);
 
-    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-            eq(new ParameterizedTypeReference<PageDto<OrderableDto>>() {})
+    when(restTemplate.exchange(eq(uri),
+            eq(HttpMethod.GET), any(HttpEntity.class),
+            any(ParameterizedTypeReference.class)
     )).thenReturn(response);
     when(authService.obtainAccessToken()).thenReturn(TOKEN);
     PageDto<OrderableDto> result = referenceDataService.findAllOrderables();
@@ -93,7 +107,7 @@ public class ReferenceDataServiceTest {
   @Test(expected = RestOperationException.class)
   public void shouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-            eq(new ParameterizedTypeReference<PageDto<OrderableDto>>() {})
+            any(ParameterizedTypeReference.class)
     )).thenThrow(HttpClientErrorException.class);
 
     referenceDataService.findAllOrderables();
