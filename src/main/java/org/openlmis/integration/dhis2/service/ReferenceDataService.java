@@ -38,9 +38,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class ReferenceDataService {
 
-  private static final String API_URL = "/api/";
-  private static final String FACILITIES_RESOUCE_PATH = "facilities/";
-  private static final String ORDERABLES_RESOUCE_PATH = "orderables/";
+  public static final String API_URL = "/api/";
+  public static final String FACILITIES_RESOUCE_PATH = "facilities/";
+  public static final String ORDERABLES_RESOUCE_PATH = "orderables/";
 
   @Value("${service.url}")
   private String serviceUrl;
@@ -57,28 +57,7 @@ public class ReferenceDataService {
    * @return page of MinimalFacilityDto objects.
    */
   public PageDto<MinimalFacilityDto> findAllFacilities() {
-
-    try {
-      ResponseEntity<PageDto<MinimalFacilityDto>> response = restTemplate.exchange(
-              URI.create(serviceUrl + API_URL + FACILITIES_RESOUCE_PATH),
-              HttpMethod.GET,
-              createEntity(authService.obtainAccessToken(), "Bearer"),
-              new ParameterizedTypeReference<PageDto<MinimalFacilityDto>>() {}
-      );
-
-      try {
-        return response.getBody();
-      } catch (NullPointerException ex) {
-        throw new ResponseParsingException(
-                MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
-      }
-    } catch (HttpClientErrorException ex) {
-      throw new RestOperationException(
-              MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
-    } catch (RestClientException ex) {
-      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
-    }
-
+    return doRequest(FACILITIES_RESOUCE_PATH);
   }
 
   /**
@@ -87,13 +66,16 @@ public class ReferenceDataService {
    * @return page of OrderableDto objects.
    */
   public PageDto<OrderableDto> findAllOrderables() {
+    return doRequest(ORDERABLES_RESOUCE_PATH);
+  }
 
+  private <T> PageDto<T> doRequest(String resourcePath) {
     try {
-      ResponseEntity<PageDto<OrderableDto>> response = restTemplate.exchange(
-              URI.create(serviceUrl + API_URL + ORDERABLES_RESOUCE_PATH),
+      ResponseEntity<PageDto<T>> response = restTemplate.exchange(
+              URI.create(serviceUrl + API_URL + resourcePath),
               HttpMethod.GET,
               createEntity(authService.obtainAccessToken(), "Bearer"),
-              new ParameterizedTypeReference<PageDto<OrderableDto>>() {}
+              new ParameterizedTypeReference<PageDto<T>>() {}
       );
 
       try {
@@ -108,7 +90,6 @@ public class ReferenceDataService {
     } catch (RestClientException ex) {
       throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
     }
-
   }
 
 }
