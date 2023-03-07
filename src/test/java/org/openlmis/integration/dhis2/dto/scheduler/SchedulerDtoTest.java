@@ -13,29 +13,29 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.repository;
+package org.openlmis.integration.dhis2.dto.scheduler;
 
-import java.util.UUID;
-import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
-import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.repository.server.ServerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
+import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.dto.schedule.ScheduleDto;
 
-public class ServerRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Server> {
+public class SchedulerDtoTest {
 
-  @Autowired
-  private ServerRepository serverRepository;
-
-  @Override
-  public CrudRepository<Server, UUID> getRepository() {
-    return serverRepository;
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+        .forClass(ScheduleDto.class)
+        .withRedefinedSuperclass()
+        .suppress(Warning.NONFINAL_FIELDS)
+        .verify();
   }
 
-  @Override
-  public Server generateInstance() {
-    return new ServerDataBuilder()
-            .buildAsNew();
+  @Test
+  public void shouldImplementToString() {
+    ScheduleDto schedule = new ScheduleDto();
+    ToStringTestUtils.verify(ScheduleDto.class, schedule);
   }
 
 }

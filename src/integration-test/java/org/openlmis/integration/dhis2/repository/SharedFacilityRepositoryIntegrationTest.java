@@ -16,43 +16,35 @@
 package org.openlmis.integration.dhis2.repository;
 
 import java.util.UUID;
-import org.openlmis.integration.dhis2.builder.DataElementDataBuilder;
-import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.builder.SharedFacilityDataBuilder;
+import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
-import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
+import org.openlmis.integration.dhis2.repository.facility.SharedFacilityRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
-public class DataElementRepositoryIntegrationTest extends
-        BaseCrudRepositoryIntegrationTest<DataElement> {
+public class SharedFacilityRepositoryIntegrationTest extends
+        BaseCrudRepositoryIntegrationTest<SharedFacility> {
 
   @Autowired
-  private DataElementRepository dataElementRepository;
-
-  @Autowired
-  private DatasetRepository datasetRepository;
+  private SharedFacilityRepository sharedFacilityRepository;
 
   @Autowired
   private ServerRepository serverRepository;
 
   @Override
-  public CrudRepository<DataElement, UUID> getRepository() {
-    return dataElementRepository;
+  public CrudRepository<SharedFacility, UUID> getRepository() {
+    return sharedFacilityRepository;
   }
 
   @Override
-  public DataElement generateInstance() {
+  public SharedFacility generateInstance() {
     Server server = new ServerDataBuilder().buildAsNew();
     serverRepository.save(server);
 
-    Dataset dataset = new DatasetDataBuilder().withServer(server).buildAsNew();
-    datasetRepository.save(dataset);
-    return new DataElementDataBuilder().withDataset(dataset).buildAsNew();
+    return new SharedFacilityDataBuilder().withServer(server).buildAsNew();
   }
 
 }

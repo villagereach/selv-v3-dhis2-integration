@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.element;
+package org.openlmis.integration.dhis2.domain.facility;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,52 +22,52 @@ import nl.jqno.equalsverifier.Warning;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
-import org.openlmis.integration.dhis2.builder.DataElementDataBuilder;
-import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.dto.element.DataElementDto;
+import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
+import org.openlmis.integration.dhis2.builder.SharedFacilityDataBuilder;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.facility.SharedFacilityDto;
 
-public class DataElementTest {
+public class SharedFacilityTest {
 
   @Test
   public void equalsContract() {
-    Dataset ds1 = new DatasetDataBuilder().build();
-    Dataset ds2 = new Dataset();
+    Server sv1 = new ServerDataBuilder().build();
+    Server sv2 = new Server();
 
     EqualsVerifier
-        .forClass(DataElement.class)
+        .forClass(SharedFacility.class)
         .withRedefinedSuperclass()
-        .withPrefabValues(Dataset.class, ds1, ds2)
+        .withPrefabValues(Server.class, sv1, sv2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }
 
   @Test
   public void shouldImplementToString() {
-    DataElement dataElement = new DataElementDataBuilder().build();
-    ToStringTestUtils.verify(DataElement.class, dataElement, "TEXT");
+    SharedFacility sharedFacility = new SharedFacilityDataBuilder().build();
+    ToStringTestUtils.verify(SharedFacility.class, sharedFacility, "TEXT");
   }
 
   @Test
   public void shouldUpdateFrom() {
-    DataElement dataElement = new DataElementDataBuilder().build();
-    DataElementDto dto = DataElementDto.newInstance(dataElement);
-    dto.setName("ala");
+    SharedFacility sharedFacility = new SharedFacilityDataBuilder().build();
+    SharedFacilityDto dto = SharedFacilityDto.newInstance(sharedFacility);
+    dto.setCode("code");
 
-    dataElement.updateFrom(dto);
+    sharedFacility.updateFrom(dto);
 
-    assertThat(dataElement.getName()).isEqualTo("ala");
+    assertThat(sharedFacility.getCode()).isEqualTo("code");
   }
 
   @Test
   public void shouldExportData() {
-    DataElement dataElement = new DataElementDataBuilder().build();
-    DataElementDto dto = new DataElementDto();
+    SharedFacility sharedFacility = new SharedFacilityDataBuilder().build();
+    SharedFacilityDto dto = new SharedFacilityDto();
 
-    dataElement.export(dto);
+    sharedFacility.export(dto);
 
-    Assertions.assertThat(dto.getId()).isEqualTo(dataElement.getId());
-    assertThat(dto.getName()).isEqualTo(dataElement.getName());
+    Assertions.assertThat(dto.getId()).isEqualTo(sharedFacility.getId());
+    assertThat(dto.getCode()).isEqualTo(sharedFacility.getCode());
   }
 
 }

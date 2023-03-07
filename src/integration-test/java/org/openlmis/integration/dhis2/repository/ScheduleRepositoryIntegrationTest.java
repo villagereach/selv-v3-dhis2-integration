@@ -18,18 +18,21 @@ package org.openlmis.integration.dhis2.repository;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.builder.DataElementDataBuilder;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
+import org.openlmis.integration.dhis2.repository.schedule.ScheduleRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
-public class DataElementRepositoryIntegrationTest extends
-        BaseCrudRepositoryIntegrationTest<DataElement> {
+public class ScheduleRepositoryIntegrationTest extends
+        BaseCrudRepositoryIntegrationTest<Schedule> {
 
   @Autowired
   private DataElementRepository dataElementRepository;
@@ -40,19 +43,29 @@ public class DataElementRepositoryIntegrationTest extends
   @Autowired
   private ServerRepository serverRepository;
 
+  @Autowired
+  private ScheduleRepository scheduleRepository;
+
   @Override
-  public CrudRepository<DataElement, UUID> getRepository() {
-    return dataElementRepository;
+  public CrudRepository<Schedule, UUID> getRepository() {
+    return scheduleRepository;
   }
 
   @Override
-  public DataElement generateInstance() {
+  public Schedule generateInstance() {
     Server server = new ServerDataBuilder().buildAsNew();
     serverRepository.save(server);
 
     Dataset dataset = new DatasetDataBuilder().withServer(server).buildAsNew();
     datasetRepository.save(dataset);
-    return new DataElementDataBuilder().withDataset(dataset).buildAsNew();
+
+    DataElement dataElement = new DataElementDataBuilder().withDataset(dataset).buildAsNew();
+    dataElementRepository.save(dataElement);
+
+    return new ScheduleDataBuilder()
+            .withServer(server)
+            .withDataset(dataset)
+            .withElement(dataElement).buildAsNew();
   }
 
 }

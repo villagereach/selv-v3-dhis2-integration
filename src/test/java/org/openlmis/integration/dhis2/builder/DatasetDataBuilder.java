@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2;
+package org.openlmis.integration.dhis2.builder;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,13 +24,19 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class DatasetDataBuilder {
 
-  private UUID id = UUID.randomUUID();
-  private String name = "test-name";
-  private String dhisDatasetId = "idXfoem";
-  private String cronExpression = "DAILY";
-  private int timeOffset = 150;
-  private Server server = new ServerDataBuilder().build();
+  private static final UUID ID = UUID.randomUUID();
+  private static final String NAME = "test-name";
+  private static final String DHIS_DATASET_ID = "test-short-id";
+  private static final String CRON_EXPRESSION = "test-expression";
+  private static final int TIME_OFFSET = 150;
+
   private List<DataElement> dataElements = Collections.emptyList();
+  private Server server = new ServerDataBuilder().build();
+
+  public DatasetDataBuilder withDataElements(List<DataElement> dataElements) {
+    this.dataElements = dataElements;
+    return this;
+  }
 
   public DatasetDataBuilder withServer(Server server) {
     this.server = server;
@@ -42,7 +48,7 @@ public class DatasetDataBuilder {
    */
   public Dataset build() {
     Dataset dataset = buildAsNew();
-    dataset.setId(id);
+    dataset.setId(ID);
     return dataset;
   }
 
@@ -50,7 +56,7 @@ public class DatasetDataBuilder {
    * Builds new instance of Dataset as a new object (without id field).
    */
   public Dataset buildAsNew() {
-    return new Dataset(name, dhisDatasetId, cronExpression, timeOffset, server, dataElements);
+    return new Dataset(NAME, DHIS_DATASET_ID, CRON_EXPRESSION, TIME_OFFSET, server, dataElements);
   }
 
 }

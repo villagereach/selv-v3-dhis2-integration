@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.domain.element;
+package org.openlmis.integration.dhis2.domain.schedule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,50 +24,62 @@ import org.junit.Test;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.builder.DataElementDataBuilder;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
+import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.dto.element.DataElementDto;
+import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.schedule.ScheduleDto;
 
-public class DataElementTest {
+public class ScheduleTest {
 
   @Test
   public void equalsContract() {
+    Server sv1 = new ServerDataBuilder().build();
+    Server sv2 = new Server();
+
     Dataset ds1 = new DatasetDataBuilder().build();
     Dataset ds2 = new Dataset();
 
+    DataElement de1 = new DataElementDataBuilder().build();
+    DataElement de2 = new DataElement();
+
     EqualsVerifier
-        .forClass(DataElement.class)
+        .forClass(Schedule.class)
         .withRedefinedSuperclass()
+        .withPrefabValues(Server.class, sv1, sv2)
         .withPrefabValues(Dataset.class, ds1, ds2)
+        .withPrefabValues(DataElement.class, de1, de2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }
 
   @Test
   public void shouldImplementToString() {
-    DataElement dataElement = new DataElementDataBuilder().build();
-    ToStringTestUtils.verify(DataElement.class, dataElement, "TEXT");
+    Schedule schedule = new ScheduleDataBuilder().build();
+    ToStringTestUtils.verify(Schedule.class, schedule, "TEXT");
   }
 
   @Test
   public void shouldUpdateFrom() {
-    DataElement dataElement = new DataElementDataBuilder().build();
-    DataElementDto dto = DataElementDto.newInstance(dataElement);
-    dto.setName("ala");
+    Schedule schedule = new ScheduleDataBuilder().build();
+    ScheduleDto dto = ScheduleDto.newInstance(schedule);
+    dto.setTimeOffset(150);
 
-    dataElement.updateFrom(dto);
+    schedule.updateFrom(dto);
 
-    assertThat(dataElement.getName()).isEqualTo("ala");
+    assertThat(schedule.getTimeOffset()).isEqualTo(150);
   }
 
   @Test
   public void shouldExportData() {
-    DataElement dataElement = new DataElementDataBuilder().build();
-    DataElementDto dto = new DataElementDto();
+    Schedule schedule = new ScheduleDataBuilder().build();
+    ScheduleDto dto = new ScheduleDto();
 
-    dataElement.export(dto);
+    schedule.export(dto);
 
-    Assertions.assertThat(dto.getId()).isEqualTo(dataElement.getId());
-    assertThat(dto.getName()).isEqualTo(dataElement.getName());
+    Assertions.assertThat(dto.getId()).isEqualTo(schedule.getId());
+    assertThat(dto.getTimeOffset()).isEqualTo(schedule.getTimeOffset());
   }
 
 }

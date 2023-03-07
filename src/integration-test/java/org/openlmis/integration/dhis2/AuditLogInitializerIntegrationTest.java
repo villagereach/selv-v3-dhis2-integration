@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +45,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @Transactional
 @ActiveProfiles({"test", "init-audit-log"})
 @RunWith(SpringRunner.class)
@@ -60,6 +62,14 @@ public class AuditLogInitializerIntegrationTest {
 
   private static final String[] DATAELEMENT_FIELDS = {
       "id", "name", "source", "indicator", "orderable", "element", "datasetId"
+  };
+
+  private static final String[] FACILITY_FIELDS = {
+      "id", "code", "facilityId", "orgUnitId", "serverId"
+  };
+
+  private static final String[] SCHEDULE_FIELDS = {
+      "id", "periodEnumerator", "timeOffset", "serverId", "datasetId", "elementId"
   };
 
   private static final String INSERT_SERVER_SQL = String.format(
@@ -80,6 +90,18 @@ public class AuditLogInitializerIntegrationTest {
           StringUtils.repeat("?", ", ", DATAELEMENT_FIELDS.length)
   );
 
+  private static final String INSERT_FACILITY_SQL = String.format(
+          "INSERT INTO dhis2.shared_facility (%s) VALUES (%s) ",
+          StringUtils.join(FACILITY_FIELDS, ", "),
+          StringUtils.repeat("?", ", ", FACILITY_FIELDS.length)
+  );
+
+  private static final String INSERT_SCHEDULE_SQL = String.format(
+          "INSERT INTO dhis2.schedule (%s) VALUES (%s) ",
+          StringUtils.join(SCHEDULE_FIELDS, ", "),
+          StringUtils.repeat("?", ", ", SCHEDULE_FIELDS.length)
+  );
+
   @Autowired
   private ApplicationContext applicationContext;
 
@@ -91,7 +113,7 @@ public class AuditLogInitializerIntegrationTest {
 
   @Test
   public void shouldCreateSnapshotForServer() {
-    UUID serverId = UUID.randomUUID();
+    final UUID serverId = UUID.randomUUID();
     addServer(serverId);
 
     executeTest(serverId, Server.class);
@@ -99,8 +121,8 @@ public class AuditLogInitializerIntegrationTest {
 
   @Test
   public void shouldCreateSnapshotForDataset() {
-    UUID serverId = UUID.randomUUID();
-    UUID datasetId = UUID.randomUUID();
+    final UUID serverId = UUID.randomUUID();
+    final UUID datasetId = UUID.randomUUID();
 
     addServer(serverId);
     addDataset(datasetId, serverId);
@@ -110,13 +132,39 @@ public class AuditLogInitializerIntegrationTest {
 
   @Test
   public void shouldCreateSnapshotForDataElement() {
-    UUID serverId = UUID.randomUUID();
-    UUID datasetId = UUID.randomUUID();
-    UUID dataElementId = UUID.randomUUID();
+    final UUID serverId = UUID.randomUUID();
+    final UUID datasetId = UUID.randomUUID();
+    final UUID dataElementId = UUID.randomUUID();
 
     addServer(serverId);
     addDataset(datasetId, serverId);
     addDataElement(dataElementId, datasetId);
+
+    executeTest(dataElementId, DataElement.class);
+  }
+
+  @Test
+  public void shouldCreateSnapshotForSharedFacility() {
+    final UUID serverId = UUID.randomUUID();
+    final UUID sharedFacilityId = UUID.randomUUID();
+
+    addServer(serverId);
+    addSharedFacility(sharedFacilityId, serverId);
+
+    executeTest(sharedFacilityId, SharedFacility.class);
+  }
+
+  @Test
+  public void shouldCreateSnapshotForSchedule() {
+    final UUID serverId = UUID.randomUUID();
+    final UUID datasetId = UUID.randomUUID();
+    final UUID dataElementId = UUID.randomUUID();
+    final UUID scheduleId = UUID.randomUUID();
+
+    addServer(serverId);
+    addDataset(datasetId, serverId);
+    addDataElement(dataElementId, datasetId);
+    addSchedule(scheduleId, dataElementId, datasetId, serverId);
 
     executeTest(dataElementId, DataElement.class);
   }
@@ -155,7 +203,7 @@ public class AuditLogInitializerIntegrationTest {
             .setParameter(2, "test-name")
             .setParameter(3, "http://test.configuration")
             .setParameter(4, "test-username")
-            .setParameter(5, "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG")
+            .setParameter(5, "test-password")
             .executeUpdate();
   }
 
@@ -183,6 +231,31 @@ public class AuditLogInitializerIntegrationTest {
             .setParameter(5, "test-orderable")
             .setParameter(6, "test-element")
             .setParameter(7, datasetId)
+            .executeUpdate();
+  }
+
+  private void addSharedFacility(UUID id, UUID serverId) {
+    entityManager.flush();
+    entityManager
+            .createNativeQuery(INSERT_FACILITY_SQL)
+            .setParameter(1, id)
+            .setParameter(2, "test-code")
+            .setParameter(3, "99bd5091-d7a6-4c7a-a38b-f85ebb5ff729")
+            .setParameter(4, "1336c767-7e43-4caf-82d6-cc51f6389068")
+            .setParameter(5, serverId)
+            .executeUpdate();
+  }
+
+  private void addSchedule(UUID id, UUID dataElementId, UUID datasetId, UUID serverId) {
+    entityManager.flush();
+    entityManager
+            .createNativeQuery(INSERT_SCHEDULE_SQL)
+            .setParameter(1, id)
+            .setParameter(2, "test-enum")
+            .setParameter(3, 150)
+            .setParameter(4, serverId)
+            .setParameter(5, datasetId)
+            .setParameter(6, dataElementId)
             .executeUpdate();
   }
 

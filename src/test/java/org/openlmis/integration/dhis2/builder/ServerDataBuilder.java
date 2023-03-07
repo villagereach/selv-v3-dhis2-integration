@@ -13,36 +13,43 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.repository;
+package org.openlmis.integration.dhis2.builder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
-import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
-import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
-import org.openlmis.integration.dhis2.repository.server.ServerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 
-public class DatasetRepositoryIntegrationTest extends BaseCrudRepositoryIntegrationTest<Dataset> {
+public class ServerDataBuilder {
 
-  @Autowired
-  private DatasetRepository datasetRepository;
+  private static final UUID ID = UUID.randomUUID();
+  private static final String NAME = "test-name";
+  private static final String URL = "http://test.configuration";
+  private static final String USERNAME = "test-username";
+  private static final String PASSWORD = "test-password";
 
-  @Autowired
-  private ServerRepository serverRepository;
+  private List<Dataset> datasets = Collections.emptyList();
 
-  @Override
-  public CrudRepository<Dataset, UUID> getRepository() {
-    return datasetRepository;
+  public ServerDataBuilder withDatasets(List<Dataset> datasets) {
+    this.datasets = datasets;
+    return this;
   }
 
-  @Override
-  public Dataset generateInstance() {
-    Server server = new ServerDataBuilder().buildAsNew();
-    serverRepository.save(server);
-    return new DatasetDataBuilder().withServer(server).buildAsNew();
+  /**
+   * Builds new instance of Server (with id field).
+   */
+  public Server build() {
+    Server server = buildAsNew();
+    server.setId(ID);
+    return server;
+  }
+
+  /**
+   * Builds new instance of Server as a new object (without id field).
+   */
+  public Server buildAsNew() {
+    return new Server(NAME, URL, USERNAME, PASSWORD, datasets);
   }
 
 }
