@@ -19,11 +19,15 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.element.DataElement;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
@@ -49,6 +53,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @EnableScheduling
@@ -87,7 +92,8 @@ public class DynamicCronScheduler {
   private SharedFacilityRepository sharedFacilityRepository;
 
   /**
-   * Refreshes facilities between OpenLMIS and DHIS2.
+   * Refreshes facilities between OpenLMIS and DHIS2. It deletes certain facilities if they are
+   * no longer present in any of the services and adds new if a matching facility occurred
    */
   public void refreshOrgUnits() {
     LOGGER.debug("Refreshing organizational units");
@@ -96,28 +102,46 @@ public class DynamicCronScheduler {
 
     List<Server> servers = serverRepository.findAll();
     for (Server server: servers) {
+      Set<SharedFacilityDto> allMatchingFacilities = new HashSet<>();
+      Set<SharedFacilityDto> allNotMatchingFacilities = new HashSet<>();
       List<OrganisationUnit> organisationUnits = dhisDataService.getDhisOrgUnits(
               server.getUrl(), server.getUsername(), server.getPassword());
 
       for (OrganisationUnit orgUnit: organisationUnits) {
-        final String orgUnitCode = orgUnit.getCode();
-        Optional<SharedFacility> sharedFacility = sharedFacilityRepository.findByCode(orgUnitCode);
-        Optional<MinimalFacilityDto> refDataFacility = refDataFacilities.stream()
-                .filter(f -> f.getCode().equals(orgUnitCode)).findFirst();
+        String orgUnitCode = orgUnit.getCode();
 
-        final boolean existInBothServices = refDataFacilities.stream()
-                .anyMatch(f -> f.getCode().equals(orgUnitCode));
-        final boolean existInSharedFacilities = sharedFacility.isPresent();
+        for (MinimalFacilityDto facilityDto : refDataFacilities) {
+          String facilityCode = facilityDto.getCode();
 
-        if (existInSharedFacilities && !existInBothServices) {
-          sharedFacilityService.deleteSharedFacility(sharedFacility.get().getId());
-        } else if (!existInSharedFacilities && existInBothServices) {
-          SharedFacilityDto sharedFacilityDto = new SharedFacilityDto(orgUnitCode,
-                  refDataFacility.get().getId(), UUID.fromString(orgUnit.getId()),
-                  ServerDto.newInstance(server));
-          sharedFacilityService.createSharedFacility(sharedFacilityDto);
+          if (facilityCode.equals(orgUnitCode)) {
+            allMatchingFacilities.add(new SharedFacilityDto(orgUnitCode, facilityDto.getId(),
+                    UUID.fromString(orgUnit.getId()), ServerDto.newInstance(server)));
+          } else {
+            allNotMatchingFacilities.add((new SharedFacilityDto(orgUnitCode, facilityDto.getId(),
+                    UUID.fromString(orgUnit.getId()), ServerDto.newInstance(server))));
+          }
+
         }
 
+      }
+
+      // if previously added facilities are not matching then delete from db
+      for (SharedFacilityDto notMatchingFacilityDto: allNotMatchingFacilities) {
+        Optional<SharedFacility> sharedFacilityOptional =
+                sharedFacilityRepository.findById(notMatchingFacilityDto.getId());
+        sharedFacilityOptional.ifPresent(sharedFacility ->
+                sharedFacilityRepository.delete(sharedFacility));
+      }
+
+      // if previously added facilities are matching then add them to db
+      for (SharedFacilityDto matchingFacilityDto: allMatchingFacilities) {
+        SharedFacility matchingFacility = SharedFacility.newInstance(matchingFacilityDto);
+        Optional<SharedFacility> sharedFacilityOptional =
+                sharedFacilityRepository.findById(matchingFacilityDto.getId());
+
+        if (!sharedFacilityOptional.isPresent()) {
+          sharedFacilityRepository.save(matchingFacility);
+        }
       }
 
     }
@@ -128,13 +152,15 @@ public class DynamicCronScheduler {
    * Sends data from OpenLMIS to DHIS2.
    */
   public void sendData(Schedule schedule) {
-    final String orderable = schedule.getDataElement().getOrderable();
-    final String sourceTable = schedule.getDataElement().getSource();
-    final String indicator = schedule.getDataElement().getIndicator();
+    DataElement dataElement = schedule.getDataElement();
+    final String orderable = dataElement.getOrderable();
+    final String sourceTable = dataElement.getSource();
+    final String indicator = dataElement.getIndicator();
 
-    final String dhisDatasetId = schedule.getDataset().getDhisDatasetId();
-    final String periodEnum = schedule.getDataset().getCronExpression();
-    final int timeOffset = schedule.getDataset().getTimeOffset();
+    Dataset dataset = schedule.getDataset();
+    final String dhisDatasetId = dataset.getDhisDatasetId();
+    final String periodEnum = dataset.getCronExpression();
+    final int timeOffset = dataset.getTimeOffset();
 
     final Pair<ZonedDateTime, ZonedDateTime> periodRange = periodGeneratorService
             .generateRange(periodEnum, timeOffset);
@@ -157,8 +183,9 @@ public class DynamicCronScheduler {
       dataValueSet.setOrgUnit(orgUnit);
       dataValueSet.setDataValues(Collections.singletonList(dataValue));
 
-      dhisDataService.createDataValueSet(dataValueSet, schedule.getServer().getUrl(),
-              schedule.getServer().getUsername(), schedule.getServer().getPassword());
+      Server server = schedule.getServer();
+      dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
+              server.getUsername(), server.getPassword());
     }
 
   }
@@ -166,7 +193,7 @@ public class DynamicCronScheduler {
   /**
    * Creates single new cron job.
    */
-  private void createNewCron(Schedule schedule) {
+  public void createNewCron(Schedule schedule) {
     LOGGER.debug("Creating new cron job");
     DhisPeriod periodEnum = periodGeneratorService.fromString(schedule.getPeriodEnumerator());
     int offset = schedule.getTimeOffset();
@@ -181,7 +208,7 @@ public class DynamicCronScheduler {
    * Recreates cron jobs from database data after application startup.
    */
   @EventListener(ApplicationReadyEvent.class)
-  private void recreateTasks() {
+  public void recreateTasks() {
     LOGGER.debug("Recreating cron jobs");
     sharedFacilities = sharedFacilityService.getAllSharedFacilities();
     List<Schedule> schedules = scheduleService.getAllSchedules();
