@@ -15,7 +15,7 @@
 
 package org.openlmis.integration.dhis2.web.execution;
 
-import org.openlmis.integration.dhis2.service.schedule.DynamicCronScheduler;
+import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class ManualExecutionController extends BaseController {
   public static final String RESOURCE_PATH = API_PATH + "/execute";
 
   @Autowired
-  private DynamicCronScheduler dynamicCronScheduler;
+  private ProcessedDataExchangeService processedDataExchangeService;
 
   @Autowired
   private ScheduleService scheduleService;
@@ -54,7 +54,7 @@ public class ManualExecutionController extends BaseController {
   public void runExecution() {
     LOGGER.debug("Running manual execution");
     scheduleService.getAllSchedules().forEach(
-        schedule -> dynamicCronScheduler.sendData(schedule));
+        schedule -> processedDataExchangeService.sendData(schedule));
   }
 
 }

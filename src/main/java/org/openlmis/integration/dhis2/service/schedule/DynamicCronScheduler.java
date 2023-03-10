@@ -15,60 +15,34 @@
 
 package org.openlmis.integration.dhis2.service.schedule;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
-import java.util.stream.Collectors;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
-import org.openlmis.integration.dhis2.domain.element.DataElement;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
-import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
-import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.dhis.DataValue;
-import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
-import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
-import org.openlmis.integration.dhis2.dto.facility.SharedFacilityDto;
-import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
-import org.openlmis.integration.dhis2.dto.server.ServerDto;
-import org.openlmis.integration.dhis2.repository.facility.SharedFacilityRepository;
-import org.openlmis.integration.dhis2.repository.server.ServerRepository;
-import org.openlmis.integration.dhis2.service.DhisDataService;
-import org.openlmis.integration.dhis2.service.ReferenceDataService;
-import org.openlmis.integration.dhis2.service.facility.SharedFacilityService;
-import org.openlmis.integration.dhis2.service.indicator.IndicatorService;
+import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
+import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.util.Pair;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @EnableScheduling
 public class DynamicCronScheduler {
 
   private HashMap<UUID, ScheduledFuture<?>> scheduledProcesses = new HashMap<>();
-  private List<SharedFacility> sharedFacilities;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DynamicCronScheduler.class);
 
   @Autowired
   private TaskScheduler taskScheduler;
-
-  @Autowired
-  private ReferenceDataService referenceDataService;
 
   @Autowired
   private ScheduleService scheduleService;
@@ -77,117 +51,14 @@ public class DynamicCronScheduler {
   private PeriodGeneratorService periodGeneratorService;
 
   @Autowired
-  private IndicatorService indicatorService;
+  private SharedFacilitySynchronizer sharedFacilitySynchronizer;
 
   @Autowired
-  private DhisDataService dhisDataService;
+  private ProcessedDataExchangeService processedDataExchangeService;
 
-  @Autowired
-  private SharedFacilityService sharedFacilityService;
-
-  @Autowired
-  private ServerRepository serverRepository;
-
-  @Autowired
-  private SharedFacilityRepository sharedFacilityRepository;
-
-  /**
-   * Refreshes facilities between OpenLMIS and DHIS2. It deletes certain facilities if they are
-   * no longer present in any of the services and adds new if a matching facility occurred
-   */
-  public void refreshOrgUnits() {
-    LOGGER.debug("Refreshing organizational units");
-    List<MinimalFacilityDto> refDataFacilities = referenceDataService
-            .findAllFacilities().getContent();
-
-    List<Server> servers = serverRepository.findAll();
-    for (Server server: servers) {
-      Set<SharedFacilityDto> allMatchingFacilities = new HashSet<>();
-      Set<SharedFacilityDto> allNotMatchingFacilities = new HashSet<>();
-      List<OrganisationUnit> organisationUnits = dhisDataService.getDhisOrgUnits(
-              server.getUrl(), server.getUsername(), server.getPassword());
-
-      for (OrganisationUnit orgUnit: organisationUnits) {
-        String orgUnitCode = orgUnit.getCode();
-
-        for (MinimalFacilityDto facilityDto : refDataFacilities) {
-          String facilityCode = facilityDto.getCode();
-
-          if (facilityCode.equals(orgUnitCode)) {
-            allMatchingFacilities.add(new SharedFacilityDto(orgUnitCode, facilityDto.getId(),
-                    UUID.fromString(orgUnit.getId()), ServerDto.newInstance(server)));
-          } else {
-            allNotMatchingFacilities.add((new SharedFacilityDto(orgUnitCode, facilityDto.getId(),
-                    UUID.fromString(orgUnit.getId()), ServerDto.newInstance(server))));
-          }
-
-        }
-
-      }
-
-      // if previously added facilities are not matching then delete from db
-      for (SharedFacilityDto notMatchingFacilityDto: allNotMatchingFacilities) {
-        Optional<SharedFacility> sharedFacilityOptional =
-                sharedFacilityRepository.findById(notMatchingFacilityDto.getId());
-        sharedFacilityOptional.ifPresent(sharedFacility ->
-                sharedFacilityRepository.delete(sharedFacility));
-      }
-
-      // if previously added facilities are matching then add them to db
-      for (SharedFacilityDto matchingFacilityDto: allMatchingFacilities) {
-        SharedFacility matchingFacility = SharedFacility.newInstance(matchingFacilityDto);
-        Optional<SharedFacility> sharedFacilityOptional =
-                sharedFacilityRepository.findById(matchingFacilityDto.getId());
-
-        if (!sharedFacilityOptional.isPresent()) {
-          sharedFacilityRepository.save(matchingFacility);
-        }
-      }
-
-    }
-
-  }
-
-  /**
-   * Sends data from OpenLMIS to DHIS2.
-   */
-  public void sendData(Schedule schedule) {
-    DataElement dataElement = schedule.getDataElement();
-    final String orderable = dataElement.getOrderable();
-    final String sourceTable = dataElement.getSource();
-    final String indicator = dataElement.getIndicator();
-
-    Dataset dataset = schedule.getDataset();
-    final String dhisDatasetId = dataset.getDhisDatasetId();
-    final String periodEnum = dataset.getCronExpression();
-    final int timeOffset = dataset.getTimeOffset();
-
-    final Pair<ZonedDateTime, ZonedDateTime> periodRange = periodGeneratorService
-            .generateRange(periodEnum, timeOffset);
-    final String formattedStartDate = periodGeneratorService.formatDate(
-            periodRange.getFirst(), periodEnum);
-
-    final List<String> orgUnits = sharedFacilities.stream().map(SharedFacility::getCode)
-            .collect(Collectors.toList());
-    for (String orgUnit: orgUnits) {
-      final BigDecimal calculatedIndicator = indicatorService.generate(sourceTable,
-              indicator, periodRange, orderable, orgUnit);
-
-      DataValue dataValue = new DataValue();
-      dataValue.setDataElement(orderable);
-      dataValue.setValue(calculatedIndicator);
-
-      DataValueSet dataValueSet = new DataValueSet();
-      dataValueSet.setDataSet(dhisDatasetId);
-      dataValueSet.setPeriod(formattedStartDate);
-      dataValueSet.setOrgUnit(orgUnit);
-      dataValueSet.setDataValues(Collections.singletonList(dataValue));
-
-      Server server = schedule.getServer();
-      dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
-              server.getUsername(), server.getPassword());
-    }
-
+  @Scheduled(cron = "0 20 * * * *")  // every day at 8:00 PM UTC
+  private void refreshSharedFacilities() {
+    sharedFacilitySynchronizer.refreshSharedFacilities();
   }
 
   /**
@@ -200,7 +71,7 @@ public class DynamicCronScheduler {
     CronTrigger cronTrigger = new CronTrigger(periodEnum, offset);
 
     ScheduledFuture<?> newProcess = taskScheduler.schedule(
-        () -> sendData(schedule), cronTrigger);
+        () -> processedDataExchangeService.sendData(schedule), cronTrigger);
     scheduledProcesses.putIfAbsent(schedule.getId(), newProcess);
   }
 
@@ -210,7 +81,6 @@ public class DynamicCronScheduler {
   @EventListener(ApplicationReadyEvent.class)
   public void recreateTasks() {
     LOGGER.debug("Recreating cron jobs");
-    sharedFacilities = sharedFacilityService.getAllSharedFacilities();
     List<Schedule> schedules = scheduleService.getAllSchedules();
     schedules.forEach(this::createNewCron);
   }
