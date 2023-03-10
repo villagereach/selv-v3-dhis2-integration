@@ -12,7 +12,7 @@ The following software is required to run this script:
 3. dhis2/cli:
     • sudo npm install -g @dhis2/cli
 
-After download the script you need to chmod +x dhis-script.sh
+After download the script you need to chmod +x local_dhis_server.sh
 
 The script takes a command-line argument to determine which function to call. The available options are:
     • reload: This argument spins up the DHIS2 instance and loads the dump.
@@ -20,7 +20,7 @@ The script takes a command-line argument to determine which function to call. Th
     • dump-db: This argument dumps the DHIS2 database to a compressed file.
     • down: This argument brings the DHIS2 instance down.
 
-      Example usage ./dhis-script.sh reload
+      Example usage ./local_dhis_server.sh reload
       
 If an invalid argument is provided, the script displays the usage instructions and exits.
 
