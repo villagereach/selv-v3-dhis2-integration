@@ -90,7 +90,8 @@ public class SharedFacilitySynchronizer {
       // if previously added facilities are not matching then delete from db
       for (SharedFacilityDto notMatchingFacilityDto: allNotMatchingFacilities) {
         Optional<SharedFacility> sharedFacilityOptional =
-                sharedFacilityRepository.findById(notMatchingFacilityDto.getId());
+                sharedFacilityRepository.findByCodeAndServerId(notMatchingFacilityDto.getCode(),
+                        notMatchingFacilityDto.getServerDto().getId());
         sharedFacilityOptional.ifPresent(sharedFacility ->
                 sharedFacilityRepository.delete(sharedFacility));
       }
@@ -99,7 +100,8 @@ public class SharedFacilitySynchronizer {
       for (SharedFacilityDto matchingFacilityDto: allMatchingFacilities) {
         SharedFacility matchingFacility = SharedFacility.newInstance(matchingFacilityDto);
         Optional<SharedFacility> sharedFacilityOptional =
-                sharedFacilityRepository.findById(matchingFacilityDto.getId());
+                sharedFacilityRepository.findByCodeAndServerId(matchingFacilityDto.getCode(),
+                        matchingFacilityDto.getServerDto().getId());
 
         if (!sharedFacilityOptional.isPresent()) {
           sharedFacilityRepository.save(matchingFacility);

@@ -47,8 +47,10 @@ public interface SharedFacilityRepository extends PagingAndSortingRepository<Sha
       nativeQuery = true)
   Page<SharedFacility> findAllWithoutSnapshots(Pageable pageable);
 
-  @Query(value = "SELECT f.code FROM dhis2.shared_facility f WHERE f.code = :code",
+  @Query(value = "SELECT f FROM dhis2.shared_facility f "
+          + "WHERE f.code = :code AND f.serverId = :serverId",
           nativeQuery = true)
-  Optional<SharedFacility> findByCode(@Param("code") String code);
+  Optional<SharedFacility> findByCodeAndServerId(@Param("code") String code,
+                                                 @Param("serverId") UUID serverId);
 
 }
