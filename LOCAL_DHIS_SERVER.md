@@ -24,6 +24,8 @@ The script takes a command-line argument to determine which function to call. Th
       
 If an invalid argument is provided, the script displays the usage instructions and exits.
 
+Server starts on http://localhost:8080 by default, you can log to instance using username: admin, password: district
+
 Downloading a Backup File from Atlassian.net
 
 1. Log in to: 
@@ -31,6 +33,8 @@ Downloading a Backup File from Atlassian.net
  
 2. Backup file should be at the end of the page
 
-3.Click on the "Download" button to download the backup file to your local machine and save it in /tmp directory. If you can't indicate where to save the file when downloading it you need to manually move the backup file to the tmp directory. Open terminal, go to place where you save the backup file using cd command and then use this command: mv backup.sql.gz /tmp/
+3. Click on the "Download" button to download the backup file to your local machine and save it in /tmp directory. If you can't indicate where to save the file when downloading it you need to manually move the backup file to the tmp directory. Open terminal, go to place where you save the backup file using cd command and then use this command: mv backup.sql.gz /tmp/
 
 If you notice any error you need to check if u have Node.js version 14 or newer. You can check this using the node -v command. To download the correct version of Node.js run this command: sudo apt install -y nodejs 
+
+If you encounter 'Invalid interpolation format' error while running the script, you should update your docker version to 18.06.0 or higher and docker-compose to 1.22 or higher

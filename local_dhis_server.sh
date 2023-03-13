@@ -3,7 +3,7 @@
 # Set the DHIS2 instance name and git repo URL
 INSTANCE_NAME="master"
 image_version="dhis2/core-dev:2.37"
-cointainer="d2-cluster-master_core_1"
+container="d2-cluster-master_core_1"
 
 # Define the function to spin up the DHIS2 instance and load the dump
 function spin_up_instance() {
