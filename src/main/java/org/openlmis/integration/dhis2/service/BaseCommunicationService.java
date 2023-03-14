@@ -1,14 +1,45 @@
-package org.openlmis.integration.dhis2.service;
+/*
+ * This program is part of the OpenLMIS logistics management information system platform software.
+ * Copyright © 2017 VillageReach
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Affero General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details. You should have received a copy of
+ * the GNU Affero General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
+ */
 
+package org.openlmis.integration.dhis2.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.lang.reflect.Array;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.dto.referencedata.ResultDto;
 import org.openlmis.integration.dhis2.exception.DataRetrievalException;
-import org.openlmis.integration.dhis2.util.*;
+import org.openlmis.integration.dhis2.util.DynamicPageTypeReference;
+import org.openlmis.integration.dhis2.util.DynamicParametrizedTypeReference;
+import org.openlmis.integration.dhis2.util.Merger;
+import org.openlmis.integration.dhis2.util.RequestHeaders;
+import org.openlmis.integration.dhis2.util.RequestHelper;
+import org.openlmis.integration.dhis2.util.RequestParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +53,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
-
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class BaseCommunicationService<T> {
@@ -133,7 +158,7 @@ public abstract class BaseCommunicationService<T> {
 
     try {
       ResponseEntity<T[]> responseEntity = runWithTokenRetry(
-              () -> doListRequest(url, params, HttpMethod.GET, getArrayResultClass())
+          () -> doListRequest(url, params, HttpMethod.GET, getArrayResultClass())
       );
       return new ArrayList<>(Arrays.asList(responseEntity.getBody()));
     } catch (HttpStatusCodeException ex) {
@@ -179,7 +204,7 @@ public abstract class BaseCommunicationService<T> {
   /**
    * Return all reference data T objects for Page that need to be retrieved with GET request.
    *
-   * @param parameters  Map of query parameters.
+   * @param parameters Map of query parameters.
    * @return Page of reference data T objects.
    */
   public Page<T> getPage(RequestParameters parameters) {
@@ -219,7 +244,7 @@ public abstract class BaseCommunicationService<T> {
 
     try {
       ResponseEntity<PageDto<P>> response = runWithTokenRetry(
-              () -> doPageRequest(url, parameters, payload, method, type)
+          () -> doPageRequest(url, parameters, payload, method, type)
       );
       return response.getBody();
 

@@ -15,10 +15,9 @@
 
 package org.openlmis.integration.dhis2.util;
 
-import org.springframework.core.ParameterizedTypeReference;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import org.springframework.core.ParameterizedTypeReference;
 
 /**
  * Extension of {@link ParameterizedTypeReference} from Spring that allows dynamically changing

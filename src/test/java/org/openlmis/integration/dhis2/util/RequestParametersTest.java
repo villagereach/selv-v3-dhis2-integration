@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import com.google.common.collect.Maps;
+import java.util.Collections;
 import java.util.Map;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class RequestParametersTest {
   @Test
   public void shouldSetParameter() {
     RequestParameters parameters = RequestParameters.init().set("a", "b");
-    assertThat(toMap(parameters), hasEntry("a", "b"));
+    assertThat(toMap(parameters), hasEntry("a", Collections.singletonList("b")));
   }
 
   @Test

@@ -15,13 +15,12 @@
 
 package org.openlmis.integration.dhis2.service.referencedata;
 
-import org.openlmis.integration.dhis2.dto.referencedata.RightDto;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openlmis.integration.dhis2.dto.referencedata.RightDto;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RightReferenceDataService extends BaseReferenceDataService<RightDto> {

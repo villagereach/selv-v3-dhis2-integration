@@ -38,13 +38,13 @@ public class RequestHelperTest {
   @Test
   public void shouldCreateUriWithParameters() {
     URI uri = RequestHelper.createUri(SERVER_URL, RequestParameters.init().set("a", "b"));
-    assertThat(uri.getQuery(), is("a=b"));
+    assertThat(uri.getQuery(), is("a=[b]"));
   }
 
   @Test
   public void shouldCreateUriWithIncorrectParameters() {
     URI uri = RequestHelper.createUri(SERVER_URL, RequestParameters.init().set("a", "b c"));
-    assertThat(uri.getQuery(), is("a=b c"));
+    assertThat(uri.getQuery(), is("a=[b c]"));
   }
 
   @Test

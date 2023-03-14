@@ -15,6 +15,9 @@
 
 package org.openlmis.integration.dhis2.util;
 
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_USER_NOT_FOUND;
+
+import java.util.UUID;
 import org.openlmis.integration.dhis2.dto.referencedata.RightDto;
 import org.openlmis.integration.dhis2.dto.referencedata.UserDto;
 import org.openlmis.integration.dhis2.exception.AuthenticationException;
@@ -23,10 +26,6 @@ import org.openlmis.integration.dhis2.service.referencedata.UserReferenceDataSer
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
-
-import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_USER_NOT_FOUND;
 
 @Component
 public class AuthenticationHelper {

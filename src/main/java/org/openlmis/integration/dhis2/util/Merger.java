@@ -15,17 +15,22 @@
 
 package org.openlmis.integration.dhis2.util;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PACKAGE)
 // we keep implementation classes inside this one to give a single access point by ofXXX methods.

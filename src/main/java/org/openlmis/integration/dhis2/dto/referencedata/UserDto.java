@@ -15,11 +15,10 @@
 
 package org.openlmis.integration.dhis2.dto.referencedata;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

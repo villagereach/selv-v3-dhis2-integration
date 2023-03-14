@@ -15,6 +15,11 @@
 
 package org.openlmis.integration.dhis2.service;
 
+import static org.apache.commons.lang3.StringUtils.startsWith;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_PERMISSION_CHECK_FAILED;
+
+import java.util.UUID;
 import org.openlmis.integration.dhis2.dto.referencedata.ResultDto;
 import org.openlmis.integration.dhis2.dto.referencedata.RightDto;
 import org.openlmis.integration.dhis2.dto.referencedata.UserDto;
@@ -27,12 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.client.HttpClientErrorException;
-
-import java.util.UUID;
-
-import static org.apache.commons.lang3.StringUtils.startsWith;
-import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
-import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_PERMISSION_CHECK_FAILED;
 
 public class PermissionService {
 
@@ -58,6 +57,10 @@ public class PermissionService {
    */
   public void canManageDhisIntegration() {
     hasPermission(DHIS2_ADMIN, null, null, null);
+  }
+
+  public PermissionStrings.Handler getPermissionStrings(UUID userId) {
+    return permissionStrings.forUser(userId);
   }
 
   private void hasPermission(String rightName, UUID program, UUID facility, UUID warehouse) {
@@ -88,9 +91,8 @@ public class PermissionService {
       return userReferenceDataService.hasRight(
               user.getId(), right.getId(), program, facility, warehouse);
     } catch (HttpClientErrorException httpException) {
-      throw new PermissionMessageException(
-              new Message(ERROR_PERMISSION_CHECK_FAILED, httpException.getMessage()), httpException);
-
+      throw new PermissionMessageException(new Message(ERROR_PERMISSION_CHECK_FAILED,
+              httpException.getMessage()), httpException);
     }
   }
 

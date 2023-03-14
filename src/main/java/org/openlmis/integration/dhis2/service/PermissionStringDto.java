@@ -15,17 +15,16 @@
 
 package org.openlmis.integration.dhis2.service;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import static org.apache.commons.lang3.StringUtils.splitByWholeSeparator;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.apache.commons.lang3.StringUtils.splitByWholeSeparator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
  * Object representation of single permission string.

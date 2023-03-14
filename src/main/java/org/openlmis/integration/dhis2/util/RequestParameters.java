@@ -15,13 +15,17 @@
 
 package org.openlmis.integration.dhis2.util;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import java.util.*;
-import java.util.function.Consumer;
 
 @EqualsAndHashCode
 public final class RequestParameters {

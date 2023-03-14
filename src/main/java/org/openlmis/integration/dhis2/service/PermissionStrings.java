@@ -16,17 +16,16 @@
 package org.openlmis.integration.dhis2.service;
 
 import com.google.common.collect.Maps;
-import org.openlmis.integration.dhis2.service.referencedata.UserReferenceDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
+import org.openlmis.integration.dhis2.service.referencedata.UserReferenceDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PermissionStrings {

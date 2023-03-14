@@ -22,7 +22,6 @@ import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -96,6 +95,9 @@ public final class RequestHelper {
     return new HttpEntity<>(headers.toHeaders());
   }
 
+  /**
+   * Split the given {@link RequestParameters} into smaller chunks.
+   */
   public static URI[] splitRequest(String url, RequestParameters queryParams, int maxUrlLength) {
     RequestParameters safeQueryParams = RequestParameters.init().setAll(queryParams);
     URI uri = createUri(url, safeQueryParams);

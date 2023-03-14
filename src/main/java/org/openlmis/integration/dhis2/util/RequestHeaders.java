@@ -15,13 +15,12 @@
 
 package org.openlmis.integration.dhis2.util;
 
-import com.google.common.collect.Maps;
-import org.springframework.http.HttpHeaders;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import org.springframework.http.HttpHeaders;
 
 public final class RequestHeaders {
   private Map<String, String> headers = Maps.newHashMap();
