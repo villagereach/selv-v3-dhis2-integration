@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.dto.referencedata.ResultDto;
 import org.openlmis.integration.dhis2.exception.DataRetrievalException;
+import org.openlmis.integration.dhis2.service.auth.ReferenceDataAuthService;
 import org.openlmis.integration.dhis2.util.DynamicPageTypeReference;
 import org.openlmis.integration.dhis2.util.DynamicParametrizedTypeReference;
 import org.openlmis.integration.dhis2.util.Merger;

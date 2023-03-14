@@ -31,8 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+@Service
 public class PermissionService {
 
   public static final String DHIS2_ADMIN = "DHIS2_ADMIN";
@@ -56,18 +58,18 @@ public class PermissionService {
    * Checks if current user has permission to manage DHIS2 integration.
    */
   public void canManageDhisIntegration() {
-    hasPermission(DHIS2_ADMIN, null, null, null);
+    hasPermission(DHIS2_ADMIN);
   }
 
   public PermissionStrings.Handler getPermissionStrings(UUID userId) {
     return permissionStrings.forUser(userId);
   }
 
-  private void hasPermission(String rightName, UUID program, UUID facility, UUID warehouse) {
-    ResultDto<Boolean> result = getRightResult(rightName, program, facility, warehouse, false);
+  private void hasPermission(String rightName) {
+    ResultDto<Boolean> result = getRightResult(rightName, null, null, null,false);
     if (null == result || !result.getResult()) {
       throw new PermissionMessageException(
-              new Message(ERROR_NO_FOLLOWING_PERMISSION, rightName, program, facility));
+              new Message(ERROR_NO_FOLLOWING_PERMISSION, rightName));
     }
   }
 

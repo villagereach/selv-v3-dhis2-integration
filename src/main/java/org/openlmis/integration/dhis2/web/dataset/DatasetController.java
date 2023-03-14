@@ -27,6 +27,7 @@ import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.service.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.server.ServerController;
@@ -69,6 +70,9 @@ public class DatasetController extends BaseController {
   @Autowired
   private ServerRepository serverRepository;
 
+  @Autowired
+  PermissionService permissionService;
+
   /**
    * Retrieves the specified dataset.
    */
@@ -76,6 +80,7 @@ public class DatasetController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public DatasetDto getDataset(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     Dataset dataset = datasetRepository.findById(id)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
