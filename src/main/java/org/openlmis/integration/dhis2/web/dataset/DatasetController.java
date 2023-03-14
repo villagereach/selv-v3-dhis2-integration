@@ -96,6 +96,7 @@ public class DatasetController extends BaseController {
   @ResponseBody
   public Page<DatasetDto> getAllDatasets(@PathVariable("serverId") UUID serverId,
                                          Pageable pageable) {
+    permissionService.canManageDhisIntegration();
     Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
@@ -116,6 +117,7 @@ public class DatasetController extends BaseController {
   @ResponseBody
   public DatasetDto createDataset(@PathVariable("serverId") UUID serverId,
                                   @RequestBody DatasetDto datasetDto) {
+    permissionService.canManageDhisIntegration();
     LOGGER.debug("Creating new dataset");
     Dataset newDataset = Dataset.newInstance(datasetDto);
 
@@ -136,6 +138,7 @@ public class DatasetController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public DatasetDto updateDataset(@PathVariable("id") UUID id, @RequestBody DatasetDto datasetDto) {
+    permissionService.canManageDhisIntegration();
     if (null != datasetDto.getId() && !Objects.equals(datasetDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_DATASET_ID_MISMATCH);
     }
@@ -156,6 +159,7 @@ public class DatasetController extends BaseController {
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteDataset(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     if (!datasetRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND);
     }
@@ -180,6 +184,7 @@ public class DatasetController extends BaseController {
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
+    permissionService.canManageDhisIntegration();
 
     // Return a 404 if the specified instance can't be found
     if (!datasetRepository.existsById(id)) {

@@ -25,7 +25,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Matchers.any;
 import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
-import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_PERMISSION_CHECK_FAILED;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -405,6 +404,118 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
             .pathParam(ID, datasetDto.getId().toString())
             .when()
             .get(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectGetPageOfDatasetsIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findById(datasetDto.getServerDto()
+            .getId())).willReturn(Optional.of(server));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .queryParam("page", pageable.getPageNumber())
+            .queryParam("size", pageable.getPageSize())
+            .when()
+            .get(RESOURCE_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectCreateDatasetIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findById(datasetDto.getServerDto()
+            .getId())).willReturn(Optional.of(server));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .body(datasetDto)
+            .when()
+            .post(RESOURCE_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectUpdateDatasetIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(datasetRepository.findById(datasetDto.getId())).willReturn(Optional.of(dataset));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(ID, datasetDto.getId().toString())
+            .body(datasetDto)
+            .when()
+            .put(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectDeleteDatasetIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(true);
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(ID, datasetDto.getId().toString())
+            .when()
+            .delete(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectRetrieveAuditLogsIfUserHasNoRights() {
+    mockUserHasNoRight();
+    given(datasetRepository.existsById(datasetDto.getId())).willReturn(true);
+    willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(ID, datasetDto.getId().toString())
+            .when()
+            .get(AUDIT_LOG_URL)
             .then()
             .statusCode(HttpStatus.SC_FORBIDDEN)
             .extract()

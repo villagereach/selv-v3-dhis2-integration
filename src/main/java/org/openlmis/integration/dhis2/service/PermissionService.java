@@ -66,7 +66,7 @@ public class PermissionService {
   }
 
   private void hasPermission(String rightName) {
-    ResultDto<Boolean> result = getRightResult(rightName, null, null, null,false);
+    ResultDto<Boolean> result = getRightResult(rightName, null, null, null, false);
     if (null == result || !result.getResult()) {
       throw new PermissionMessageException(
               new Message(ERROR_NO_FOLLOWING_PERMISSION, rightName));

@@ -28,6 +28,7 @@ import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
+import org.openlmis.integration.dhis2.service.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.dataset.DatasetController;
@@ -74,6 +75,9 @@ public class DataElementController extends BaseController {
   @Autowired
   private ScheduleService scheduleService;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves the specified data element.
    */
@@ -81,6 +85,7 @@ public class DataElementController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public DataElementDto getDataElement(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     DataElement dataElement = dataElementRepository.findById(id)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
 
@@ -96,6 +101,7 @@ public class DataElementController extends BaseController {
   @ResponseBody
   public Page<DataElementDto> getAllDataElements(@PathVariable("datasetId") UUID datasetId,
                                          Pageable pageable) {
+    permissionService.canManageDhisIntegration();
     Dataset dataset = datasetRepository.findById(datasetId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
 
@@ -116,6 +122,7 @@ public class DataElementController extends BaseController {
   @ResponseBody
   public DataElementDto createDataElement(@PathVariable("datasetId") UUID datasetId,
                                   @RequestBody DataElementDto dataElementDto) {
+    permissionService.canManageDhisIntegration();
     LOGGER.debug("Creating new data element");
 
     Dataset dataset = datasetRepository.findById(datasetId)
@@ -142,6 +149,7 @@ public class DataElementController extends BaseController {
   @ResponseBody
   public DataElementDto updateDataElement(@PathVariable("id") UUID id,
                                           @RequestBody DataElementDto dataElementDto) {
+    permissionService.canManageDhisIntegration();
     if (null != dataElementDto.getId() && !Objects.equals(dataElementDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_DATAELEMENT_ID_MISMATCH);
     }
@@ -167,6 +175,7 @@ public class DataElementController extends BaseController {
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteDataElement(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     if (!dataElementRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND);
     }
@@ -191,6 +200,7 @@ public class DataElementController extends BaseController {
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
+    permissionService.canManageDhisIntegration();
 
     // Return a 404 if the specified instance can't be found
     if (!dataElementRepository.existsById(id)) {
