@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.auth;
 
 import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
 
@@ -68,7 +68,7 @@ public class ReferenceDataAuthService {
     return ((Map<String, String>) response.getBody()).get(ACCESS_TOKEN);
   }
 
-  void setRestTemplate(RestOperations restTemplate) {
+  public void setRestTemplate(RestOperations restTemplate) {
     this.restTemplate = restTemplate;
   }
 

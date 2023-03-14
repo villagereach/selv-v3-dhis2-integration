@@ -16,8 +16,8 @@
 package org.openlmis.integration.dhis2.repository;
 
 import java.util.UUID;
-import org.openlmis.integration.dhis2.DatasetDataBuilder;
-import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;

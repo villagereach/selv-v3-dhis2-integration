@@ -106,7 +106,6 @@ public class DataElement extends BaseEntity {
   }
 
   public interface Exporter extends BaseExporter {
-
     void setName(String name);
 
     void setSource(String source);
@@ -118,11 +117,9 @@ public class DataElement extends BaseEntity {
     void setElement(String element);
 
     void setDataset(Dataset dataset);
-
   }
 
   public interface Importer extends BaseImporter {
-
     String getName();
 
     String getSource();
@@ -134,7 +131,6 @@ public class DataElement extends BaseEntity {
     String getElement();
 
     Dataset getDataset();
-
   }
 
 }

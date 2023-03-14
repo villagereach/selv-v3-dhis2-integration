@@ -16,7 +16,7 @@
 package org.openlmis.integration.dhis2.repository;
 
 import java.util.UUID;
-import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;

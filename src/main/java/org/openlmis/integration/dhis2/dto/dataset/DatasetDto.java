@@ -38,6 +38,7 @@ public final class DatasetDto extends BaseDto implements Dataset.Importer, Datas
   private String name;
   private String dhisDatasetId;
   private String cronExpression;
+  private int timeOffset;
   private ServerDto serverDto;
 
   /**

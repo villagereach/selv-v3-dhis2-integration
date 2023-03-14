@@ -40,7 +40,7 @@ import org.javers.repository.jql.JqlQuery;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.ServerDataBuilder;
+import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;

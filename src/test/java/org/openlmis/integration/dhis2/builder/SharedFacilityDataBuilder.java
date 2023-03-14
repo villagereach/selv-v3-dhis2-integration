@@ -13,42 +13,40 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2;
+package org.openlmis.integration.dhis2.builder;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
-public class ServerDataBuilder {
+public class SharedFacilityDataBuilder {
 
-  private UUID id = UUID.randomUUID();
-  private String name = "test-name";
-  private String url = "http://test.configuration";
-  private String username = "test-username";
-  private String password = "$2a$12$/MRrjNIDYgba/9K6i.zNAOSMJFkWWwJHVYXGp/s3OfSbWL1fsiMWG";
-  private List<Dataset> datasets = Collections.emptyList();
+  private static final UUID ID = UUID.randomUUID();
+  private static final String CODE = "test-code";
+  private static final UUID FACILITY_ID = UUID.randomUUID();
+  private static final UUID ORG_UNIT_ID = UUID.randomUUID();
 
-  public ServerDataBuilder withDatasets(List<Dataset> datasets) {
-    this.datasets = datasets;
+  private Server server = new ServerDataBuilder().build();
+
+  public SharedFacilityDataBuilder withServer(Server server) {
+    this.server = server;
     return this;
   }
 
   /**
-   * Builds new instance of Server (with id field).
+   * Builds new instance of SharedFacility (with id field).
    */
-  public Server build() {
-    Server server = buildAsNew();
-    server.setId(id);
-    return server;
+  public SharedFacility build() {
+    SharedFacility sharedFacility = buildAsNew();
+    sharedFacility.setId(ID);
+    return sharedFacility;
   }
 
   /**
-   * Builds new instance of Server as a new object (without id field).
+   * Builds new instance of SharedFacility as a new object (without id field).
    */
-  public Server buildAsNew() {
-    return new Server(name, url, username, password, datasets);
+  public SharedFacility buildAsNew() {
+    return new SharedFacility(CODE, FACILITY_ID, ORG_UNIT_ID, server);
   }
 
 }

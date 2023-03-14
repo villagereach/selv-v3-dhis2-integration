@@ -1,3 +1,3 @@
-id,name,dhisDatasetId,cronExpression,serverId
-5eccc1c1-7a73-4647-a9dc-e95a557a4919,SIS-A01-V2,idXfoem,0 5 * * *,08b2b579-8e08-45f2-a640-5f558713b374
-01329067-927f-42e3-a52b-fa48eb9a294c,SISCOV-A01-V2,dbjKtsX,0 4 3 * *,4f441cfc-0556-46f5-b2ca-ad7988d8781a
+id,name,dhisDatasetId,cronExpression,timeOffset,serverId
+5eccc1c1-7a73-4647-a9dc-e95a557a4919,SIS-A01-V2,idXfoem,DAILY,90,08b2b579-8e08-45f2-a640-5f558713b374
+01329067-927f-42e3-a52b-fa48eb9a294c,SISCOV-A01-V2,dbjKtsX,MONTHLY,150,4f441cfc-0556-46f5-b2ca-ad7988d8781a

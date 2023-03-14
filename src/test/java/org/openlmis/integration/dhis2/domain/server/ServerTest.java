@@ -19,11 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.DatasetDataBuilder;
-import org.openlmis.integration.dhis2.ServerDataBuilder;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
+import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
@@ -66,7 +65,7 @@ public class ServerTest {
 
     server.export(dto);
 
-    Assertions.assertThat(dto.getId()).isEqualTo(server.getId());
+    assertThat(dto.getId()).isEqualTo(server.getId());
     assertThat(dto.getName()).isEqualTo(server.getName());
   }
 

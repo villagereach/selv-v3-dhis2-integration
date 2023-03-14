@@ -100,7 +100,6 @@ public class Server extends BaseEntity {
   }
 
   public interface Exporter extends BaseExporter {
-
     void setName(String name);
 
     void setUrl(String url);
@@ -108,11 +107,9 @@ public class Server extends BaseEntity {
     void setUsername(String username);
 
     void setPassword(String password);
-
   }
 
   public interface Importer extends BaseImporter {
-
     String getName();
 
     String getUrl();
@@ -120,7 +117,6 @@ public class Server extends BaseEntity {
     String getUsername();
 
     String getPassword();
-
   }
 
 }

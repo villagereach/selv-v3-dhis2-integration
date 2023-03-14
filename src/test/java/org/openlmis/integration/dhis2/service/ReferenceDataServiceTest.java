@@ -38,6 +38,7 @@ import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.OrderableDto;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
+import org.openlmis.integration.dhis2.service.auth.ReferenceDataAuthService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;

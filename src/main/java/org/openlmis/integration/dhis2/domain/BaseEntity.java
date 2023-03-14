@@ -43,15 +43,11 @@ public abstract class BaseEntity {
   private UUID id;
 
   public interface BaseExporter {
-
     void setId(UUID id);
-
   }
 
   public interface BaseImporter {
-
     UUID getId();
-
   }
 
 }
