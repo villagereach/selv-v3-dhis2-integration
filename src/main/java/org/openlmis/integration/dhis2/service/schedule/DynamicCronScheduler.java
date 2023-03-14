@@ -17,6 +17,7 @@ package org.openlmis.integration.dhis2.service.schedule;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
@@ -37,9 +38,10 @@ import org.springframework.stereotype.Service;
 @EnableScheduling
 public class DynamicCronScheduler {
 
-  private HashMap<UUID, ScheduledFuture<?>> scheduledProcesses = new HashMap<>();
-
   private static final Logger LOGGER = LoggerFactory.getLogger(DynamicCronScheduler.class);
+  private static final String FACILITY_REFRESH_CRON = "0 20 * * * *";
+
+  private Map<UUID, ScheduledFuture<?>> scheduledProcesses = new HashMap<>();
 
   @Autowired
   private TaskScheduler taskScheduler;
@@ -56,7 +58,7 @@ public class DynamicCronScheduler {
   @Autowired
   private ProcessedDataExchangeService processedDataExchangeService;
 
-  @Scheduled(cron = "0 20 * * * *")  // every day at 8:00 PM UTC
+  @Scheduled(cron = FACILITY_REFRESH_CRON)  // every day at 8:00 PM UTC
   private void refreshSharedFacilities() {
     sharedFacilitySynchronizer.refreshSharedFacilities();
   }

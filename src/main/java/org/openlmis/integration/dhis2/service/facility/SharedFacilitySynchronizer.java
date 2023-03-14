@@ -30,7 +30,6 @@ import org.openlmis.integration.dhis2.repository.facility.SharedFacilityReposito
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
 import org.openlmis.integration.dhis2.service.ReferenceDataService;
-import org.openlmis.integration.dhis2.service.schedule.DynamicCronScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SharedFacilitySynchronizer {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DynamicCronScheduler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SharedFacilitySynchronizer.class);
 
   @Autowired
   private ReferenceDataService referenceDataService;
@@ -107,9 +106,7 @@ public class SharedFacilitySynchronizer {
           sharedFacilityRepository.save(matchingFacility);
         }
       }
-
     }
-
   }
 
 }

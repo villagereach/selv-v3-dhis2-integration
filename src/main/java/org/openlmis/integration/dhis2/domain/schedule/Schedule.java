@@ -99,19 +99,15 @@ public class Schedule extends BaseEntity {
   }
 
   public interface Exporter extends BaseExporter {
-
     void setPeriodEnumerator(String periodEnumerator);
 
     void setTimeOffset(int timeOffset);
-
   }
 
   public interface Importer extends BaseImporter {
-
     String getPeriodEnumerator();
 
     int getTimeOffset();
-
   }
 
 }

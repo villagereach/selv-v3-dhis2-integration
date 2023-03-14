@@ -88,7 +88,6 @@ public class ProcessedDataExchangeService {
       dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
               server.getUsername(), server.getPassword());
     }
-
   }
 
 }

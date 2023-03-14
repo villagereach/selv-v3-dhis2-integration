@@ -18,8 +18,8 @@ package org.openlmis.integration.dhis2.service;
 import static org.openlmis.integration.dhis2.util.RequestHelper.createEntity;
 import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
@@ -96,7 +96,7 @@ public class DhisDataService {
    * @param password  User password.
    * @return the {@link DhisDataset} list.
    */
-  public ArrayList<DhisDataset> getDhisDatasets(String serverUrl, String username,
+  public List<DhisDataset> getDhisDatasets(String serverUrl, String username,
                                                String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
@@ -104,19 +104,19 @@ public class DhisDataService {
             .init()
             .set("paging", "false");
 
-    ResponseEntity<LinkedHashMap<String, ArrayList<Object>>> datasetResponse;
+    ResponseEntity<Map<String, List<Object>>> datasetResponse;
     try {
       datasetResponse = restTemplate.exchange(
               createUri(serverUrl + API_DATASETS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
               new ParameterizedTypeReference
-                      <LinkedHashMap<String, ArrayList<Object>>>() {}
+                      <Map<String, List<Object>>>() {}
       );
 
-      ArrayList<?> datasets
+      List<?> datasets
               = datasetResponse.getBody().get("dataSets");
-      return (ArrayList<DhisDataset>) datasets;
+      return (List<DhisDataset>) datasets;
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
               MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
@@ -136,7 +136,7 @@ public class DhisDataService {
    * @param password  User password.
    * @return the {@link OrganisationUnit} list.
    */
-  public ArrayList<OrganisationUnit> getDhisOrgUnits(String serverUrl, String username,
+  public List<OrganisationUnit> getDhisOrgUnits(String serverUrl, String username,
                                                 String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
@@ -144,19 +144,19 @@ public class DhisDataService {
             .init()
             .set("paging", "false");
 
-    ResponseEntity<LinkedHashMap<String, ArrayList<Object>>> orgUnitResponse;
+    ResponseEntity<Map<String, List<Object>>> orgUnitResponse;
     try {
       orgUnitResponse = restTemplate.exchange(
               createUri(serverUrl + API_ORG_UNITS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
               new ParameterizedTypeReference
-                      <LinkedHashMap<String, ArrayList<Object>>>() {}
+                      <Map<String, List<Object>>>() {}
       );
 
-      ArrayList<?> orgUnits
+      List<?> orgUnits
               = orgUnitResponse.getBody().get("organisationUnits");
-      return (ArrayList<OrganisationUnit>) orgUnits;
+      return (List<OrganisationUnit>) orgUnits;
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
               MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);

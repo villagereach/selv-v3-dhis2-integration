@@ -45,6 +45,7 @@ public class SharedFacility extends BaseEntity {
 
   @Column(nullable = false)
   private String code;
+
   @Column(nullable = false)
   private UUID facilityId;
 
@@ -88,23 +89,19 @@ public class SharedFacility extends BaseEntity {
   }
 
   public interface Exporter extends BaseExporter {
-
     void setCode(String code);
 
     void setFacilityId(UUID facilityId);
 
     void setOrgUnitId(UUID orgUnitId);
-
   }
 
   public interface Importer extends BaseImporter {
-
     String getCode();
 
     UUID getFacilityId();
 
     UUID getOrgUnitId();
-
   }
 
 }
