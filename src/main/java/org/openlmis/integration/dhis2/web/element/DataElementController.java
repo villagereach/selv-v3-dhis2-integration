@@ -73,6 +73,9 @@ public class DataElementController extends BaseController {
   private DatasetRepository datasetRepository;
 
   @Autowired
+  private PermissionService permissionService;
+
+  @Autowired
   private ScheduleService scheduleService;
 
   @Autowired
