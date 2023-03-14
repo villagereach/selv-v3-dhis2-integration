@@ -96,7 +96,7 @@ public abstract class MessageKeys {
   public static final String ERROR_PERMISSION_CHECK_FAILED = ERROR_PREFIX
           + ".authorization.failed";
 
-  public static final String ERROR_USER_NOT_FOUND = ERROR_PREFIX + ".user.notFound";
+  public static final String ERROR_USER_NOT_FOUND = ERROR_PREFIX + ".authentication.user.notFound";
 
   private MessageKeys() {
     throw new UnsupportedOperationException();
