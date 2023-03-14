@@ -25,6 +25,7 @@ import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.service.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public class ServerController extends BaseController {
   @Autowired
   private ServerRepository serverRepository;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves the specified server.
    */
@@ -82,6 +86,8 @@ public class ServerController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Page<ServerDto> getAllServers(Pageable pageable) {
+    permissionService.canManageDhisIntegration();
+
     Page<Server> page = serverRepository.findAll(pageable);
     List<ServerDto> content = page
             .getContent()

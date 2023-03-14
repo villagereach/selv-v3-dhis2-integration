@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.openlmis.integration.dhis2.util.RequestParameters;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -58,14 +59,19 @@ public class ReferenceDataAuthService {
     HttpEntity<String> request = new HttpEntity<>(headers);
 
     RequestParameters params = RequestParameters
-            .init()
-            .set("grant_type", "client_credentials");
+        .init()
+        .set("grant_type", "client_credentials");
 
     ResponseEntity<?> response = restTemplate.exchange(
-            createUri(authorizationUrl, params), HttpMethod.POST, request, Object.class
+        createUri(authorizationUrl, params), HttpMethod.POST, request, Object.class
     );
 
     return ((Map<String, String>) response.getBody()).get(ACCESS_TOKEN);
+  }
+
+  @CacheEvict(cacheNames = "token", allEntries = true)
+  public void clearTokenCache() {
+    // Intentionally blank
   }
 
   public void setRestTemplate(RestOperations restTemplate) {

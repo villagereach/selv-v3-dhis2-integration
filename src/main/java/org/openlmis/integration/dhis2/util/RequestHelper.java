@@ -20,6 +20,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -76,6 +80,41 @@ public final class RequestHelper {
    */
   public static <E> HttpEntity<E> createEntity(E payload, HttpHeaders headers) {
     return new HttpEntity<>(payload, headers);
+  }
+
+  /**
+   * Creates an {@link HttpEntity} with the given payload as a body and headers.
+   */
+  public static <E> HttpEntity<E> createEntity(E payload, RequestHeaders headers) {
+    return new HttpEntity<>(payload, headers.toHeaders());
+  }
+
+  /**
+   * Creates an {@link HttpEntity} with the given headers.
+   */
+  public static <E> HttpEntity<E> createEntity(RequestHeaders headers) {
+    return new HttpEntity<>(headers.toHeaders());
+  }
+
+  public static URI[] splitRequest(String url, RequestParameters queryParams, int maxUrlLength) {
+    RequestParameters safeQueryParams = RequestParameters.init().setAll(queryParams);
+    URI uri = createUri(url, safeQueryParams);
+
+    if (uri.toString().length() > maxUrlLength) {
+      Pair<RequestParameters, RequestParameters> split = safeQueryParams.split();
+
+      if (null != split.getLeft() && null != split.getRight()) {
+        URI[] left = splitRequest(url, split.getLeft(), maxUrlLength);
+        URI[] right = splitRequest(url, split.getRight(), maxUrlLength);
+
+        return Stream
+                .concat(Arrays.stream(left), Arrays.stream(right))
+                .distinct()
+                .toArray(URI[]::new);
+      }
+    }
+
+    return new URI[]{uri};
   }
 
   private static HttpHeaders createHeadersWithAuth(String token, String tokenPrefix) {
