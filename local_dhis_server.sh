@@ -17,9 +17,8 @@ function spin_up_instance() {
     # Load the dump
     d2 cluster db restore $INSTANCE_NAME ~/tmp/backup.sql.gz
 
-    #start the instance
+    # Start the instance
     d2 cluster up $INSTANCE_NAME -i=$image_version
-    rm -rf /tmp/backup.sql.gz
 }   
 
 # Define the function to start the DHIS2 instance
