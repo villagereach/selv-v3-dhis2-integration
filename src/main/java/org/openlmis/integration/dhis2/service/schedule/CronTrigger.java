@@ -15,30 +15,37 @@
 
 package org.openlmis.integration.dhis2.service.schedule;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 
 public class CronTrigger implements Trigger {
 
+  private final PeriodGeneratorService periodGeneratorService;
+
   private final DhisPeriod periodEnum;
   private final int offsetMinutes;
 
-  @Autowired
-  private PeriodGeneratorService periodGeneratorService;
-
-  public CronTrigger(DhisPeriod periodEnum, int offsetMinutes) {
+  /**
+   * Creates new instance of cron trigger.
+   */
+  public CronTrigger(PeriodGeneratorService periodGeneratorService,
+                     DhisPeriod periodEnum, int offsetMinutes) {
+    this.periodGeneratorService = periodGeneratorService;
     this.periodEnum = periodEnum;
     this.offsetMinutes = offsetMinutes;
   }
 
   @Override
   public Date nextExecutionTime(@Nullable TriggerContext triggerContext) {
-    return Date.from(periodGeneratorService.generateRange(
-            periodEnum, offsetMinutes).getSecond().toInstant());
+    Pair<ZonedDateTime, ZonedDateTime> range = periodGeneratorService.generateRange(
+            periodEnum, offsetMinutes);
+    ZonedDateTime periodEnd = range.getSecond();
+    return Date.from(periodEnd.toInstant());
   }
 
 }

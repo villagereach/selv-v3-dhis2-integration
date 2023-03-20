@@ -27,6 +27,7 @@ import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
+import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.dataset.DatasetController;
@@ -69,6 +70,9 @@ public class DataElementController extends BaseController {
 
   @Autowired
   private DatasetRepository datasetRepository;
+
+  @Autowired
+  private ScheduleService scheduleService;
 
   /**
    * Retrieves the specified data element.
@@ -122,6 +126,7 @@ public class DataElementController extends BaseController {
     newDataElement.setId(null);
     try {
       newDataElement = dataElementRepository.saveAndFlush(newDataElement);
+      scheduleService.createSchedule(newDataElement);
     } catch (DataIntegrityViolationException e) {
       throw new ValidationMessageException(MessageKeys.ERROR_DATAELEMENT_CODE_DUPLICATED, e);
     }
