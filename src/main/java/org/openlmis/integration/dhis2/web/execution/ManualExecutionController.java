@@ -16,6 +16,7 @@
 package org.openlmis.integration.dhis2.web.execution;
 
 import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
+import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
@@ -44,6 +45,9 @@ public class ManualExecutionController extends BaseController {
   private ProcessedDataExchangeService processedDataExchangeService;
 
   @Autowired
+  private SharedFacilitySynchronizer sharedFacilitySynchronizer;
+
+  @Autowired
   private ScheduleService scheduleService;
 
   /**
@@ -53,6 +57,7 @@ public class ManualExecutionController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   public void runExecution() {
     LOGGER.debug("Running manual execution");
+    sharedFacilitySynchronizer.refreshSharedFacilities();
     scheduleService.getAllSchedules().forEach(
         schedule -> processedDataExchangeService.sendData(schedule));
   }

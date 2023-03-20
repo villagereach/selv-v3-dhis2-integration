@@ -21,11 +21,9 @@ import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.domain.server.Server;
-import org.openlmis.integration.dhis2.dto.element.DataElementDto;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
-import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.repository.schedule.ScheduleRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.slf4j.Logger;
@@ -43,9 +41,6 @@ public class ScheduleService {
 
   @Autowired
   private DatasetRepository datasetRepository;
-
-  @Autowired
-  private DataElementRepository dataElementRepository;
 
   @Autowired
   private ScheduleRepository scheduleRepository;
@@ -68,18 +63,15 @@ public class ScheduleService {
   /**
    * Allows the creation of a new schedule.
    */
-  public Schedule createSchedule(DataElementDto dataElementDto) {
+  public Schedule createSchedule(DataElement dataElement) {
     LOGGER.debug("Creating new scheduler");
 
-    Server server = serverRepository.findById(
-            dataElementDto.getDatasetDto().getServerDto().getId())
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
-
-    Dataset dataset = datasetRepository.findById(dataElementDto.getDatasetDto().getId())
+    Dataset dataset = datasetRepository.findById(dataElement.getDataset().getId())
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
-    DataElement dataElement = dataElementRepository.findById(dataElementDto.getId())
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
+    Server server = serverRepository.findById(
+            dataset.getServer().getId())
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
     Schedule newSchedule = new Schedule(dataset.getCronExpression(), dataset.getTimeOffset(),
             server, dataset, dataElement);

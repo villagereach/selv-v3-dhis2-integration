@@ -24,6 +24,7 @@ import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
+import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
@@ -136,7 +137,7 @@ public class DhisDataService {
    * @param password  User password.
    * @return the {@link OrganisationUnit} list.
    */
-  public List<OrganisationUnit> getDhisOrgUnits(String serverUrl, String username,
+  public PageDto<OrganisationUnit> getDhisOrgUnits(String serverUrl, String username,
                                                 String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
@@ -144,19 +145,17 @@ public class DhisDataService {
             .init()
             .set("paging", "false");
 
-    ResponseEntity<Map<String, List<Object>>> orgUnitResponse;
+    ResponseEntity<PageDto<OrganisationUnit>> orgUnitResponse;
     try {
       orgUnitResponse = restTemplate.exchange(
               createUri(serverUrl + API_ORG_UNITS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
               new ParameterizedTypeReference
-                      <Map<String, List<Object>>>() {}
+                      <PageDto<OrganisationUnit>>() {}
       );
 
-      List<?> orgUnits
-              = orgUnitResponse.getBody().get("organisationUnits");
-      return (List<OrganisationUnit>) orgUnits;
+      return orgUnitResponse.getBody();
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
               MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);

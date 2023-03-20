@@ -70,7 +70,7 @@ public class DynamicCronScheduler {
     LOGGER.debug("Creating new cron job");
     DhisPeriod periodEnum = periodGeneratorService.fromString(schedule.getPeriodEnumerator());
     int offset = schedule.getTimeOffset();
-    CronTrigger cronTrigger = new CronTrigger(periodEnum, offset);
+    CronTrigger cronTrigger = new CronTrigger(periodGeneratorService, periodEnum, offset);
 
     ScheduledFuture<?> newProcess = taskScheduler.schedule(
         () -> processedDataExchangeService.sendData(schedule), cronTrigger);

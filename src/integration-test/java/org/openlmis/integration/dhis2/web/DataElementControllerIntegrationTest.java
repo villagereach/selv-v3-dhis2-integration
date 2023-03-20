@@ -49,7 +49,9 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 import org.openlmis.integration.dhis2.dto.element.DataElementDto;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
+import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
 import org.openlmis.integration.dhis2.web.element.DataElementController;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -76,6 +78,9 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
   private CommitId commitId = new CommitId(1, 0);
   private CommitMetadata commitMetadata = new CommitMetadata(
           "admin", Maps.newHashMap(), LocalDateTime.now(), commitId);
+
+  @MockBean
+  ScheduleService scheduleService;
 
   @Before
   public void setUp() {
