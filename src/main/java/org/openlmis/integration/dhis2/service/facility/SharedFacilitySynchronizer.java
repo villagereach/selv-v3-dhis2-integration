@@ -65,8 +65,9 @@ public class SharedFacilitySynchronizer {
     for (Server server: servers) {
       Set<SharedFacilityDto> allMatchingFacilities = new HashSet<>();
       Set<SharedFacilityDto> allNotMatchingFacilities = new HashSet<>();
-      List<OrganisationUnit> organisationUnits = dhisDataService.getDhisOrgUnits(
+      PageDto<OrganisationUnit> organisationUnitsPage = dhisDataService.getDhisOrgUnits(
               server.getUrl(), server.getUsername(), server.getPassword());
+      List<OrganisationUnit> organisationUnits = organisationUnitsPage.getContent();
 
       for (OrganisationUnit orgUnit: organisationUnits) {
         String orgUnitCode = orgUnit.getCode();
