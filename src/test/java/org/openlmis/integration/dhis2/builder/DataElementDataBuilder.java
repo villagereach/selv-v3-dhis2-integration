@@ -41,6 +41,8 @@ public class DataElementDataBuilder {
   public DataElement build() {
     DataElement dataElement = buildAsNew();
     dataElement.setId(ID);
+    dataElement.setDataset(dataset);
+
     return dataElement;
   }
 
@@ -48,7 +50,9 @@ public class DataElementDataBuilder {
    * Builds new instance of Dataset as a new object (without id field).
    */
   public DataElement buildAsNew() {
-    return new DataElement(NAME, SOURCE, INDICATOR, ORDERABLE, ELEMENT, dataset);
+    DataElement dataElement = new DataElement(NAME, SOURCE, INDICATOR, ORDERABLE, ELEMENT);
+    dataElement.setDataset(dataset);
+    return dataElement;
   }
 
 }

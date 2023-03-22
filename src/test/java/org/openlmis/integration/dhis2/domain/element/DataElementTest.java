@@ -23,7 +23,9 @@ import org.junit.Test;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.builder.DataElementDataBuilder;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.dto.element.DataElementDto;
 
 public class DataElementTest {
@@ -33,10 +35,14 @@ public class DataElementTest {
     Dataset ds1 = new DatasetDataBuilder().build();
     Dataset ds2 = new Dataset();
 
+    Schedule sc1 = new ScheduleDataBuilder().build();
+    Schedule sc2 = new Schedule();
+
     EqualsVerifier
         .forClass(DataElement.class)
         .withRedefinedSuperclass()
         .withPrefabValues(Dataset.class, ds1, ds2)
+        .withPrefabValues(Schedule.class, sc1, sc2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }

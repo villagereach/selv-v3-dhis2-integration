@@ -22,50 +22,58 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 
 @Entity
 @TypeName("Server")
 @Table(name = "server", schema = "dhis2")
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class Server extends BaseEntity {
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String name;
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String url;
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String username;
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String password;
 
   @Column
-  @Getter
-  @Setter
-  @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "server")
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "server")
   private List<Dataset> datasetList = new ArrayList<>();
+
+  @Column
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "server")
+  private List<Schedule> scheduleList = new ArrayList<>();
+
+  @Column
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "server")
+  private List<SharedFacility> sharedFacilityList = new ArrayList<>();
 
   /**
    * Creates new instance based on data from the importer.

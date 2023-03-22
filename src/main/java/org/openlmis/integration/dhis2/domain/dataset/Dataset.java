@@ -25,57 +25,57 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 @Entity
 @TypeName("Dataset")
 @Table(name = "dataset", schema = "dhis2")
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Dataset extends BaseEntity {
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String name;
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String dhisDatasetId;
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
+  @Column
+  @NonNull
   private String cronExpression;
 
-  @Column(nullable = false)
-  @Getter
-  @Setter
-  private int timeOffset;
+  @Column
+  @NonNull
+  private Integer timeOffset;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "serverId", nullable = false)
-  @Getter
-  @Setter
   private Server server;
 
   @Column
-  @Getter
-  @Setter
-  @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "dataset")
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataset")
   private List<DataElement> dataElementList = new ArrayList<>();
+
+  @Column
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataset")
+  private List<Schedule> scheduleList = new ArrayList<>();
 
   /**
    * Creates new instance based on data from the importer.
@@ -117,7 +117,7 @@ public class Dataset extends BaseEntity {
 
     void setCronExpression(String cronExpression);
 
-    void setTimeOffset(int timeOffset);
+    void setTimeOffset(Integer timeOffset);
 
     void setServer(Server server);
 
@@ -131,7 +131,7 @@ public class Dataset extends BaseEntity {
 
     String getCronExpression();
 
-    int getTimeOffset();
+    Integer getTimeOffset();
 
     Server getServer();
 

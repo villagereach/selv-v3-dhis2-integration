@@ -22,8 +22,12 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
+import org.openlmis.integration.dhis2.builder.SharedFacilityDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
+import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
 public class ServerTest {
@@ -33,10 +37,18 @@ public class ServerTest {
     Dataset ds1 = new DatasetDataBuilder().build();
     Dataset ds2 = new Dataset();
 
+    Schedule sc1 = new ScheduleDataBuilder().build();
+    Schedule sc2 = new Schedule();
+
+    SharedFacility sf1 = new SharedFacilityDataBuilder().build();
+    SharedFacility sf2 = new SharedFacility();
+
     EqualsVerifier
         .forClass(Server.class)
         .withRedefinedSuperclass()
         .withPrefabValues(Dataset.class, ds1, ds2)
+        .withPrefabValues(Schedule.class, sc1, sc2)
+        .withPrefabValues(SharedFacility.class, sf1, sf2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }

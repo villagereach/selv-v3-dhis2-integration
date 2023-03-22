@@ -36,6 +36,8 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 @Entity
 @TypeName("Schedule")
 @Table(name = "schedule", schema = "dhis2")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -43,31 +45,21 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 public class Schedule extends BaseEntity {
 
   @Column(nullable = false)
-  @Getter
-  @Setter
   private String periodEnumerator;
 
   @Column(nullable = false)
-  @Getter
-  @Setter
   private int timeOffset;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "serverId", nullable = false)
-  @Getter
-  @Setter
   private Server server;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "datasetId", nullable = false)
-  @Getter
-  @Setter
   private Dataset dataset;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "elementId", nullable = false)
-  @Getter
-  @Setter
   private DataElement dataElement;
 
   /**
