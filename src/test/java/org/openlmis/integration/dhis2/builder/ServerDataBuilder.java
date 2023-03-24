@@ -15,10 +15,7 @@
 
 package org.openlmis.integration.dhis2.builder;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
-import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class ServerDataBuilder {
@@ -28,13 +25,6 @@ public class ServerDataBuilder {
   private static final String URL = "http://test.configuration";
   private static final String USERNAME = "test-username";
   private static final String PASSWORD = "test-password";
-
-  private List<Dataset> datasets = Collections.emptyList();
-
-  public ServerDataBuilder withDatasets(List<Dataset> datasets) {
-    this.datasets = datasets;
-    return this;
-  }
 
   /**
    * Builds new instance of Server (with id field).
@@ -49,7 +39,7 @@ public class ServerDataBuilder {
    * Builds new instance of Server as a new object (without id field).
    */
   public Server buildAsNew() {
-    return new Server(NAME, URL, USERNAME, PASSWORD, datasets);
+    return new Server(NAME, URL, USERNAME, PASSWORD);
   }
 
 }

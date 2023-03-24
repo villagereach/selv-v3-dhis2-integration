@@ -54,8 +54,6 @@ public class SharedFacility extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "serverId", nullable = false)
-  @Getter
-  @Setter
   private Server server;
 
   /**

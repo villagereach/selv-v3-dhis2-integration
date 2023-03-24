@@ -20,7 +20,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +67,7 @@ public class SharedFacilitySynchronizerTest {
   public void setUp() throws Exception {
     UUID serverId = UUID.randomUUID();
     Server server = new Server(serverName, serverUrl, serverUsername,
-            serverPassword, new ArrayList<>());
+            serverPassword);
     server.setId(serverId);
     when(serverRepository.findAll()).thenReturn(Collections.singletonList(server));
   }
