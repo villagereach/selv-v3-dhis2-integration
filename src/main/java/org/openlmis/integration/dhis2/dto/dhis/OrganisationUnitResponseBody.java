@@ -13,22 +13,22 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.referencedata;
+package org.openlmis.integration.dhis2.dto.dhis;
 
-import lombok.EqualsAndHashCode;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.openlmis.integration.dhis2.dto.BaseDto;
+import lombok.ToString;
 
 /**
- * Objects of this class represent MinimalFacilityDto data retrieved from the referencedata.
+ * List of all organizational units for a server, retrieved from the DHIS2 API.
+ * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-public class MinimalFacilityDto extends BaseDto {
+@ToString
+public class OrganisationUnitResponseBody {
 
-  private String code;
-  private String name;
+  private List<OrganisationUnit> organisationUnits;
 
 }

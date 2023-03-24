@@ -25,7 +25,6 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
 import org.openlmis.integration.dhis2.dto.facility.SharedFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
-import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 import org.openlmis.integration.dhis2.repository.facility.SharedFacilityRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
@@ -66,9 +65,8 @@ public class SharedFacilitySynchronizer {
     for (Server server: servers) {
       Set<SharedFacilityDto> allMatchingFacilities = new HashSet<>();
       Set<SharedFacilityDto> allNotMatchingFacilities = new HashSet<>();
-      PageDto<OrganisationUnit> organisationUnitsPage = dhisDataService.getDhisOrgUnits(
+      List<OrganisationUnit> organisationUnits = dhisDataService.getDhisOrgUnits(
               server.getUrl(), server.getUsername(), server.getPassword());
-      List<OrganisationUnit> organisationUnits = organisationUnitsPage.getContent();
 
       for (OrganisationUnit orgUnit: organisationUnits) {
         String orgUnitCode = orgUnit.getCode();
