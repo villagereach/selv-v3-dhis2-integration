@@ -24,7 +24,7 @@ public class SharedFacilityDataBuilder {
   private static final UUID ID = UUID.randomUUID();
   private static final String CODE = "test-code";
   private static final UUID FACILITY_ID = UUID.randomUUID();
-  private static final UUID ORG_UNIT_ID = UUID.randomUUID();
+  private static final String ORG_UNIT_ID = "test-unit-id";
 
   private Server server = new ServerDataBuilder().build();
 

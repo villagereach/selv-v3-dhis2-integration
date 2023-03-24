@@ -50,7 +50,7 @@ public class SharedFacility extends BaseEntity {
   private UUID facilityId;
 
   @Column(nullable = false)
-  private UUID orgUnitId;
+  private String orgUnitId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "serverId", nullable = false)
@@ -91,7 +91,7 @@ public class SharedFacility extends BaseEntity {
 
     void setFacilityId(UUID facilityId);
 
-    void setOrgUnitId(UUID orgUnitId);
+    void setOrgUnitId(String orgUnitId);
   }
 
   public interface Importer extends BaseImporter {
@@ -99,7 +99,7 @@ public class SharedFacility extends BaseEntity {
 
     UUID getFacilityId();
 
-    UUID getOrgUnitId();
+    String getOrgUnitId();
   }
 
 }

@@ -19,12 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
 import org.openlmis.integration.dhis2.dto.facility.SharedFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
+import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 import org.openlmis.integration.dhis2.repository.facility.SharedFacilityRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
@@ -58,8 +58,8 @@ public class SharedFacilitySynchronizer {
    */
   public void refreshSharedFacilities() {
     LOGGER.debug("Refreshing shared facilities");
-    List<MinimalFacilityDto> refDataFacilities = referenceDataService
-            .findAllFacilities().getContent();
+    PageDto<MinimalFacilityDto> refDataFacilitiesPage = referenceDataService.findAllFacilities();
+    List<MinimalFacilityDto> refDataFacilities = refDataFacilitiesPage.getContent();
 
     List<Server> servers = serverRepository.findAll();
     for (Server server: servers) {
@@ -73,13 +73,12 @@ public class SharedFacilitySynchronizer {
 
         for (MinimalFacilityDto facilityDto : refDataFacilities) {
           String facilityCode = facilityDto.getCode();
-
           if (facilityCode.equals(orgUnitCode)) {
             allMatchingFacilities.add(new SharedFacilityDto(orgUnitCode, facilityDto.getId(),
-                    UUID.fromString(orgUnit.getId()), ServerDto.newInstance(server)));
+                    orgUnit.getId(), ServerDto.newInstance(server)));
           } else {
             allNotMatchingFacilities.add((new SharedFacilityDto(orgUnitCode, facilityDto.getId(),
-                    UUID.fromString(orgUnit.getId()), ServerDto.newInstance(server))));
+                    orgUnit.getId(), ServerDto.newInstance(server))));
           }
         }
       }

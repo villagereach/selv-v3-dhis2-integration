@@ -37,7 +37,7 @@ public final class SharedFacilityDto extends BaseDto implements
 
   private String code;
   private UUID facilityId;
-  private UUID orgUnitId;
+  private String orgUnitId;
   private ServerDto serverDto;
 
   /**

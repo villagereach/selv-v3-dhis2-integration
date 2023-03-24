@@ -28,6 +28,7 @@ import org.openlmis.integration.dhis2.service.auth.ReferenceDataAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class ReferenceDataService {
    * @return page of MinimalFacilityDto objects.
    */
   public PageDto<MinimalFacilityDto> findAllFacilities() {
-    return doRequest(FACILITIES_RESOUCE_PATH);
+    return doRequest(FACILITIES_RESOUCE_PATH, MinimalFacilityDto.class);
   }
 
   /**
@@ -66,16 +67,17 @@ public class ReferenceDataService {
    * @return page of OrderableDto objects.
    */
   public PageDto<OrderableDto> findAllOrderables() {
-    return doRequest(ORDERABLES_RESOUCE_PATH);
+    return doRequest(ORDERABLES_RESOUCE_PATH, OrderableDto.class);
   }
 
-  private <T> PageDto<T> doRequest(String resourcePath) {
+  private <T> PageDto<T> doRequest(String resourcePath, Class<T> clazz) {
     try {
       ResponseEntity<PageDto<T>> response = restTemplate.exchange(
               URI.create(serviceUrl + API_URL + resourcePath),
               HttpMethod.GET,
               createEntity(authService.obtainAccessToken(), "Bearer"),
-              new ParameterizedTypeReference<PageDto<T>>() {}
+              ParameterizedTypeReference.forType(
+                      ResolvableType.forClassWithGenerics(PageDto.class, clazz).getType())
       );
 
       try {
