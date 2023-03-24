@@ -96,6 +96,7 @@ public class DataElement extends BaseEntity {
     indicator = importer.getIndicator();
     orderable = importer.getOrderable();
     element = importer.getElement();
+    dataset = importer.getDataset();
   }
 
   /**
@@ -108,6 +109,7 @@ public class DataElement extends BaseEntity {
     exporter.setIndicator(indicator);
     exporter.setOrderable(orderable);
     exporter.setElement(element);
+    exporter.setDataset(dataset);
   }
 
   public interface Exporter extends BaseExporter {

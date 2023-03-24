@@ -74,6 +74,7 @@ public class SharedFacility extends BaseEntity {
     code = importer.getCode();
     facilityId = importer.getFacilityId();
     orgUnitId = importer.getOrgUnitId();
+    server = importer.getServer();
   }
 
   /**
@@ -84,6 +85,7 @@ public class SharedFacility extends BaseEntity {
     exporter.setCode(getCode());
     exporter.setFacilityId(getFacilityId());
     exporter.setOrgUnitId(getOrgUnitId());
+    exporter.setServer(server);
   }
 
   public interface Exporter extends BaseExporter {
@@ -92,6 +94,8 @@ public class SharedFacility extends BaseEntity {
     void setFacilityId(UUID facilityId);
 
     void setOrgUnitId(String orgUnitId);
+
+    void setServer(Server server);
   }
 
   public interface Importer extends BaseImporter {
@@ -100,6 +104,8 @@ public class SharedFacility extends BaseEntity {
     UUID getFacilityId();
 
     String getOrgUnitId();
+
+    Server getServer();
   }
 
 }
