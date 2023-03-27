@@ -92,9 +92,9 @@ public class SharedFacilitySynchronizerTest {
     orgUnit.setId(String.valueOf(orgUnitId));
     orgUnit.setCode(notMatchingCode);
 
-    PageDto<OrganisationUnit> orgUnitsPage = createPageDto(Collections.singletonList(orgUnit));
+    List<OrganisationUnit> orgUnits = Collections.singletonList(orgUnit);
     when(dhisDataService.getDhisOrgUnits(any(String.class), any(String.class),
-            any(String.class))).thenReturn(orgUnitsPage);
+            any(String.class))).thenReturn(orgUnits);
 
     when(sharedFacilityRepository.findByCodeAndServerId(any(String.class), any(UUID.class)))
             .thenReturn(Optional.of(mock(SharedFacility.class)));
@@ -122,9 +122,9 @@ public class SharedFacilitySynchronizerTest {
     orgUnit.setId(String.valueOf(orgUnitId));
     orgUnit.setCode(matchingCode);
 
-    PageDto<OrganisationUnit> orgUnitsPage = createPageDto(Collections.singletonList(orgUnit));
+    List<OrganisationUnit> orgUnits = Collections.singletonList(orgUnit);
     when(dhisDataService.getDhisOrgUnits(any(String.class), any(String.class),
-            any(String.class))).thenReturn(orgUnitsPage);
+            any(String.class))).thenReturn(orgUnits);
 
     when(sharedFacilityRepository.findByCodeAndServerId(any(String.class), any(UUID.class)))
             .thenReturn(Optional.empty());

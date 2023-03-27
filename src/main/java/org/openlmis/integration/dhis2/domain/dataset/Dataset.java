@@ -96,6 +96,7 @@ public class Dataset extends BaseEntity {
     dhisDatasetId = importer.getDhisDatasetId();
     cronExpression = importer.getCronExpression();
     timeOffset = importer.getTimeOffset();
+    server = importer.getServer();
   }
 
   /**
@@ -107,6 +108,7 @@ public class Dataset extends BaseEntity {
     exporter.setDhisDatasetId(dhisDatasetId);
     exporter.setCronExpression(cronExpression);
     exporter.setTimeOffset(timeOffset);
+    exporter.setServer(server);
   }
 
   public interface Exporter extends BaseExporter {

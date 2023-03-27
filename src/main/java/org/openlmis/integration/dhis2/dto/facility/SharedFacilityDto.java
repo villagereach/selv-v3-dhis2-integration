@@ -15,6 +15,7 @@
 
 package org.openlmis.integration.dhis2.dto.facility;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
+import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.BaseDto;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
@@ -37,7 +39,7 @@ public final class SharedFacilityDto extends BaseDto implements
 
   private String code;
   private UUID facilityId;
-  private UUID orgUnitId;
+  private String orgUnitId;
   private ServerDto serverDto;
 
   /**
@@ -47,6 +49,17 @@ public final class SharedFacilityDto extends BaseDto implements
     SharedFacilityDto dto = new SharedFacilityDto();
     sharedFacility.export(dto);
     return dto;
+  }
+
+  @JsonIgnore
+  @Override
+  public void setServer(Server server) {
+    this.serverDto = ServerDto.newInstance(server);
+  }
+
+  @Override
+  public Server getServer() {
+    return Server.newInstance(serverDto);
   }
 
 }
