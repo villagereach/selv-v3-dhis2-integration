@@ -21,7 +21,7 @@ import lombok.Setter;
 import org.openlmis.integration.dhis2.dto.BaseDto;
 
 /**
- * Objects of this class represent MinimalFacilityDto data retrieved from the referencedata.
+ * Objects of this class represent ProcessingScheduleDto data retrieved from the referencedata.
  */
 @Getter
 @Setter
