@@ -16,9 +16,17 @@
 package org.openlmis.integration.dhis2.service.schedule;
 
 import java.time.Clock;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
+import org.openlmis.integration.dhis2.dto.referencedata.ProcessingPeriodDto;
+import org.openlmis.integration.dhis2.exception.ValidationMessageException;
+import org.openlmis.integration.dhis2.service.ReferenceDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -28,6 +36,9 @@ public class PeriodGeneratorService {
 
   @Autowired
   private Clock clock;
+
+  @Autowired
+  private ReferenceDataService referenceDataService;
 
   public PeriodGeneratorService() {
   }
@@ -53,6 +64,29 @@ public class PeriodGeneratorService {
   public Pair<ZonedDateTime, ZonedDateTime> generateRange(
           String periodName, int offsetMinutes) {
     return generateRange(fromString(periodName), offsetMinutes);
+  }
+
+  /**
+   * Retrieves last finished requisition period from Requisition service.
+   */
+  public Pair<ZonedDateTime, ZonedDateTime> getLastRequisitionPeriod() {
+    Date currentDate = Date.from(ZonedDateTime.now().toInstant());
+    List<ProcessingPeriodDto> processingPeriods =
+            referenceDataService.findAllProcessingPeriods().getContent();
+
+    processingPeriods.sort(Comparator.comparing(ProcessingPeriodDto::getStartDate));
+    Optional<ProcessingPeriodDto> lastPeriodOptional = processingPeriods.stream()
+            .filter(e -> e.getEndDate().before(currentDate))
+            .max(Comparator.comparing(ProcessingPeriodDto::getStartDate));
+
+    ProcessingPeriodDto lastPeriod = lastPeriodOptional.orElseThrow(
+        () -> new ValidationMessageException("No matching processing periods found"));
+    ZonedDateTime startDate = ZonedDateTime.ofInstant(
+            lastPeriod.getStartDate().toInstant(), ZoneId.systemDefault());
+    ZonedDateTime endDate = ZonedDateTime.ofInstant(
+            lastPeriod.getEndDate().toInstant(), ZoneId.systemDefault());
+
+    return Pair.of(startDate, endDate);
   }
 
   /**
