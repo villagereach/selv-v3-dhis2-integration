@@ -40,7 +40,7 @@ public class RequisitionRepository {
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT line_items.beginningbalance AS bb "
+            "(SELECT line_items.beginningbalance AS bb "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
@@ -54,7 +54,10 @@ public class RequisitionRepository {
                     + "AND req.createddate <= :startDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility "
-                    + "ORDER BY req.createddate DESC LIMIT 1");
+                    + "ORDER BY req.createddate desc) UNION ( "
+                    + "select 0 as bb "
+                    + ") "
+                    + "LIMIT 1;");
 
     return Long.parseLong(query.setParameter(START_DATE, startDate)
             .setParameter(ORDERABLE, orderable)
@@ -69,7 +72,7 @@ public class RequisitionRepository {
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT line_items.stockonhand AS soh "
+            "(SELECT line_items.stockonhand AS soh "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
@@ -83,7 +86,10 @@ public class RequisitionRepository {
                     + "AND req.createddate <= :endDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility "
-                    + "ORDER BY req.createddate DESC LIMIT 1");
+                    + "ORDER BY req.createddate desc) UNION ( "
+                    + "    select 0 as soh "
+                    + ") "
+                    + "LIMIT 1;");
 
     return Long.parseLong(query.setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
@@ -98,7 +104,7 @@ public class RequisitionRepository {
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT line_items.totalreceivedquantity AS received "
+            "(SELECT line_items.totalreceivedquantity AS received "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
@@ -112,7 +118,10 @@ public class RequisitionRepository {
                     + "AND req.createddate <= :endDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility "
-                    + "ORDER BY req.createddate desc LIMIT 1");
+                    + "ORDER BY req.createddate desc) UNION ( "
+                    + "    select 0 as received "
+                    + ") "
+                    + "LIMIT 1;");
 
     return Double.parseDouble(query.setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
