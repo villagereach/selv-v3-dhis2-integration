@@ -41,8 +41,8 @@ public class StockmanagementRepository {
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT cal.stockonhand "
-                    + "FROM stockmanagement.stock_card_line_items AS line_items  "
+            "(SELECT cal.stockonhand "
+                    + "FROM stockmanagement.stock_card_line_items AS line_items "
                     + "JOIN stockmanagement.stock_cards AS cards "
                     + "ON line_items.stockcardid = cards.id "
                     + "JOIN stockmanagement.stock_card_line_item_reasons AS reasons "
@@ -50,17 +50,20 @@ public class StockmanagementRepository {
                     + "JOIN stockmanagement.calculated_stocks_on_hand AS cal "
                     + "ON cal.stockcardid = cards.id "
                     + "JOIN referencedata.orderables AS products "
-                    + "ON cards.orderableid = products.id  "
+                    + "ON cards.orderableid = products.id "
                     + "JOIN referencedata.facilities AS facilities "
-                    + "ON facilities.id = cards.facilityid  "
+                    + "ON facilities.id = cards.facilityid "
                     + "WHERE products.versionnumber = ( "
                     + "SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id "
                     + ") "
                     + "AND line_items.occurreddate <= :startDate "
                     + "AND products.fullproductname = :orderable  "
-                    + "AND facilities.code = :facility  "
-                    + "ORDER BY line_items.occurreddate DESC LIMIT 1");
+                    + "AND facilities.code = :facility "
+                    + "ORDER BY line_items.occurreddate desc) union ( "
+                    + "select 0 as stockonhand"
+                    + ") "
+                    + "LIMIT 1;");
 
     return Long.parseLong(query.setParameter(START_DATE, startDate)
             .setParameter(ORDERABLE, orderable)
@@ -75,8 +78,8 @@ public class StockmanagementRepository {
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "SELECT cal.stockonhand "
-                    + "FROM stockmanagement.stock_card_line_items AS line_items  "
+            "(SELECT cal.stockonhand "
+                    + "FROM stockmanagement.stock_card_line_items AS line_items "
                     + "JOIN stockmanagement.stock_cards AS cards "
                     + "ON line_items.stockcardid = cards.id "
                     + "JOIN stockmanagement.stock_card_line_item_reasons AS reasons "
@@ -84,17 +87,20 @@ public class StockmanagementRepository {
                     + "JOIN stockmanagement.calculated_stocks_on_hand AS cal "
                     + "ON cal.stockcardid = cards.id "
                     + "JOIN referencedata.orderables AS products "
-                    + "ON cards.orderableid = products.id  "
+                    + "ON cards.orderableid = products.id "
                     + "JOIN referencedata.facilities AS facilities "
-                    + "ON facilities.id = cards.facilityid  "
+                    + "ON facilities.id = cards.facilityid "
                     + "WHERE products.versionnumber = ( "
                     + "SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id "
                     + ") "
                     + "AND line_items.occurreddate <= :endDate "
-                    + "AND products.fullproductname = :orderable  "
-                    + "AND facilities.code = :facility  "
-                    + "ORDER BY line_items.occurreddate DESC LIMIT 1");
+                    + "AND products.fullproductname = :orderable "
+                    + "AND facilities.code = :facility "
+                    + "ORDER BY line_items.occurreddate DESC) UNION ("
+                    + "select 0 as stockonhand "
+                    + ") "
+                    + "LIMIT 1;");
 
     return Long.parseLong(query.setParameter(END_DATE, endDate)
             .setParameter(ORDERABLE, orderable)
