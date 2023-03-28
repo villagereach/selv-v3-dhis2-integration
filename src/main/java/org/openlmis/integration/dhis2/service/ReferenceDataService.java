@@ -21,6 +21,7 @@ import java.net.URI;
 import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.OrderableDto;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
+import org.openlmis.integration.dhis2.dto.referencedata.ProcessingPeriodDto;
 import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
@@ -40,8 +41,9 @@ import org.springframework.web.client.RestTemplate;
 public class ReferenceDataService {
 
   public static final String API_URL = "/api/";
-  public static final String FACILITIES_RESOUCE_PATH = "facilities/";
-  public static final String ORDERABLES_RESOUCE_PATH = "orderables/";
+  public static final String FACILITIES_RESOURCE_PATH = "facilities/";
+  public static final String ORDERABLES_RESOURCE_PATH = "orderables/";
+  public static final String PROCESSING_PERIODS_RESOURCE_PATH = "processingPeriods/";
 
   @Value("${service.url}")
   private String serviceUrl;
@@ -58,7 +60,7 @@ public class ReferenceDataService {
    * @return page of MinimalFacilityDto objects.
    */
   public PageDto<MinimalFacilityDto> findAllFacilities() {
-    return doRequest(FACILITIES_RESOUCE_PATH, MinimalFacilityDto.class);
+    return doRequest(FACILITIES_RESOURCE_PATH, MinimalFacilityDto.class);
   }
 
   /**
@@ -67,7 +69,16 @@ public class ReferenceDataService {
    * @return page of OrderableDto objects.
    */
   public PageDto<OrderableDto> findAllOrderables() {
-    return doRequest(ORDERABLES_RESOUCE_PATH, OrderableDto.class);
+    return doRequest(ORDERABLES_RESOURCE_PATH, OrderableDto.class);
+  }
+
+  /**
+   * Retrieves {@link PageDto} of {@link ProcessingPeriodDto} objects from referencedata service.
+   *
+   * @return page of ProcessingPeriodDto objects.
+   */
+  public PageDto<ProcessingPeriodDto> findAllProcessingPeriods() {
+    return doRequest(PROCESSING_PERIODS_RESOURCE_PATH, ProcessingPeriodDto.class);
   }
 
   private <T> PageDto<T> doRequest(String resourcePath, Class<T> clazz) {

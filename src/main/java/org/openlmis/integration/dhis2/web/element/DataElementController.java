@@ -117,11 +117,11 @@ public class DataElementController extends BaseController {
   public DataElementDto createDataElement(@PathVariable("datasetId") UUID datasetId,
                                   @RequestBody DataElementDto dataElementDto) {
     LOGGER.debug("Creating new data element");
-    DataElement newDataElement = DataElement.newInstance(dataElementDto);
 
     Dataset dataset = datasetRepository.findById(datasetId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
-    newDataElement.setDataset(dataset);
+    dataElementDto.setDataset(dataset);
+    DataElement newDataElement = DataElement.newInstance(dataElementDto);
 
     newDataElement.setId(null);
     try {

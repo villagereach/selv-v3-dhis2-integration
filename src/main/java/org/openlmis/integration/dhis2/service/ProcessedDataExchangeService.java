@@ -63,10 +63,15 @@ public class ProcessedDataExchangeService {
     final String periodEnum = dataset.getCronExpression();
     final int timeOffset = dataset.getTimeOffset();
 
-    final Pair<ZonedDateTime, ZonedDateTime> periodRange = periodGeneratorService
-            .generateRange(periodEnum, timeOffset);
-    final String formattedStartDate = periodGeneratorService.formatDate(
-            periodRange.getFirst(), periodEnum);
+    Pair<ZonedDateTime, ZonedDateTime> periodRange;
+    String formattedStartDate;
+    if (sourceTable.equals("Requisition")) {
+      periodRange = periodGeneratorService.getLastRequisitionPeriod();
+      formattedStartDate = periodGeneratorService.formatDate(periodRange.getFirst(), "Monthly");
+    } else {
+      periodRange = periodGeneratorService.generateRange(periodEnum, timeOffset);
+      formattedStartDate = periodGeneratorService.formatDate(periodRange.getFirst(), periodEnum);
+    }
 
     final List<String> orgUnits = sharedFacilityRepository.findAll().stream()
             .map(SharedFacility::getCode).collect(Collectors.toList());

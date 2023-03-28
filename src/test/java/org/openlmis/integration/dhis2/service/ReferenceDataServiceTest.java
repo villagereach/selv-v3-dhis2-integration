@@ -23,8 +23,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openlmis.integration.dhis2.service.ReferenceDataService.API_URL;
-import static org.openlmis.integration.dhis2.service.ReferenceDataService.FACILITIES_RESOUCE_PATH;
-import static org.openlmis.integration.dhis2.service.ReferenceDataService.ORDERABLES_RESOUCE_PATH;
+import static org.openlmis.integration.dhis2.service.ReferenceDataService.FACILITIES_RESOURCE_PATH;
+import static org.openlmis.integration.dhis2.service.ReferenceDataService.ORDERABLES_RESOURCE_PATH;
+import static org.openlmis.integration.dhis2.service.ReferenceDataService.PROCESSING_PERIODS_RESOURCE_PATH;
 
 import java.net.URI;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.OrderableDto;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
+import org.openlmis.integration.dhis2.dto.referencedata.ProcessingPeriodDto;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.service.auth.ReferenceDataAuthService;
 import org.springframework.core.ParameterizedTypeReference;
@@ -75,7 +77,7 @@ public class ReferenceDataServiceTest {
     final PageDto<MinimalFacilityDto> minimalFacilityDtos = createPageDto(dtos);
     ResponseEntity<PageDto<MinimalFacilityDto>> response =
             new ResponseEntity<>(minimalFacilityDtos, HttpStatus.OK);
-    URI uri = URI.create(SERVICE_URL + API_URL + FACILITIES_RESOUCE_PATH);
+    URI uri = URI.create(SERVICE_URL + API_URL + FACILITIES_RESOURCE_PATH);
 
     when(restTemplate.exchange(eq(uri),
             eq(HttpMethod.GET), any(HttpEntity.class),
@@ -93,7 +95,7 @@ public class ReferenceDataServiceTest {
     final PageDto<OrderableDto> orderableDtos = createPageDto(dtos);
     ResponseEntity<PageDto<OrderableDto>> response =
             new ResponseEntity<>(orderableDtos, HttpStatus.OK);
-    URI uri = URI.create(SERVICE_URL + API_URL + ORDERABLES_RESOUCE_PATH);
+    URI uri = URI.create(SERVICE_URL + API_URL + ORDERABLES_RESOURCE_PATH);
 
     when(restTemplate.exchange(eq(uri),
             eq(HttpMethod.GET), any(HttpEntity.class),
@@ -103,6 +105,24 @@ public class ReferenceDataServiceTest {
     PageDto<OrderableDto> result = referenceDataService.findAllOrderables();
 
     assertThat(result, is(equalTo(orderableDtos)));
+  }
+
+  @Test
+  public void shouldReturnPageOfProcessingPeriodDtos() {
+    final List<ProcessingPeriodDto> dtos = (List<ProcessingPeriodDto>) mock(List.class);
+    final PageDto<ProcessingPeriodDto> processingPeriodDtos = createPageDto(dtos);
+    ResponseEntity<PageDto<ProcessingPeriodDto>> response =
+            new ResponseEntity<>(processingPeriodDtos, HttpStatus.OK);
+    URI uri = URI.create(SERVICE_URL + API_URL + PROCESSING_PERIODS_RESOURCE_PATH);
+
+    when(restTemplate.exchange(eq(uri),
+            eq(HttpMethod.GET), any(HttpEntity.class),
+            any(ParameterizedTypeReference.class)
+    )).thenReturn(response);
+    when(authService.obtainAccessToken()).thenReturn(TOKEN);
+    PageDto<ProcessingPeriodDto> result = referenceDataService.findAllProcessingPeriods();
+
+    assertThat(result, is(equalTo(processingPeriodDtos)));
   }
 
   @Test(expected = RestOperationException.class)
