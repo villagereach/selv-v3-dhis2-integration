@@ -46,23 +46,27 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class Dataset extends BaseEntity {
 
   @Column
   @NonNull
+  @ToString.Include
   private String name;
 
   @Column
   @NonNull
+  @ToString.Include
   private String dhisDatasetId;
 
   @Column
   @NonNull
+  @ToString.Include
   private String cronExpression;
 
   @Column
   @NonNull
+  @ToString.Include
   private Integer timeOffset;
 
   @ManyToOne(fetch = FetchType.LAZY)

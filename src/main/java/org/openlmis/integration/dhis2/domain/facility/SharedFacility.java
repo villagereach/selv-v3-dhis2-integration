@@ -40,16 +40,19 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class SharedFacility extends BaseEntity {
 
   @Column(nullable = false)
+  @ToString.Include
   private String code;
 
   @Column(nullable = false)
+  @ToString.Include
   private UUID facilityId;
 
   @Column(nullable = false)
+  @ToString.Include
   private String orgUnitId;
 
   @ManyToOne(fetch = FetchType.LAZY)

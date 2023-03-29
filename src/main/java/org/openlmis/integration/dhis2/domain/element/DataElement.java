@@ -45,27 +45,32 @@ import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class DataElement extends BaseEntity {
 
   @Column(unique = true)
   @NonNull
+  @ToString.Include
   private String name;
 
   @Column
   @NonNull
+  @ToString.Include
   private String source;
 
   @Column
   @NonNull
+  @ToString.Include
   private String indicator;
 
   @Column
   @NonNull
+  @ToString.Include
   private String orderable;
 
   @Column
   @NonNull
+  @ToString.Include
   private String element;
 
   @ManyToOne(fetch = FetchType.LAZY)

@@ -41,13 +41,15 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class Schedule extends BaseEntity {
 
   @Column(nullable = false)
+  @ToString.Include
   private String periodEnumerator;
 
   @Column(nullable = false)
+  @ToString.Include
   private int timeOffset;
 
   @ManyToOne(fetch = FetchType.LAZY)
