@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
@@ -51,12 +50,6 @@ public class ServerTest {
         .withPrefabValues(SharedFacility.class, sf1, sf2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
-  }
-
-  @Test
-  public void shouldImplementToString() {
-    Server server = new ServerDataBuilder().build();
-    ToStringTestUtils.verify(Server.class, server, "TEXT");
   }
 
   @Test

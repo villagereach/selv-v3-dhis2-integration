@@ -88,8 +88,10 @@ public class SharedFacilitySynchronizer {
         Optional<SharedFacility> sharedFacilityOptional =
                 sharedFacilityRepository.findByCodeAndServerId(notMatchingFacilityDto.getCode(),
                         notMatchingFacilityDto.getServerDto().getId());
-        sharedFacilityOptional.ifPresent(sharedFacility ->
-                sharedFacilityRepository.delete(sharedFacility));
+        if (sharedFacilityOptional.isPresent()) {
+          SharedFacility sharedFacility = sharedFacilityOptional.get();
+          sharedFacilityRepository.delete(sharedFacility);
+        }
       }
 
       // if previously added facilities are matching then add them to db

@@ -54,7 +54,7 @@ public class ClosingBalance implements IndicatorSupplier {
       period.getSecond(), orderable, facility);
     } else if (source.equals(REQUISITION)) {
       calculatedIndicator = requisitionRepository.findClosingBalance(
-              period.getSecond(), orderable, facility);
+              period.getFirst(), orderable, facility);
     } else {
       throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
     }

@@ -43,20 +43,23 @@ import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString(callSuper = true, onlyExplicitlyIncluded = true)
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class Server extends BaseEntity {
 
   @Column
   @NonNull
+  @ToString.Include
   private String name;
 
   @Column
   @NonNull
+  @ToString.Include
   private String url;
 
   @Column
   @NonNull
+  @ToString.Include
   private String username;
 
   @Column

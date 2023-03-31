@@ -40,26 +40,31 @@ public class RequisitionRepository {
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "(SELECT line_items.beginningbalance AS bb "
+            "select bb from ( "
+                    + "(SELECT line_items.beginningbalance AS bb, pp.enddate as cd "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
                     + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id "
                     + "JOIN referencedata.facilities AS facilities "
                     + "ON facilities.id = req.facilityid "
+                    + "join referencedata.processing_periods pp "
+                    + "on pp.id = req.processingperiodid "
                     + "WHERE products.versionnumber = "
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
                     + "AND line_items.beginningbalance NOTNULL "
-                    + "AND req.createddate <= :startDate "
+                    + "AND pp.startdate = :startDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility "
-                    + "ORDER BY req.createddate desc) UNION ( "
-                    + "select 0 as bb "
+                    + ") UNION ( "
+                    + "select 0 as bb, '1900-01-01' as cd "
                     + ") "
-                    + "LIMIT 1;");
+                    + "ORDER BY cd desc "
+                    + "LIMIT 1 "
+                    + ") as result;");
 
-    return Long.parseLong(query.setParameter(START_DATE, startDate)
+    return Long.parseLong(query.setParameter(START_DATE, startDate.toLocalDate())
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
             .getSingleResult().toString());
@@ -68,30 +73,34 @@ public class RequisitionRepository {
   /**
    * Retrieves closing balance from requisition for a given period.
    */
-  public Long findClosingBalance(@Param(END_DATE) ZonedDateTime endDate,
+  public Long findClosingBalance(@Param(START_DATE) ZonedDateTime startDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "(SELECT line_items.stockonhand AS soh "
+            "select soh from ( "
+                    + "(SELECT line_items.stockonhand AS soh, pp.enddate as cd "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
                     + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id "
                     + "JOIN referencedata.facilities AS facilities "
                     + "ON facilities.id = req.facilityid "
+                    + "join referencedata.processing_periods pp "
+                    + "on pp.id = req.processingperiodid "
                     + "WHERE products.versionnumber = "
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
                     + "AND line_items.stockonhand NOTNULL "
-                    + "AND req.createddate <= :endDate "
+                    + "AND pp.startdate = :startDate "
                     + "AND products.fullproductname = :orderable "
-                    + "AND facilities.code = :facility "
-                    + "ORDER BY req.createddate desc) UNION ( "
-                    + "    select 0 as soh "
+                    + "AND facilities.code = :facility) UNION ( "
+                    + "    select 0 as soh, '1900-01-01' as cd "
                     + ") "
-                    + "LIMIT 1;");
+                    + "ORDER BY cd desc "
+                    + "LIMIT 1 "
+                    + ") as result;");
 
-    return Long.parseLong(query.setParameter(END_DATE, endDate)
+    return Long.parseLong(query.setParameter(START_DATE, startDate.toLocalDate())
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
             .getSingleResult().toString());
@@ -100,30 +109,34 @@ public class RequisitionRepository {
   /**
    * Retrieves received amount of products from requisition for a given period.
    */
-  public Double findReceived(@Param(END_DATE) ZonedDateTime endDate,
+  public Double findReceived(@Param(START_DATE) ZonedDateTime startDate,
                                    @Param(ORDERABLE) String orderable,
                                    @Param(FACILITY) String facility) {
     Query query = entityManager.createNativeQuery(
-            "(SELECT line_items.totalreceivedquantity AS received "
+            "select received from ( "
+                    + "(SELECT line_items.totalreceivedquantity AS received, pp.enddate as cd "
                     + "FROM requisition.requisition_line_items AS line_items "
                     + "JOIN referencedata.orderables AS products "
                     + "ON line_items.orderableid = products.id "
                     + "JOIN requisition.requisitions AS req ON line_items.requisitionid = req.id "
                     + "JOIN referencedata.facilities AS facilities "
                     + "ON facilities.id = req.facilityid "
+                    + "join referencedata.processing_periods pp "
+                    + "on pp.id = req.processingperiodid "
                     + "WHERE products.versionnumber = "
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
                     + "AND line_items.totalreceivedquantity NOTNULL "
-                    + "AND req.createddate <= :endDate "
+                    + "AND pp.startdate = :startDate "
                     + "AND products.fullproductname = :orderable "
-                    + "AND facilities.code = :facility "
-                    + "ORDER BY req.createddate desc) UNION ( "
-                    + "    select 0 as received "
+                    + "AND facilities.code = :facility) UNION ( "
+                    + "    select 0 as received, '1900-01-01' as cd "
                     + ") "
-                    + "LIMIT 1;");
+                    + "ORDER BY cd desc "
+                    + "LIMIT 1 "
+                    + ") as result;");
 
-    return Double.parseDouble(query.setParameter(END_DATE, endDate)
+    return Double.parseDouble(query.setParameter(START_DATE, startDate.toLocalDate())
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
             .getSingleResult().toString());

@@ -54,7 +54,7 @@ public class ReceivedBalance implements IndicatorSupplier {
               period.getFirst(), period.getSecond(), orderable, facility);
     } else if (source.equals(REQUISITION)) {
       calculatedIndicator = requisitionRepository.findReceived(
-              period.getSecond(), orderable, facility);
+              period.getFirst(), orderable, facility);
     } else {
       throw new ValidationMessageException(ERROR_ENUMERATOR_NOT_EXIST);
     }

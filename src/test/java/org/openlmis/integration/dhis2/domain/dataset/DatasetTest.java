@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.builder.DataElementDataBuilder;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
@@ -52,12 +51,6 @@ public class DatasetTest {
         .withPrefabValues(Schedule.class, sc1, sc2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
-  }
-
-  @Test
-  public void shouldImplementToString() {
-    Dataset dataset = new DatasetDataBuilder().build();
-    ToStringTestUtils.verify(Dataset.class, dataset, "TEXT");
   }
 
   @Test

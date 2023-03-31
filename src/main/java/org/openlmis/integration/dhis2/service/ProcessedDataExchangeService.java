@@ -27,15 +27,20 @@ import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.DataValue;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
+import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.repository.facility.SharedFacilityRepository;
 import org.openlmis.integration.dhis2.service.indicator.IndicatorService;
 import org.openlmis.integration.dhis2.service.schedule.PeriodGeneratorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProcessedDataExchangeService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProcessedDataExchangeService.class);
 
   @Autowired
   private PeriodGeneratorService periodGeneratorService;
@@ -67,7 +72,7 @@ public class ProcessedDataExchangeService {
     String formattedStartDate;
     if (sourceTable.equals("Requisition")) {
       periodRange = periodGeneratorService.getLastRequisitionPeriod();
-      formattedStartDate = periodGeneratorService.formatDate(periodRange.getFirst(), "Monthly");
+      formattedStartDate = periodGeneratorService.formatDate(periodRange.getSecond(), "Monthly");
     } else {
       periodRange = periodGeneratorService.generateRange(periodEnum, timeOffset);
       formattedStartDate = periodGeneratorService.formatDate(periodRange.getFirst(), periodEnum);
@@ -90,8 +95,10 @@ public class ProcessedDataExchangeService {
       dataValueSet.setDataValues(Collections.singletonList(dataValue));
 
       Server server = schedule.getServer();
-      dhisDataService.createDataValueSet(dataValueSet, server.getUrl(),
-              server.getUsername(), server.getPassword());
+      DhisResponseBody dhisResponseBody = dhisDataService.createDataValueSet(dataValueSet,
+              server.getUrl(), server.getUsername(), server.getPassword());
+      LOGGER.debug("Sending data value set: " + dataValueSet);
+      LOGGER.debug("DHIS2 response body: " + dhisResponseBody);
     }
   }
 

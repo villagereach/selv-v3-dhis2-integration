@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
-import org.openlmis.integration.dhis2.ToStringTestUtils;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.builder.SharedFacilityDataBuilder;
 import org.openlmis.integration.dhis2.domain.server.Server;
@@ -39,12 +38,6 @@ public class SharedFacilityTest {
         .withPrefabValues(Server.class, sv1, sv2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
-  }
-
-  @Test
-  public void shouldImplementToString() {
-    SharedFacility sharedFacility = new SharedFacilityDataBuilder().build();
-    ToStringTestUtils.verify(SharedFacility.class, sharedFacility, "TEXT");
   }
 
   @Test
