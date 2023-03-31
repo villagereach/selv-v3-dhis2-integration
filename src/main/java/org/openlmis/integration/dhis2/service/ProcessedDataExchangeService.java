@@ -97,7 +97,8 @@ public class ProcessedDataExchangeService {
       Server server = schedule.getServer();
       DhisResponseBody dhisResponseBody = dhisDataService.createDataValueSet(dataValueSet,
               server.getUrl(), server.getUsername(), server.getPassword());
-      LOGGER.debug("Sending data value set: " + dhisResponseBody);
+      LOGGER.debug("Sending data value set: " + dataValueSet);
+      LOGGER.debug("DHIS2 response body: " + dhisResponseBody);
     }
   }
 

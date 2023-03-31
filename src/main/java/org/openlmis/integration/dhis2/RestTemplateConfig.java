@@ -19,18 +19,27 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.net.ssl.SSLContext;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class RestTemplateConfig {
+
+  static Logger LOGGER = LoggerFactory.getLogger(RestTemplateConfig.class);
 
   /**
    * RestTemplate configuration for Spring context.
@@ -52,10 +61,24 @@ public class RestTemplateConfig {
 
     HttpComponentsClientHttpRequestFactory requestFactory =
             new HttpComponentsClientHttpRequestFactory();
-
     requestFactory.setHttpClient(httpClient);
 
-    return new RestTemplate(requestFactory);
+    RestTemplate restTemplate;
+    if (LOGGER.isDebugEnabled()) {
+      restTemplate = new RestTemplate(
+              new BufferingClientHttpRequestFactory(requestFactory));
+
+      List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+      if (CollectionUtils.isEmpty(interceptors)) {
+        interceptors = new ArrayList<>();
+      }
+      interceptors.add(new LoggingInterceptor());
+      restTemplate.setInterceptors(interceptors);
+    } else {
+      restTemplate = new RestTemplate(requestFactory);
+    }
+
+    return restTemplate;
   }
 
 }
