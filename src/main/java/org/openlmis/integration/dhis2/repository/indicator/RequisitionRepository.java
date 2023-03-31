@@ -54,7 +54,7 @@ public class RequisitionRepository {
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
                     + "AND line_items.beginningbalance NOTNULL "
-                    + "AND pp.startdate <= :startDate "
+                    + "AND pp.startdate = :startDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility "
                     + ") UNION ( "
@@ -64,7 +64,7 @@ public class RequisitionRepository {
                     + "LIMIT 1 "
                     + ") as result;");
 
-    return Long.parseLong(query.setParameter(START_DATE, startDate)
+    return Long.parseLong(query.setParameter(START_DATE, startDate.toLocalDate())
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
             .getSingleResult().toString());
@@ -91,7 +91,7 @@ public class RequisitionRepository {
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
                     + "AND line_items.stockonhand NOTNULL "
-                    + "AND pp.startdate <= :startDate "
+                    + "AND pp.startdate = :startDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility) UNION ( "
                     + "    select 0 as soh, '1900-01-01' as cd "
@@ -100,7 +100,7 @@ public class RequisitionRepository {
                     + "LIMIT 1 "
                     + ") as result;");
 
-    return Long.parseLong(query.setParameter(START_DATE, startDate)
+    return Long.parseLong(query.setParameter(START_DATE, startDate.toLocalDate())
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
             .getSingleResult().toString());
@@ -127,7 +127,7 @@ public class RequisitionRepository {
                     + "(SELECT MAX(versionnumber) FROM referencedata.orderables o2 "
                     + "WHERE o2.id = products.id) "
                     + "AND line_items.totalreceivedquantity NOTNULL "
-                    + "AND pp.startdate <= :startDate "
+                    + "AND pp.startdate = :startDate "
                     + "AND products.fullproductname = :orderable "
                     + "AND facilities.code = :facility) UNION ( "
                     + "    select 0 as received, '1900-01-01' as cd "
@@ -136,7 +136,7 @@ public class RequisitionRepository {
                     + "LIMIT 1 "
                     + ") as result;");
 
-    return Double.parseDouble(query.setParameter(START_DATE, startDate)
+    return Double.parseDouble(query.setParameter(START_DATE, startDate.toLocalDate())
             .setParameter(ORDERABLE, orderable)
             .setParameter(FACILITY, facility)
             .getSingleResult().toString());
