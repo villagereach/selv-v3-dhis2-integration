@@ -36,6 +36,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openlmis.integration.dhis2.dto.dhis.CategoryOptionCombo;
+import org.openlmis.integration.dhis2.dto.dhis.CategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
@@ -127,6 +129,38 @@ public class DhisDataServiceTest {
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisDatasets(SERVER_URL, USERNAME, PASSWORD);
+  }
+
+  @Test
+  public void getDhisCategoryOptionCombosShouldReturnCategoryOptionComboList() {
+    final ResponseEntity<CategoryOptionComboResponseBody> response = mock(ResponseEntity.class);
+    final CategoryOptionComboResponseBody categoryOptionComboResponseBody
+        = mock(CategoryOptionComboResponseBody.class);
+    final List<CategoryOptionCombo> categoryOptionCombos = new ArrayList<>(
+        Arrays.asList(mock(CategoryOptionCombo.class), mock(CategoryOptionCombo.class)));
+
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+        eq(new ParameterizedTypeReference
+            <CategoryOptionComboResponseBody>() {}))
+    ).thenReturn(response);
+
+    when(response.getBody()).thenReturn(categoryOptionComboResponseBody);
+    when(categoryOptionComboResponseBody.getCategoryOptionCombos())
+        .thenReturn(categoryOptionCombos);
+
+    List<CategoryOptionCombo> newCategoryOptionCombos =
+        dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);
+    assertThat(newCategoryOptionCombos, is(equalTo(categoryOptionCombos)));
+  }
+
+  @Test(expected = RestOperationException.class)
+  public void getDhisCategoryOptionCombosShouldThrowNotFoundException() {
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+        eq(new ParameterizedTypeReference
+            <CategoryOptionComboResponseBody>() {}))
+    ).thenThrow(HttpClientErrorException.class);
+
+    dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);
   }
 
   @Test
