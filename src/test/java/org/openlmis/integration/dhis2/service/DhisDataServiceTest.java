@@ -36,9 +36,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openlmis.integration.dhis2.dto.dhis.CategoryOptionCombo;
-import org.openlmis.integration.dhis2.dto.dhis.CategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
@@ -133,22 +133,22 @@ public class DhisDataServiceTest {
 
   @Test
   public void getDhisCategoryOptionCombosShouldReturnCategoryOptionComboList() {
-    final ResponseEntity<CategoryOptionComboResponseBody> response = mock(ResponseEntity.class);
-    final CategoryOptionComboResponseBody categoryOptionComboResponseBody
-        = mock(CategoryOptionComboResponseBody.class);
-    final List<CategoryOptionCombo> categoryOptionCombos = new ArrayList<>(
-        Arrays.asList(mock(CategoryOptionCombo.class), mock(CategoryOptionCombo.class)));
+    final ResponseEntity<DhisCategoryOptionComboResponseBody> response = mock(ResponseEntity.class);
+    final DhisCategoryOptionComboResponseBody categoryOptionComboResponseBody
+        = mock(DhisCategoryOptionComboResponseBody.class);
+    final List<DhisCategoryOptionCombo> categoryOptionCombos = new ArrayList<>(
+        Arrays.asList(mock(DhisCategoryOptionCombo.class), mock(DhisCategoryOptionCombo.class)));
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
         eq(new ParameterizedTypeReference
-            <CategoryOptionComboResponseBody>() {}))
+            <DhisCategoryOptionComboResponseBody>() {}))
     ).thenReturn(response);
 
     when(response.getBody()).thenReturn(categoryOptionComboResponseBody);
     when(categoryOptionComboResponseBody.getCategoryOptionCombos())
         .thenReturn(categoryOptionCombos);
 
-    List<CategoryOptionCombo> newCategoryOptionCombos =
+    List<DhisCategoryOptionCombo> newCategoryOptionCombos =
         dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);
     assertThat(newCategoryOptionCombos, is(equalTo(categoryOptionCombos)));
   }
@@ -157,7 +157,7 @@ public class DhisDataServiceTest {
   public void getDhisCategoryOptionCombosShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
         eq(new ParameterizedTypeReference
-            <CategoryOptionComboResponseBody>() {}))
+            <DhisCategoryOptionComboResponseBody>() {}))
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);

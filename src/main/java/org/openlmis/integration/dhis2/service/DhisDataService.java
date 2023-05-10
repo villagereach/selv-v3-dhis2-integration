@@ -20,9 +20,9 @@ import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
 
 import java.util.List;
 import java.util.Map;
-import org.openlmis.integration.dhis2.dto.dhis.CategoryOptionCombo;
-import org.openlmis.integration.dhis2.dto.dhis.CategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
@@ -176,22 +176,22 @@ public class DhisDataService {
    * @param serverUrl Url of the dhis2 server.
    * @param username  Name of the specific user.
    * @param password  User password.
-   * @return the {@link CategoryOptionCombo} list.
+   * @return the {@link DhisCategoryOptionCombo} list.
    */
-  public List<CategoryOptionCombo> getDhisCategoryOptionCombos(String serverUrl, String username,
-                                                String password) {
+  public List<DhisCategoryOptionCombo> getDhisCategoryOptionCombos(String serverUrl,
+      String username, String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
     RequestParameters params = RequestParameters
             .init();
 
-    ResponseEntity<CategoryOptionComboResponseBody> orgUnitResponse;
+    ResponseEntity<DhisCategoryOptionComboResponseBody> orgUnitResponse;
     try {
       orgUnitResponse = restTemplate.exchange(
               createUri(serverUrl + API_CATEGORY_OPTION_COMBOS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
               new ParameterizedTypeReference
-                      <CategoryOptionComboResponseBody>() {}
+                      <DhisCategoryOptionComboResponseBody>() {}
       );
 
       return orgUnitResponse.getBody().getCategoryOptionCombos();

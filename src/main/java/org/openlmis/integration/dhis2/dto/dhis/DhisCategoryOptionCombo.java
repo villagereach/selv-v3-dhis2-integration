@@ -31,7 +31,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CategoryOptionCombo {
+public class DhisCategoryOptionCombo {
 
   private String id;
   private String displayName;

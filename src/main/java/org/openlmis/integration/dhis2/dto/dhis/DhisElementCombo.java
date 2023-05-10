@@ -15,20 +15,23 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * List of all category option combos for a server, retrieved from the DHIS2 API.
+ * Objects of this class represent DHIS2 Data Elements concatenated with Category Option Combos.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class CategoryOptionComboResponseBody {
+public class DhisElementCombo {
 
-  private List<CategoryOptionCombo> categoryOptionCombos;
+  private String displayName;
 
 }

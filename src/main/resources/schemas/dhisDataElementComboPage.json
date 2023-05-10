@@ -8,7 +8,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "$ref": "categoryOptionCombo.json"
+        "$ref": "dhisDataElementComboPage.json"
       }
     },
     "totalPages": {
