@@ -15,7 +15,6 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +33,7 @@ import lombok.ToString;
 @ToString
 public class CategoryOptionCombo {
 
-  private UUID id;
+  private String id;
   private String displayName;
 
 }
