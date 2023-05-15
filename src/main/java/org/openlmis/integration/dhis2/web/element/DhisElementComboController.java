@@ -27,7 +27,6 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisElementCombo;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
-import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
@@ -56,9 +55,6 @@ public class DhisElementComboController extends BaseController {
       + "/{datasetId}/elementsAndCombos";
 
   @Autowired
-  private ServerRepository serverRepository;
-
-  @Autowired
   private DatasetRepository datasetRepository;
 
   @Autowired
@@ -73,10 +69,9 @@ public class DhisElementComboController extends BaseController {
   public Page<DhisElementCombo> getElementsAndCombos(
       @PathVariable("serverId") UUID serverId, @PathVariable("datasetId") UUID datasetId,
       Pageable pageable) {
-    Server server = serverRepository.findById(serverId)
-        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
     Dataset dataset = datasetRepository.findById(datasetId)
         .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+    Server server = dataset.getServer();
 
     String dhisDatasetId = dataset.getDhisDatasetId();
     DhisDataset dhisDataset = dhisDataService.getDhisDataSetById(dhisDatasetId, server.getUrl(),
@@ -90,7 +85,10 @@ public class DhisElementComboController extends BaseController {
     for (DhisCategoryOptionCombo combo: categoryOptionCombos) {
       for (DhisDataElement element: dhisDataElements) {
         DhisElementCombo dhisElementCombo = new DhisElementCombo(
-            element.getName() + " - " + combo.getDisplayName());
+            element.getName() + " - " + combo.getDisplayName(),
+            element.getName(),
+            combo.getDisplayName()
+            );
         dhisElementCombos.add(dhisElementCombo);
       }
     }

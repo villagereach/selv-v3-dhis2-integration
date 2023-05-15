@@ -32,6 +32,8 @@ import lombok.ToString;
 @ToString
 public class DhisElementCombo {
 
-  private String displayName;
+  private String fullComboName;
+  private String element;
+  private String categoryCombo;
 
 }
