@@ -18,23 +18,22 @@ package org.openlmis.integration.dhis2.service;
 import static org.openlmis.integration.dhis2.util.RequestHelper.createEntity;
 import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
 
-import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
-import org.openlmis.integration.dhis2.dto.dhis.DhisDatasetResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnitResponseBody;
+import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.service.auth.DhisAuthService;
 import org.openlmis.integration.dhis2.util.RequestParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -69,17 +68,28 @@ public class DhisDataService {
   public DhisDataset getDhisDataSetById(String id, String serverUrl, String username,
       String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
+
     RequestParameters params = RequestParameters
         .init()
         .set("fields", "periodType,"
             + "organisationUnits[id,code,name],"
             + "dataSetElements[dataElement[id,name]]");
 
-    return doRequest(
-        createUri(serverUrl + API_DATASETS_URL + "/" + id, params),
-        createEntity(token, API_TOKEN),
-        HttpMethod.GET
-    );
+    try {
+      ResponseEntity<DhisDataset> response = restTemplate.exchange(
+          createUri(serverUrl + API_DATASETS_URL + "/" + id, params),
+          HttpMethod.GET,
+          createEntity(token, API_TOKEN),
+          DhisDataset.class
+      );
+
+      return response.getBody();
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+          MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    }
   }
 
   /**
@@ -93,16 +103,31 @@ public class DhisDataService {
   public List<DhisDataset> getDhisDatasets(String serverUrl, String username,
       String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
+
     RequestParameters params = RequestParameters
         .init()
         .set("paging", "false");
 
-    DhisDatasetResponseBody responseBody = doRequest(
-        createUri(serverUrl + API_DATASETS_URL, params),
-        createEntity(token, API_TOKEN),
-        HttpMethod.GET
-    );
-    return responseBody.getDhisDatasets();
+    try {
+      ResponseEntity<Map<String, List<Object>>> response = restTemplate.exchange(
+          createUri(serverUrl + API_DATASETS_URL, params),
+          HttpMethod.GET,
+          createEntity(token, API_TOKEN),
+          new ParameterizedTypeReference<Map<String, List<Object>>>() {}
+      );
+
+      List<?> datasets
+          = response.getBody().get("dataSets");
+      return (List<DhisDataset>) datasets;
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+          MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    } catch (NullPointerException ex) {
+      throw new ResponseParsingException(
+          MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
+    }
   }
 
   /**
@@ -116,16 +141,29 @@ public class DhisDataService {
   public List<OrganisationUnit> getDhisOrgUnits(String serverUrl, String username,
       String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
+
     RequestParameters params = RequestParameters
         .init()
         .set("fields", "id,name,code");
 
-    OrganisationUnitResponseBody responseBody = doRequest(
-        createUri(serverUrl + API_ORG_UNITS_URL, params),
-        createEntity(token, API_TOKEN),
-        HttpMethod.GET
-    );
-    return responseBody.getOrganisationUnits();
+    try {
+      ResponseEntity<OrganisationUnitResponseBody> response = restTemplate.exchange(
+          createUri(serverUrl + API_ORG_UNITS_URL, params),
+          HttpMethod.GET,
+          createEntity(token, API_TOKEN),
+          new ParameterizedTypeReference<OrganisationUnitResponseBody>() {}
+      );
+
+      return response.getBody().getOrganisationUnits();
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+          MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    } catch (NullPointerException ex) {
+      throw new ResponseParsingException(
+          MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
+    }
   }
 
   /**
@@ -142,12 +180,24 @@ public class DhisDataService {
     RequestParameters params = RequestParameters
         .init();
 
-    DhisCategoryOptionComboResponseBody responseBody = doRequest(
-        createUri(API_CATEGORY_OPTION_COMBOS_URL, params),
-        createEntity(token, API_TOKEN),
-        HttpMethod.GET
-    );
-    return responseBody.getCategoryOptionCombos();
+    try {
+      ResponseEntity<DhisCategoryOptionComboResponseBody> response = restTemplate.exchange(
+          createUri(serverUrl + API_CATEGORY_OPTION_COMBOS_URL, params),
+          HttpMethod.GET,
+          createEntity(token, API_TOKEN),
+          new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {}
+      );
+
+      return response.getBody().getCategoryOptionCombos();
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+          MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    } catch (NullPointerException ex) {
+      throw new ResponseParsingException(
+          MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
+    }
   }
 
   /**
@@ -162,26 +212,20 @@ public class DhisDataService {
   public DhisResponseBody createDataValueSet(DataValueSet dataValueSet, String serverUrl,
       String username, String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
+
     RequestParameters params = RequestParameters
         .init()
         .set("orgUnitIdScheme", "code")
         .set("dataElementIdScheme", "name");
 
-    return doRequest(
-        createUri(API_DATA_VALUE_SETS_URL, params),
-        createEntity(dataValueSet.toString(), token, API_TOKEN),
-        HttpMethod.POST
-    );
-  }
-
-  private <T> T doRequest(URI uri, HttpEntity<String> httpEntity, HttpMethod httpMethod) {
     try {
-      ResponseEntity<T> response = restTemplate.exchange(
-          uri,
-          httpMethod,
-          httpEntity,
-          new ParameterizedTypeReference<T>() {}
+      ResponseEntity<DhisResponseBody> response = restTemplate.exchange(
+          createUri(serverUrl + API_DATA_VALUE_SETS_URL, params),
+          HttpMethod.POST,
+          createEntity(dataValueSet, token, API_TOKEN),
+          DhisResponseBody.class
       );
+
       return response.getBody();
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(

@@ -27,7 +27,9 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +40,6 @@ import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
-import org.openlmis.integration.dhis2.dto.dhis.DhisDatasetResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.service.auth.DhisAuthService;
@@ -80,7 +81,7 @@ public class DhisDataServiceTest {
     final DhisDataset dhisDataset = mock(DhisDataset.class);
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-        (ParameterizedTypeReference<DhisDataset>) any())
+        eq(DhisDataset.class))
     ).thenReturn(response);
 
     when(response.getBody()).thenReturn(dhisDataset);
@@ -93,7 +94,7 @@ public class DhisDataServiceTest {
   @Test(expected = RestOperationException.class)
   public void getDhisDataSetByIdShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-        (ParameterizedTypeReference<?>) any())
+        eq(DhisDataset.class))
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisDataSetById(DATASET_ID, SERVER_URL, USERNAME, PASSWORD);
@@ -101,28 +102,29 @@ public class DhisDataServiceTest {
 
   @Test
   public void getDhisDatasetsShouldReturnDhisDatasetList() {
-    final ResponseEntity<DhisDatasetResponseBody> response = mock(ResponseEntity.class);
-    final DhisDatasetResponseBody dhisDatasetResponseBody
-        = mock(DhisDatasetResponseBody.class);
-    final List<DhisDataset> dhisDatasets = new ArrayList<>(
+    final ResponseEntity<Map<String, List<Object>>> response =
+        mock(ResponseEntity.class);
+    final Map<String, List<Object>> body =
+        mock(LinkedHashMap.class);
+    final List<Object> datasets = new ArrayList<>(
         Arrays.asList(mock(DhisDataset.class), mock(DhisDataset.class)));
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-        (ParameterizedTypeReference<DhisDatasetResponseBody>) any())
+        any(ParameterizedTypeReference.class))
     ).thenReturn(response);
 
-    when(response.getBody()).thenReturn(dhisDatasetResponseBody);
-    when(dhisDatasetResponseBody.getDhisDatasets()).thenReturn(dhisDatasets);
+    when(response.getBody()).thenReturn(body);
+    when(body.get("dataSets")).thenReturn(datasets);
 
     List<DhisDataset> newDhisDatasets = dhisDataService.getDhisDatasets(SERVER_URL,
-            USERNAME, PASSWORD);
-    assertThat(newDhisDatasets, is(equalTo(dhisDatasets)));
+        USERNAME, PASSWORD);
+    assertThat(newDhisDatasets, is(equalTo(datasets)));
   }
 
   @Test(expected = RestOperationException.class)
   public void getDhisDatasetsShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-        (ParameterizedTypeReference<?>) any())
+        eq(new ParameterizedTypeReference<Map<String, List<Object>>>() {}))
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisDatasets(SERVER_URL, USERNAME, PASSWORD);
@@ -137,7 +139,7 @@ public class DhisDataServiceTest {
         Arrays.asList(mock(DhisCategoryOptionCombo.class), mock(DhisCategoryOptionCombo.class)));
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-        (ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>) any())
+        eq(new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {}))
     ).thenReturn(response);
 
     when(response.getBody()).thenReturn(categoryOptionComboResponseBody);
@@ -152,7 +154,7 @@ public class DhisDataServiceTest {
   @Test(expected = RestOperationException.class)
   public void getDhisCategoryOptionCombosShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-        (ParameterizedTypeReference<?>) any())
+        eq(new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {}))
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);
@@ -164,7 +166,7 @@ public class DhisDataServiceTest {
     final DhisResponseBody dhisResponseBody = mock(DhisResponseBody.class);
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class),
-        (ParameterizedTypeReference<DhisResponseBody>) any())
+        eq(DhisResponseBody.class))
     ).thenReturn(response);
 
     when(response.getBody()).thenReturn(dhisResponseBody);
@@ -177,7 +179,7 @@ public class DhisDataServiceTest {
   @Test(expected = RestOperationException.class)
   public void createDataValueSetShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.POST), any(HttpEntity.class),
-        (ParameterizedTypeReference<?>) any())
+        eq(DhisResponseBody.class))
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.createDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
