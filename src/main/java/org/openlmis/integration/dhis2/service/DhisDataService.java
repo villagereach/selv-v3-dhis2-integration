@@ -66,7 +66,7 @@ public class DhisDataService {
    * @return the {@link DhisDataset} with specific ID.
    */
   public DhisDataset getDhisDataSetById(String id, String serverUrl, String username,
-          String password) {
+                                        String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
     RequestParameters params = RequestParameters
@@ -101,7 +101,7 @@ public class DhisDataService {
    * @return the {@link DhisDataset} list.
    */
   public List<DhisDataset> getDhisDatasets(String serverUrl, String username,
-          String password) {
+                                           String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
     RequestParameters params = RequestParameters
@@ -113,8 +113,7 @@ public class DhisDataService {
               createUri(serverUrl + API_DATASETS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
-              new ParameterizedTypeReference<Map<String, List<Object>>>() {
-              }
+              new ParameterizedTypeReference<Map<String, List<Object>>>() {}
       );
 
       List<?> datasets
@@ -140,7 +139,7 @@ public class DhisDataService {
    * @return the {@link OrganisationUnit} list.
    */
   public List<OrganisationUnit> getDhisOrgUnits(String serverUrl, String username,
-          String password) {
+                                                String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
     RequestParameters params = RequestParameters
@@ -152,8 +151,7 @@ public class DhisDataService {
               createUri(serverUrl + API_ORG_UNITS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
-              new ParameterizedTypeReference<OrganisationUnitResponseBody>() {
-              }
+              new ParameterizedTypeReference<OrganisationUnitResponseBody>() {}
       );
 
       return response.getBody().getOrganisationUnits();
@@ -177,7 +175,8 @@ public class DhisDataService {
    * @return the {@link DhisCategoryOptionCombo} list.
    */
   public List<DhisCategoryOptionCombo> getDhisCategoryOptionCombos(String serverUrl,
-          String username, String password) {
+                                                                   String username,
+                                                                   String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
     RequestParameters params = RequestParameters
             .init();
@@ -187,8 +186,7 @@ public class DhisDataService {
               createUri(serverUrl + API_CATEGORY_OPTION_COMBOS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
-              new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {
-              }
+              new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {}
       );
 
       return response.getBody().getCategoryOptionCombos();
@@ -213,7 +211,7 @@ public class DhisDataService {
    * @return the {@link DhisResponseBody}
    */
   public DhisResponseBody createDataValueSet(DataValueSet dataValueSet, String serverUrl,
-          String username, String password) {
+                                             String username, String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
     RequestParameters params = RequestParameters
