@@ -41,6 +41,7 @@ public final class DataElementDto extends BaseDto implements
   private String indicator;
   private String orderable;
   private String element;
+  private String categoryCombo;
   private DatasetDto datasetDto;
 
   /**

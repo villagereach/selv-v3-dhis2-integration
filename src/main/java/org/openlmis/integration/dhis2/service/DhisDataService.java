@@ -21,6 +21,8 @@ import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
 import java.util.List;
 import java.util.Map;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
@@ -45,6 +47,7 @@ public class DhisDataService {
   public static final String API_DATASETS_URL = "/api/dataSets";
   public static final String API_DATA_VALUE_SETS_URL = "/api/dataValueSets";
   public static final String API_ORG_UNITS_URL = "/api/organisationUnits";
+  public static final String API_CATEGORY_OPTION_COMBOS_URL = "/api/categoryOptionCombos";
   public static final String API_TOKEN = "ApiToken";
 
   @Autowired
@@ -98,25 +101,23 @@ public class DhisDataService {
    * @return the {@link DhisDataset} list.
    */
   public List<DhisDataset> getDhisDatasets(String serverUrl, String username,
-                                               String password) {
+                                           String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
     RequestParameters params = RequestParameters
             .init()
             .set("paging", "false");
 
-    ResponseEntity<Map<String, List<Object>>> datasetResponse;
     try {
-      datasetResponse = restTemplate.exchange(
+      ResponseEntity<Map<String, List<Object>>> response = restTemplate.exchange(
               createUri(serverUrl + API_DATASETS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
-              new ParameterizedTypeReference
-                      <Map<String, List<Object>>>() {}
+              new ParameterizedTypeReference<Map<String, List<Object>>>() {}
       );
 
       List<?> datasets
-              = datasetResponse.getBody().get("dataSets");
+              = response.getBody().get("dataSets");
       return (List<DhisDataset>) datasets;
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
@@ -145,17 +146,50 @@ public class DhisDataService {
             .init()
             .set("fields", "id,name,code");
 
-    ResponseEntity<OrganisationUnitResponseBody> orgUnitResponse;
     try {
-      orgUnitResponse = restTemplate.exchange(
+      ResponseEntity<OrganisationUnitResponseBody> response = restTemplate.exchange(
               createUri(serverUrl + API_ORG_UNITS_URL, params),
               HttpMethod.GET,
               createEntity(token, API_TOKEN),
-              new ParameterizedTypeReference
-                      <OrganisationUnitResponseBody>() {}
+              new ParameterizedTypeReference<OrganisationUnitResponseBody>() {}
       );
 
-      return orgUnitResponse.getBody().getOrganisationUnits();
+      return response.getBody().getOrganisationUnits();
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+              MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    } catch (NullPointerException ex) {
+      throw new ResponseParsingException(
+              MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
+    }
+  }
+
+  /**
+   * Get all category option combos from DHIS2 API.
+   *
+   * @param serverUrl Url of the dhis2 server.
+   * @param username  Name of the specific user.
+   * @param password  User password.
+   * @return the {@link DhisCategoryOptionCombo} list.
+   */
+  public List<DhisCategoryOptionCombo> getDhisCategoryOptionCombos(String serverUrl,
+                                                                   String username,
+                                                                   String password) {
+    String token = authService.obtainAccessToken(username, password, serverUrl);
+    RequestParameters params = RequestParameters
+            .init();
+
+    try {
+      ResponseEntity<DhisCategoryOptionComboResponseBody> response = restTemplate.exchange(
+              createUri(serverUrl + API_CATEGORY_OPTION_COMBOS_URL, params),
+              HttpMethod.GET,
+              createEntity(token, API_TOKEN),
+              new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {}
+      );
+
+      return response.getBody().getCategoryOptionCombos();
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
               MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
