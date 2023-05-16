@@ -27,7 +27,6 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisElementCombo;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
-import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
@@ -59,9 +58,6 @@ public class DhisElementComboController extends BaseController {
   private DatasetRepository datasetRepository;
 
   @Autowired
-  private DataElementRepository dataElementRepository;
-
-  @Autowired
   private DhisDataService dhisDataService;
 
   /**
@@ -88,19 +84,12 @@ public class DhisElementComboController extends BaseController {
     List<DhisElementCombo> dhisElementCombos = new ArrayList<>();
     for (DhisCategoryOptionCombo combo: categoryOptionCombos) {
       for (DhisDataElement element: dhisDataElements) {
-        String elementName = element.getName();
-        String categoryComboName = combo.getDisplayName();
-
         DhisElementCombo dhisElementCombo = new DhisElementCombo(
-            elementName + " - " + categoryComboName,
-            elementName,
-            categoryComboName
-            );
-
-        if (!dataElementRepository.existsByElementAndCategoryCombo(
-            elementName, categoryComboName)) {
-          dhisElementCombos.add(dhisElementCombo);
-        }
+            element.getName() + " - " + combo.getDisplayName(),
+            element.getName(),
+            combo.getDisplayName()
+        );
+        dhisElementCombos.add(dhisElementCombo);
       }
     }
 
