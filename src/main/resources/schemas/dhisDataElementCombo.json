@@ -4,12 +4,22 @@
   "title": "DhisDataElementAndCombo",
   "description": "Single DHIS2 Data Element concatenated with single Category Option Combo",
   "properties": {
-    "displayName": {
+    "fullComboName": {
       "type": "string",
-      "title": "displayName"
+      "title": "fullComboName"
+    },
+    "element": {
+      "type": "string",
+      "title": "element"
+    },
+    "categoryCombo": {
+      "type": "string",
+      "title": "categoryCombo"
     }
   },
     "required": [
-      "displayName"
+      "fullComboName",
+      "element",
+      "categoryCombo"
     ]
 }

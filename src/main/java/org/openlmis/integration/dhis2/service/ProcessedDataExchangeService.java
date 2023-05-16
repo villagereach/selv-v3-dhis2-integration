@@ -60,6 +60,7 @@ public class ProcessedDataExchangeService {
   public void sendData(Schedule schedule) {
     DataElement dataElement = schedule.getDataElement();
     final String orderable = dataElement.getOrderable();
+    final String categoryOptionCombo = dataElement.getCategoryCombo();
     final String sourceTable = dataElement.getSource();
     final String indicator = dataElement.getIndicator();
 
@@ -86,6 +87,7 @@ public class ProcessedDataExchangeService {
 
       DataValue dataValue = new DataValue();
       dataValue.setDataElement(orderable);
+      dataValue.setCategoryOptionCombo(categoryOptionCombo);
       dataValue.setValue(calculatedIndicator);
 
       DataValueSet dataValueSet = new DataValueSet();

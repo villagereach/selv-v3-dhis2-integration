@@ -36,6 +36,7 @@ import lombok.ToString;
 public class DataValue {
 
   private String dataElement;
+  private String categoryOptionCombo;
   private BigDecimal value;
 
 }
