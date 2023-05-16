@@ -27,6 +27,7 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisElementCombo;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
+import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
@@ -52,10 +53,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class DhisElementComboController extends BaseController {
 
   public static final String RESOURCE_PATH = DatasetController.RESOURCE_PATH
-      + "/{datasetId}/elementsAndCombos";
+          + "/{datasetId}/elementsAndCombos";
 
   @Autowired
   private DatasetRepository datasetRepository;
+
+  @Autowired
+  private DataElementRepository dataElementRepository;
 
   @Autowired
   private DhisDataService dhisDataService;
@@ -67,19 +71,20 @@ public class DhisElementComboController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Page<DhisElementCombo> getElementsAndCombos(
-      @PathVariable("serverId") UUID serverId, @PathVariable("datasetId") UUID datasetId,
-      Pageable pageable) {
+          @PathVariable("serverId") UUID serverId, @PathVariable("datasetId") UUID datasetId,
+          Pageable pageable) {
     Dataset dataset = datasetRepository.findById(datasetId)
-        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
     Server server = dataset.getServer();
 
     String dhisDatasetId = dataset.getDhisDatasetId();
     DhisDataset dhisDataset = dhisDataService.getDhisDataSetById(dhisDatasetId, server.getUrl(),
-        server.getUsername(), server.getPassword());
+            server.getUsername(), server.getPassword());
     List<DhisDataElement> dhisDataElements = dhisDataset.getDataSetElements();
 
     List<DhisCategoryOptionCombo> categoryOptionCombos = dhisDataService
-        .getDhisCategoryOptionCombos(server.getUrl(), server.getUsername(), server.getPassword());
+            .getDhisCategoryOptionCombos(
+                    server.getUrl(), server.getUsername(), server.getPassword());
 
     List<DhisElementCombo> dhisElementCombos = new ArrayList<>();
     for (DhisCategoryOptionCombo combo : categoryOptionCombos) {
@@ -91,7 +96,10 @@ public class DhisElementComboController extends BaseController {
                 combo.getDisplayName()
         );
 
-        dhisElementCombos.add(dhisElementCombo);
+        if (!dataElementRepository.existsByElementAndCategoryCombo(
+                element.getName(), combo.getDisplayName())) {
+          dhisElementCombos.add(dhisElementCombo);
+        }
       }
     }
 
