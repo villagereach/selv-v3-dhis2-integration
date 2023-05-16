@@ -82,13 +82,15 @@ public class DhisElementComboController extends BaseController {
         .getDhisCategoryOptionCombos(server.getUrl(), server.getUsername(), server.getPassword());
 
     List<DhisElementCombo> dhisElementCombos = new ArrayList<>();
-    for (DhisCategoryOptionCombo combo: categoryOptionCombos) {
-      for (DhisDataElement element: dhisDataElements) {
+    for (DhisCategoryOptionCombo combo : categoryOptionCombos) {
+      for (DhisDataElement element : dhisDataElements) {
         DhisElementCombo dhisElementCombo = new DhisElementCombo(
-            element.getName() + " - " + combo.getDisplayName(),
-            element.getName(),
-            combo.getDisplayName()
+                new StringBuilder(element.getName()).append(" - ").append(combo.getDisplayName())
+                        .toString(),
+                element.getName(),
+                combo.getDisplayName()
         );
+
         dhisElementCombos.add(dhisElementCombo);
       }
     }
