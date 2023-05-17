@@ -215,9 +215,10 @@ public class DhisDataService {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
     RequestParameters params = RequestParameters
-            .init()
-            .set("orgUnitIdScheme", "code")
-            .set("dataElementIdScheme", "name");
+        .init()
+        .set("orgUnitIdScheme", "code")
+        .set("dataElementIdScheme", "name")
+        .set("categoryOptionComboIdScheme", "name");
 
     try {
       ResponseEntity<DhisResponseBody> response = restTemplate.exchange(
