@@ -96,8 +96,8 @@ public class DhisElementComboController extends BaseController {
                 combo.getDisplayName()
         );
 
-        if (!dataElementRepository.existsByElementAndCategoryCombo(
-                element.getName(), combo.getDisplayName())) {
+        if (!dataElementRepository.existsByElementAndCategoryComboAndDatasetId(
+                element.getName(), combo.getDisplayName(), datasetId)) {
           dhisElementCombos.add(dhisElementCombo);
         }
       }
