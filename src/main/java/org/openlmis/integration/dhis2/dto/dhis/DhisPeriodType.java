@@ -21,9 +21,8 @@ import lombok.ToString;
 
 /**
  * Objects of this class represent data retrieved from the DHIS2 API.
- * Organisation unit tells you <i>where</i> the data value was recorded. In health sector
- * applications, it typically represents localisation, such as a referral hospital or
- * administrative unit.
+ * Period tells you <i>when</i> the data value was recorded. It becomes
+ * an important factor when analysing data over time.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
 @Getter
