@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
+import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodType;
+import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodTypeResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnitResponseBody;
@@ -45,6 +47,7 @@ public class DhisDataService {
   public static final String API_DATASETS_URL = "/api/dataSets";
   public static final String API_DATA_VALUE_SETS_URL = "/api/dataValueSets";
   public static final String API_ORG_UNITS_URL = "/api/organisationUnits";
+  public static final String API_PERIOD_TYPES_URL = "/api/periodTypes";
   public static final String API_TOKEN = "ApiToken";
 
   @Autowired
@@ -199,6 +202,38 @@ public class DhisDataService {
               MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
     } catch (RestClientException ex) {
       throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    }
+  }
+
+  /**
+   * Get all period types for a given server from DHIS2 API.
+   *
+   * @param serverUrl Url of the dhis2 server.
+   * @param username  Name of the specific user.
+   * @param password  User password.
+   * @return the {@link DhisPeriodType} list.
+   */
+  public List<DhisPeriodType> getDhisPeriodTypes(String serverUrl, String username,
+                                           String password) {
+    String token = authService.obtainAccessToken(username, password, serverUrl);
+
+    try {
+      ResponseEntity<DhisPeriodTypeResponseBody> periodTypesResponse = restTemplate.exchange(
+              createUri(serverUrl + API_PERIOD_TYPES_URL, null),
+              HttpMethod.GET,
+              createEntity(token, API_TOKEN),
+              new ParameterizedTypeReference<DhisPeriodTypeResponseBody>() {}
+      );
+
+      return periodTypesResponse.getBody().getPeriodTypes();
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+              MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    } catch (NullPointerException ex) {
+      throw new ResponseParsingException(
+              MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
     }
   }
 
