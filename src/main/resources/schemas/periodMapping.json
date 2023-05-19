@@ -1,0 +1,74 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "PeriodMapping",
+  "description": "Single period mapping instance",
+  "properties": {
+    "id": {
+      "type": "string",
+      "title": "id"
+    },
+    "name": {
+      "type": "string",
+      "title": "name"
+    },
+    "source": {
+      "type": "string",
+      "title": "source"
+    },
+    "dhisPeriod": {
+      "type": "string",
+      "title": "dhisPeriod"
+    },
+    "processingPeriodId": {
+      "type": "string",
+      "title": "processingPeriodId"
+    },
+    "startDate": {
+      "type": "string",
+      "title": "startDate"
+    },
+    "endDate": {
+      "type": "string",
+      "title": "endDate"
+    },
+    "serverDto": {
+      "type": "object",
+      "title": "serverDto",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "id"
+        },
+        "name": {
+          "type": "string",
+          "title": "name"
+        },
+        "url": {
+          "type": "string",
+          "title": "url"
+        },
+        "username": {
+          "type": "string",
+          "title": "username"
+        },
+        "password": {
+          "type": "string",
+          "title": "password"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "source",
+    "dhisPeriod",
+    "processingPeriodId",
+    "startDate",
+    "endDate",
+    "serverDto"
+  ]
+}
