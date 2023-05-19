@@ -73,6 +73,11 @@ public class DataElement extends BaseEntity {
   @ToString.Include
   private String element;
 
+  @Column
+  @NonNull
+  @ToString.Include
+  private String categoryCombo;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "datasetId", nullable = false)
   private Dataset dataset;
@@ -101,6 +106,7 @@ public class DataElement extends BaseEntity {
     indicator = importer.getIndicator();
     orderable = importer.getOrderable();
     element = importer.getElement();
+    categoryCombo = importer.getCategoryCombo();
     dataset = importer.getDataset();
   }
 
@@ -114,6 +120,7 @@ public class DataElement extends BaseEntity {
     exporter.setIndicator(indicator);
     exporter.setOrderable(orderable);
     exporter.setElement(element);
+    exporter.setCategoryCombo(categoryCombo);
     exporter.setDataset(dataset);
   }
 
@@ -128,6 +135,8 @@ public class DataElement extends BaseEntity {
 
     void setElement(String element);
 
+    void setCategoryCombo(String categoryCombo);
+
     void setDataset(Dataset dataset);
   }
 
@@ -141,6 +150,8 @@ public class DataElement extends BaseEntity {
     String getOrderable();
 
     String getElement();
+
+    String getCategoryCombo();
 
     Dataset getDataset();
   }

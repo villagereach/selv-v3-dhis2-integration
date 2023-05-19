@@ -15,28 +15,20 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.math.BigDecimal;
-import lombok.AllArgsConstructor;
+import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Objects of this class represent data sent to the DHIS2 API.
- * Data Value is the single recorded value of Data Element. It is described by at least three
- * dimensions: data element, organisation unit and period.
+ * List of all category option combos for a server, retrieved from the DHIS2 API.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class DataValue {
+public class DhisCategoryOptionComboResponseBody {
 
-  private String dataElement;
-  private String categoryOptionCombo;
-  private BigDecimal value;
+  private List<DhisCategoryOptionCombo> categoryOptionCombos;
 
 }

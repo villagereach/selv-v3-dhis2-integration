@@ -37,6 +37,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
+import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodType;
 import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodTypeResponseBody;
@@ -101,34 +103,67 @@ public class DhisDataServiceTest {
   }
 
   @Test
-  public void getDhisDataElementsShouldReturnDhisDatasetList() {
+  public void getDhisDatasetsShouldReturnDhisDatasetList() {
     final ResponseEntity<Map<String, List<Object>>> response =
             mock(ResponseEntity.class);
-    final Map<String, List<Object>> extractedResponse =
+    final Map<String, List<Object>> body =
             mock(LinkedHashMap.class);
-    final List<Object> dhisDataset = new ArrayList<>(
+    final List<Object> datasets = new ArrayList<>(
             Arrays.asList(mock(DhisDataset.class), mock(DhisDataset.class)));
 
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
             any(ParameterizedTypeReference.class))
     ).thenReturn(response);
 
-    when(response.getBody()).thenReturn(extractedResponse);
-    when(extractedResponse.get("dataSets")).thenReturn(dhisDataset);
+    when(response.getBody()).thenReturn(body);
+    when(body.get("dataSets")).thenReturn(datasets);
 
     List<DhisDataset> newDhisDatasets = dhisDataService.getDhisDatasets(SERVER_URL,
             USERNAME, PASSWORD);
-    assertThat(newDhisDatasets, is(equalTo(dhisDataset)));
+    assertThat(newDhisDatasets, is(equalTo(datasets)));
   }
 
   @Test(expected = RestOperationException.class)
   public void getDhisDatasetsShouldThrowNotFoundException() {
     when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
-            eq(new ParameterizedTypeReference
-                    <Map<String, List<Object>>>() {}))
+            eq(new ParameterizedTypeReference<Map<String, List<Object>>>() {
+            }))
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.getDhisDatasets(SERVER_URL, USERNAME, PASSWORD);
+  }
+
+  @Test
+  public void getDhisCategoryOptionCombosShouldReturnCategoryOptionComboList() {
+    final ResponseEntity<DhisCategoryOptionComboResponseBody> response = mock(ResponseEntity.class);
+    final DhisCategoryOptionComboResponseBody categoryOptionComboResponseBody
+            = mock(DhisCategoryOptionComboResponseBody.class);
+    final List<DhisCategoryOptionCombo> categoryOptionCombos = new ArrayList<>(
+            Arrays.asList(mock(DhisCategoryOptionCombo.class),
+                    mock(DhisCategoryOptionCombo.class)));
+
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            eq(new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {
+            }))
+    ).thenReturn(response);
+
+    when(response.getBody()).thenReturn(categoryOptionComboResponseBody);
+    when(categoryOptionComboResponseBody.getCategoryOptionCombos())
+            .thenReturn(categoryOptionCombos);
+
+    List<DhisCategoryOptionCombo> newCategoryOptionCombos =
+            dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);
+    assertThat(newCategoryOptionCombos, is(equalTo(categoryOptionCombos)));
+  }
+
+  @Test(expected = RestOperationException.class)
+  public void getDhisCategoryOptionCombosShouldThrowNotFoundException() {
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            eq(new ParameterizedTypeReference<DhisCategoryOptionComboResponseBody>() {
+            }))
+    ).thenThrow(HttpClientErrorException.class);
+
+    dhisDataService.getDhisCategoryOptionCombos(SERVER_URL, USERNAME, PASSWORD);
   }
 
   @Test

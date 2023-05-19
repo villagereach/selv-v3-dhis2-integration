@@ -27,6 +27,7 @@ public class DataElementDataBuilder {
   private static final String INDICATOR = "test-indicator";
   private static final String ORDERABLE = "test-orderable";
   private static final String ELEMENT = "test-element";
+  private static final String CATEGORYCOMBO = "test-category-combo";
 
   private Dataset dataset = new DatasetDataBuilder().build();
 
@@ -50,7 +51,8 @@ public class DataElementDataBuilder {
    * Builds new instance of Dataset as a new object (without id field).
    */
   public DataElement buildAsNew() {
-    DataElement dataElement = new DataElement(NAME, SOURCE, INDICATOR, ORDERABLE, ELEMENT);
+    DataElement dataElement = new DataElement(
+        NAME, SOURCE, INDICATOR, ORDERABLE, ELEMENT, CATEGORYCOMBO);
     dataElement.setDataset(dataset);
     return dataElement;
   }

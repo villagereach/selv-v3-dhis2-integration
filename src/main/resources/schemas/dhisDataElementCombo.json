@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DhisDataElementAndCombo",
+  "description": "Single DHIS2 Data Element concatenated with single Category Option Combo",
+  "properties": {
+    "fullComboName": {
+      "type": "string",
+      "title": "fullComboName"
+    },
+    "element": {
+      "type": "string",
+      "title": "element"
+    },
+    "categoryCombo": {
+      "type": "string",
+      "title": "categoryCombo"
+    }
+  },
+    "required": [
+      "fullComboName",
+      "element",
+      "categoryCombo"
+    ]
+}

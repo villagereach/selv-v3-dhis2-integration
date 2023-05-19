@@ -61,7 +61,7 @@ public class AuditLogInitializerIntegrationTest {
   };
 
   private static final String[] DATAELEMENT_FIELDS = {
-      "id", "name", "source", "indicator", "orderable", "element", "datasetId"
+      "id", "name", "source", "indicator", "orderable", "element", "categoryCombo", "datasetId"
   };
 
   private static final String[] FACILITY_FIELDS = {
@@ -230,7 +230,8 @@ public class AuditLogInitializerIntegrationTest {
             .setParameter(4, "test-indicator")
             .setParameter(5, "test-orderable")
             .setParameter(6, "test-element")
-            .setParameter(7, datasetId)
+            .setParameter(7, "test-category-combo")
+            .setParameter(8, datasetId)
             .executeUpdate();
   }
 

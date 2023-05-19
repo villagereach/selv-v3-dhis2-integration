@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "Category Option Combo",
+  "description": "Single category option combo instance",
+  "properties": {
+    "id": {
+      "type": "string",
+      "title": "id"
+    },
+    "name": {
+      "type": "string",
+      "title": "displayName"
+    }
+  },
+  "required": [
+    "id",
+    "displayName"
+  ]
+}

@@ -45,4 +45,7 @@ public interface DataElementRepository extends PagingAndSortingRepository<DataEl
       nativeQuery = true)
   Page<DataElement> findAllWithoutSnapshots(Pageable pageable);
 
+  boolean existsByElementAndCategoryComboAndDatasetId(String element, String categoryCombo,
+                                                      UUID datasetId);
+
 }
