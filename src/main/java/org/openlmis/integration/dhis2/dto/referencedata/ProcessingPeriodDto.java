@@ -16,6 +16,7 @@
 package org.openlmis.integration.dhis2.dto.referencedata;
 
 import java.util.Date;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ import org.openlmis.integration.dhis2.dto.BaseDto;
 @EqualsAndHashCode(callSuper = true)
 public class ProcessingPeriodDto extends BaseDto {
 
+  private UUID id;
   private ProcessingScheduleDto processingSchedule;
   private String name;
   private String description;
