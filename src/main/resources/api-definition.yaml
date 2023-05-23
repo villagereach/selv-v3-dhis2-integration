@@ -815,6 +815,19 @@ resourceTypes:
     post:
       is: [ secured ]
       description: Run execution
+      queryParameters:
+        serverId:
+          displayName: Server ID
+          description: Retrieves schedule with certain serverId.
+          type: string
+          required: false
+          repeat: false
+        datasetId:
+          displayName: Dataset ID
+          description: Retrieves schedule with certain datasetId.
+          type: string
+          required: false
+          repeat: false
       body:
         application/json:
       responses:

@@ -15,6 +15,9 @@
 
 package org.openlmis.integration.dhis2.web.execution;
 
+import java.util.List;
+import java.util.UUID;
+import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
@@ -26,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
@@ -57,6 +61,22 @@ public class ManualExecutionController extends BaseController {
     LOGGER.debug("Running manual execution");
     sharedFacilitySynchronizer.refreshSharedFacilities();
     scheduleService.getAllSchedules().forEach(
+        schedule -> processedDataExchangeService.sendData(schedule));
+  }
+
+  /**
+   * Run manual execution for certain server and dataset.
+   */
+  @PostMapping(params = {"serverId", "datasetId"})
+  @ResponseStatus(HttpStatus.OK)
+  public void runExecution(@RequestParam(value = "serverId") UUID serverId,
+                           @RequestParam(value = "datasetId") UUID datasetId) {
+    LOGGER.debug("Running manual execution");
+    sharedFacilitySynchronizer.refreshSharedFacilities();
+
+    List<Schedule> schedules = scheduleService
+        .getSchedulesByServerAndDatasetId(serverId, datasetId);
+    schedules.forEach(
         schedule -> processedDataExchangeService.sendData(schedule));
   }
 

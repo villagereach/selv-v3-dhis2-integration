@@ -54,6 +54,14 @@ public class ScheduleService {
   }
 
   /**
+   * Retrieves the specified schedule.
+   */
+  public List<Schedule> getSchedulesByServerAndDatasetId(UUID serverId, UUID datasetId) {
+    return scheduleRepository.findByServerIdAndDatasetId(serverId, datasetId)
+        .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SCHEDULE_NOT_FOUND));
+  }
+
+  /**
    * Retrieves all schedules.
    */
   public List<Schedule> getAllSchedules() {
