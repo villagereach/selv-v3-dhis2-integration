@@ -15,6 +15,8 @@
 
 package org.openlmis.integration.dhis2.repository.schedule;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.javers.spring.annotation.JaversSpringDataAuditable;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
@@ -44,5 +46,7 @@ public interface ScheduleRepository extends PagingAndSortingRepository<Schedule,
       + "    )\n",
       nativeQuery = true)
   Page<Schedule> findAllWithoutSnapshots(Pageable pageable);
+
+  Optional<List<Schedule>> findByServerIdAndDatasetId(UUID serverId, UUID datasetId);
 
 }
