@@ -36,15 +36,16 @@ public class RequestHelperTest {
   }
 
   @Test
-  public void shouldCreateUriWithParameters() {
+  public void shouldCreateUriWithParameters() throws Exception {
     URI uri = RequestHelper.createUri(SERVER_URL, RequestParameters.init().set("a", "b"));
-    assertThat(uri.getQuery(), is("a=[b]"));
+    assertThat(uri.getQuery(), is("a=b"));
   }
 
   @Test
-  public void shouldCreateUriWithIncorrectParameters() {
+  public void shouldCreateUriWithEncodedParameters() throws Exception {
     URI uri = RequestHelper.createUri(SERVER_URL, RequestParameters.init().set("a", "b c"));
-    assertThat(uri.getQuery(), is("a=[b c]"));
+    assertThat(uri.getQuery(), is("a=b c"));
+    assertThat(uri.getRawQuery(), is("a=b%20c"));
   }
 
   @Test

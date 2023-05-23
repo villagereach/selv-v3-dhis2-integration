@@ -25,6 +25,6 @@ import lombok.Setter;
 public class RightDto {
   private UUID id;
   private String name;
-  private String description;
+  private String type;
   private Set<RightDto> attachments;
 }

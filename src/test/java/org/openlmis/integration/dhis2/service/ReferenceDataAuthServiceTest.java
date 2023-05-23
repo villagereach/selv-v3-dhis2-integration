@@ -93,4 +93,5 @@ public class ReferenceDataAuthServiceTest {
             contains("Basic dHJ1c3RlZC1jbGllbnQ6c2VjcmV0")
     );
   }
+
 }

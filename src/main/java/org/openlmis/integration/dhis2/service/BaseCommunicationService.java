@@ -58,17 +58,13 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class BaseCommunicationService<T> {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-
+  private final RestOperations restTemplate = new RestTemplate();
   @Autowired
   private ReferenceDataAuthService authService;
-
   @Autowired
   private ObjectMapper objectMapper;
-
   @Value("${request.maxUrlLength}")
   private int maxUrlLength;
-
-  private RestOperations restTemplate = new RestTemplate();
 
   protected abstract String getServiceUrl();
 
@@ -121,21 +117,21 @@ public abstract class BaseCommunicationService<T> {
     String url = getServiceUrl() + getUrl() + StringUtils.defaultIfBlank(resourceUrl, "");
 
     RequestParameters params = RequestParameters
-            .init()
-            .setAll(parameters);
+        .init()
+        .setAll(parameters);
 
     try {
       return runWithTokenRetry(() -> restTemplate.exchange(
-              RequestHelper.createUri(url, params),
-              HttpMethod.GET,
-              createEntity(),
-              type)).getBody();
+          RequestHelper.createUri(url, params),
+          HttpMethod.GET,
+          createEntity(),
+          type)).getBody();
     } catch (HttpStatusCodeException ex) {
       // rest template will handle 404 as an exception, instead of returning null
       if (HttpStatus.NOT_FOUND == ex.getStatusCode()) {
         logger.warn(
-                "{} matching params does not exist. Params: {}",
-                getResultClass().getSimpleName(), parameters
+            "{} matching params does not exist. Params: {}",
+            getResultClass().getSimpleName(), parameters
         );
 
         return null;
@@ -154,13 +150,13 @@ public abstract class BaseCommunicationService<T> {
    */
   protected Collection<T> findAll(String resourceUrl, Map<String, Object> parameters) {
     String url = getServiceUrl() + getUrl() + resourceUrl;
-
     RequestParameters params = RequestParameters.of(parameters);
 
     try {
       ResponseEntity<T[]> responseEntity = runWithTokenRetry(
           () -> doListRequest(url, params, HttpMethod.GET, getArrayResultClass())
       );
+
       return new ArrayList<>(Arrays.asList(responseEntity.getBody()));
     } catch (HttpStatusCodeException ex) {
       throw buildDataRetrievalException(ex);
@@ -175,7 +171,7 @@ public abstract class BaseCommunicationService<T> {
     try {
       RequestHeaders headers = RequestHeaders.init().setIfNoneMatch(etag);
       ResponseEntity<P[]> response = restTemplate.exchange(
-              url, HttpMethod.GET, RequestHelper.createEntity(null, addAuthHeader(headers)), type
+          url, HttpMethod.GET, RequestHelper.createEntity(null, addAuthHeader(headers)), type
       );
       logger.info("permissionStrings responseEntity: {}", response);
 
@@ -259,10 +255,10 @@ public abstract class BaseCommunicationService<T> {
     String url = getServiceUrl() + getUrl() + resourceUrl;
 
     ResponseEntity<ResultDto<P>> response = runWithTokenRetry(() -> restTemplate.exchange(
-            RequestHelper.createUri(url, parameters),
-            HttpMethod.GET,
-            createEntity(),
-            new DynamicParametrizedTypeReference<>(type)
+        RequestHelper.createUri(url, parameters),
+        HttpMethod.GET,
+        createEntity(),
+        new DynamicParametrizedTypeReference<>(type)
     ));
 
     return response.getBody();
@@ -284,9 +280,9 @@ public abstract class BaseCommunicationService<T> {
     }
 
     return Merger
-            .ofMaps(maps)
-            .withDefaultValue(Collections::emptyMap)
-            .merge();
+        .ofMaps(maps)
+        .withDefaultValue(Collections::emptyMap)
+        .merge();
   }
 
   private <E> ResponseEntity<E[]> doListRequest(String url, RequestParameters parameters,
@@ -299,9 +295,9 @@ public abstract class BaseCommunicationService<T> {
     }
 
     E[] body = Merger
-            .ofArrays(arrays)
-            .withDefaultValue(() -> (E[]) Array.newInstance(type.getComponentType(), 0))
-            .merge();
+        .ofArrays(arrays)
+        .withDefaultValue(() -> (E[]) Array.newInstance(type.getComponentType(), 0))
+        .merge();
 
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
@@ -313,7 +309,7 @@ public abstract class BaseCommunicationService<T> {
                                                        Class<E> type) {
     HttpEntity<Object> entity = createEntity(payload);
     ParameterizedTypeReference<PageDto<E>> parameterizedType =
-            new DynamicPageTypeReference<>(type);
+        new DynamicPageTypeReference<>(type);
     List<PageDto<E>> pages = new ArrayList<>();
 
     for (URI uri : RequestHelper.splitRequest(url, parameters, maxUrlLength)) {
@@ -321,9 +317,9 @@ public abstract class BaseCommunicationService<T> {
     }
 
     PageDto<E> body = Merger
-            .ofPages(pages)
-            .withDefaultValue(PageDto::new)
-            .merge();
+        .ofPages(pages)
+        .withDefaultValue(PageDto::new)
+        .merge();
 
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
@@ -346,8 +342,8 @@ public abstract class BaseCommunicationService<T> {
 
   private RequestHeaders addAuthHeader(RequestHeaders headers) {
     return null == headers
-            ? RequestHeaders.init().setAuth(authService.obtainAccessToken())
-            : headers.setAuth(authService.obtainAccessToken());
+        ? RequestHeaders.init().setAuth(authService.obtainAccessToken())
+        : headers.setAuth(authService.obtainAccessToken());
   }
 
   private RequestHeaders createHeadersWithAuth() {

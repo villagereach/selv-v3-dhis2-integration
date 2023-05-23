@@ -15,17 +15,15 @@
 
 package org.openlmis.integration.dhis2.util;
 
-import static java.lang.String.valueOf;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.web.util.UriUtils.encodeQueryParam;
-
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 /**
  * Creates a {@link URI} from the given string representation and with the given parameters.
@@ -42,11 +40,14 @@ public final class RequestHelper {
   public static URI createUri(String url, RequestParameters parameters) {
     UriComponentsBuilder builder = UriComponentsBuilder.newInstance().uri(URI.create(url));
 
-    if (parameters != null) {
-      parameters.forEach(pm -> {
-        builder.queryParam(pm.getKey(), encodeQueryParam(valueOf(pm.getValue()), UTF_8.name()));
-      });
-    }
+    RequestParameters
+        .init()
+        .setAll(parameters)
+        .forEach(e -> e.getValue().forEach(one -> {
+          builder.queryParam(e.getKey(),
+              UriUtils.encodeQueryParam(String.valueOf(one),
+                  StandardCharsets.UTF_8.name()));
+        }));
 
     return builder.build(true).toUri();
   }
