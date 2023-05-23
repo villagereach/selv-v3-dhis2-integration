@@ -820,13 +820,13 @@ resourceTypes:
           displayName: Server ID
           description: Retrieves schedule with certain serverId.
           type: string
-          required: true
+          required: false
           repeat: false
         datasetId:
           displayName: Dataset ID
           description: Retrieves schedule with certain datasetId.
           type: string
-          required: true
+          required: false
           repeat: false
       body:
         application/json:
