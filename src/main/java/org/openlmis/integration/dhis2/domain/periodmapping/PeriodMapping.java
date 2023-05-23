@@ -112,7 +112,6 @@ public class PeriodMapping extends BaseEntity {
   }
 
   public interface Exporter extends BaseExporter {
-
     void setName(String name);
 
     void setSource(String source);
@@ -126,11 +125,9 @@ public class PeriodMapping extends BaseEntity {
     void setEndDate(LocalDate endDate);
 
     void setServer(Server server);
-
   }
 
   public interface Importer extends BaseImporter {
-
     String getName();
 
     String getSource();
@@ -144,7 +141,6 @@ public class PeriodMapping extends BaseEntity {
     LocalDate getEndDate();
 
     Server getServer();
-
   }
 
 }

@@ -157,6 +157,8 @@ public class PeriodMappingController extends BaseController {
     if (!periodMappingRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_PERIOD_MAPPING_NOT_FOUND);
     }
+
+    periodMappingRepository.deleteById(id);
   }
 
   /**
