@@ -58,4 +58,5 @@ public class DataRetrievalException extends RuntimeException {
     this.status = status;
     this.response = response;
   }
+
 }

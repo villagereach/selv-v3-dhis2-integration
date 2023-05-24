@@ -26,6 +26,7 @@ import org.springframework.core.ParameterizedTypeReference;
  * provided generic type at runtime.
  */
 public abstract class BaseParameterizedTypeReference<T> extends ParameterizedTypeReference<T> {
+
   private final Class<?> valueType;
 
   /**
@@ -76,4 +77,5 @@ public abstract class BaseParameterizedTypeReference<T> extends ParameterizedTyp
   public int hashCode() {
     return getType().hashCode();
   }
+
 }

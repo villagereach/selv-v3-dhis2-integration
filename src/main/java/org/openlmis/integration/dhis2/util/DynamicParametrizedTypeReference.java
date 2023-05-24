@@ -29,6 +29,7 @@ import org.springframework.core.ParameterizedTypeReference;
  */
 public class DynamicParametrizedTypeReference<T>
         extends ParameterizedTypeReference<ResultDto<T>> {
+
   private final Class<?> valueType;
 
   /**
@@ -79,4 +80,5 @@ public class DynamicParametrizedTypeReference<T>
   public int hashCode() {
     return getType().hashCode();
   }
+
 }

@@ -36,6 +36,7 @@ import org.springframework.data.domain.PageRequest;
 // we keep implementation classes inside this one to give a single access point by ofXXX methods.
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class Merger<T> {
+
   private List<T> elements;
   private Supplier<T> defaultValue;
 
@@ -99,6 +100,7 @@ public abstract class Merger<T> {
     public T merge() {
       return getElements().get(0);
     }
+
   }
 
 

@@ -19,6 +19,7 @@ import org.openlmis.integration.dhis2.service.BaseCommunicationService;
 import org.springframework.beans.factory.annotation.Value;
 
 public abstract class BaseReferenceDataService<T> extends BaseCommunicationService<T> {
+
   @Value("${referencedata.url}")
   private String referenceDataUrl;
 
@@ -31,4 +32,5 @@ public abstract class BaseReferenceDataService<T> extends BaseCommunicationServi
   protected abstract Class<T> getResultClass();
 
   protected abstract Class<T[]> getArrayResultClass();
+
 }

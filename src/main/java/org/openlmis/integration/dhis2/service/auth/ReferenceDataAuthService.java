@@ -32,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class ReferenceDataAuthService {
+
   private static final String ACCESS_TOKEN = "access_token";
 
   @Value("${auth.server.clientId}")

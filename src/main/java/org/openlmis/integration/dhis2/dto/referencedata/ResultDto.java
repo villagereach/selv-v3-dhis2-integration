@@ -23,5 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ResultDto<T> {
+
   T result;
+
 }

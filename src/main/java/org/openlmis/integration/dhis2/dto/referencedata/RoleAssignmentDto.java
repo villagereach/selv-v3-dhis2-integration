@@ -22,7 +22,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RoleAssignmentDto {
+
   private UUID id;
   protected RoleDto role;
   protected UserDto user;
+
 }

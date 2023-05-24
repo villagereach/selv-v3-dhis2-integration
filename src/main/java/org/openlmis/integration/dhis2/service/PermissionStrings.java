@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PermissionStrings {
-  private static final Logger LOGGER = LoggerFactory.getLogger(PermissionStrings.class);
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(PermissionStrings.class);
   private final Map<UUID, Handler> handlers = Maps.newConcurrentMap();
 
   @Autowired
@@ -41,8 +41,8 @@ public class PermissionStrings {
   }
 
   public class Handler implements Supplier<Set<PermissionStringDto>> {
-    private UUID userId;
 
+    private UUID userId;
     private Set<PermissionStringDto> permissionStrings;
     private String etag;
 
@@ -64,4 +64,5 @@ public class PermissionStrings {
       return permissionStrings;
     }
   }
+
 }

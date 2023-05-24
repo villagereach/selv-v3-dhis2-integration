@@ -22,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 @Getter
 @AllArgsConstructor
 public class ServiceResponse<T> {
+
   private T body;
   private HttpHeaders headers;
   private boolean modified;
@@ -29,4 +30,5 @@ public class ServiceResponse<T> {
   public String getETag() {
     return headers.getETag();
   }
+
 }

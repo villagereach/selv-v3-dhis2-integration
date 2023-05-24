@@ -29,6 +29,7 @@ import org.springframework.util.MultiValueMap;
 
 @EqualsAndHashCode
 public final class RequestParameters {
+
   private final MultiValueMap<String, String> params;
 
   private RequestParameters() {
@@ -126,4 +127,5 @@ public final class RequestParameters {
 
     return Pair.of(left, right);
   }
+
 }

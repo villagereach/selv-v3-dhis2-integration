@@ -23,8 +23,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RightDto {
+
   private UUID id;
   private String name;
   private String type;
   private Set<RightDto> attachments;
+
 }

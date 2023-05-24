@@ -57,12 +57,16 @@ import org.springframework.web.client.RestTemplate;
 
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class BaseCommunicationService<T> {
+
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   private final RestOperations restTemplate = new RestTemplate();
+
   @Autowired
   private ReferenceDataAuthService authService;
+
   @Autowired
   private ObjectMapper objectMapper;
+
   @Value("${request.maxUrlLength}")
   private int maxUrlLength;
 
