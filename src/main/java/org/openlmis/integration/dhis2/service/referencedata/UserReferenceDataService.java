@@ -71,14 +71,12 @@ public class UserReferenceDataService extends BaseReferenceDataService<UserDto> 
    * @param facility facility to check (for supervision rights, can be {@code null})
    * @return {@link ResultDto} of true or false depending on if user has the right.
    */
-  public ResultDto<Boolean> hasRight(UUID user, UUID right, UUID program, UUID facility,
-                                     UUID warehouse) {
+  public ResultDto<Boolean> hasRight(UUID user, UUID right, UUID program, UUID facility) {
     RequestParameters parameters = RequestParameters
             .init()
             .set("rightId", right)
             .set("programId", program)
-            .set("facilityId", facility)
-            .set("warehouseId", warehouse);
+            .set("facilityId", facility);
 
     return getResult(user + "/hasRight", parameters, Boolean.class);
   }

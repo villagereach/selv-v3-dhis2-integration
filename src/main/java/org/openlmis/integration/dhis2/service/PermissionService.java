@@ -58,15 +58,15 @@ public class PermissionService {
    * Checks if current user has permission to manage DHIS2 integration.
    */
   public void canManageDhisIntegration() {
-    hasPermission(DHIS2_ADMIN);
+    hasPermission(DHIS2_ADMIN, null, null);
   }
 
   public PermissionStrings.Handler getPermissionStrings(UUID userId) {
     return permissionStrings.forUser(userId);
   }
 
-  private void hasPermission(String rightName) {
-    ResultDto<Boolean> result = getRightResult(rightName, null, null, null, false);
+  private void hasPermission(String rightName, UUID program, UUID facility) {
+    ResultDto<Boolean> result = getRightResult(rightName, program, facility, false);
     if (null == result || !result.getResult()) {
       throw new PermissionMessageException(
               new Message(ERROR_NO_FOLLOWING_PERMISSION, rightName));
@@ -74,24 +74,23 @@ public class PermissionService {
   }
 
   private ResultDto<Boolean> getRightResult(String rightName, UUID program, UUID facility,
-                                            UUID warehouse, boolean allowApiKey) {
+                                            boolean allowApiKey) {
     OAuth2Authentication authentication = (OAuth2Authentication) SecurityContextHolder
             .getContext()
             .getAuthentication();
 
     return authentication.isClientOnly()
             ? checkServiceToken(allowApiKey, authentication)
-            : checkUserToken(rightName, program, facility, warehouse);
+            : checkUserToken(rightName, program, facility);
   }
 
-  private ResultDto<Boolean> checkUserToken(String rightName, UUID program, UUID facility,
-                                            UUID warehouse) {
+  private ResultDto<Boolean> checkUserToken(String rightName, UUID program, UUID facility) {
     UserDto user = authenticationHelper.getCurrentUser();
     RightDto right = authenticationHelper.getRight(rightName);
 
     try {
       return userReferenceDataService.hasRight(
-              user.getId(), right.getId(), program, facility, warehouse);
+              user.getId(), right.getId(), program, facility);
     } catch (HttpClientErrorException httpException) {
       throw new PermissionMessageException(new Message(ERROR_PERMISSION_CHECK_FAILED,
               httpException.getMessage()), httpException);
