@@ -310,6 +310,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -336,6 +338,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -368,6 +372,8 @@ resourceTypes:
                 body:
                   application/json:
               403:
+                headers:
+                  Keep-Alive:
                 body:
                   application/json:
                     schema: localizedErrorResponse
@@ -394,6 +400,8 @@ resourceTypes:
                 body:
                   application/json:
               403:
+                headers:
+                  Keep-Alive:
                 body:
                   application/json:
                     schema: localizedErrorResponse
@@ -413,6 +421,11 @@ resourceTypes:
                   application/json:
                     schema: localizedErrorResponse
               401:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+              403:
                 headers:
                   Keep-Alive:
                 body:
@@ -478,6 +491,11 @@ resourceTypes:
                     application/json:
                       schema: localizedErrorResponse
                 401:
+                  headers:
+                    Keep-Alive:
+                  body:
+                    application/json:
+                403:
                   headers:
                     Keep-Alive:
                   body:
