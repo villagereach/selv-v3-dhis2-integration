@@ -13,28 +13,28 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.referencedata;
+package org.openlmis.integration.dhis2.dto.periodmapping;
 
-import java.util.Date;
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.openlmis.integration.dhis2.dto.BaseDto;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
+import org.openlmis.integration.dhis2.ToStringTestUtils;
 
-/**
- * Objects of this class represent ProcessingPeriodDto data retrieved from the referencedata.
- */
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = true)
-public class ProcessingPeriodDto extends BaseDto {
+public class PeriodMappingDtoTest {
 
-  private UUID id;
-  private ProcessingScheduleDto processingSchedule;
-  private String name;
-  private String description;
-  private Date startDate;
-  private Date endDate;
+  @Test
+  public void equalsContract() {
+    EqualsVerifier
+            .forClass(PeriodMappingDto.class)
+            .withRedefinedSuperclass()
+            .suppress(Warning.NONFINAL_FIELDS)
+            .verify();
+  }
+
+  @Test
+  public void shouldImplementToString() {
+    PeriodMappingDto periodMappingDto = new PeriodMappingDto();
+    ToStringTestUtils.verify(PeriodMappingDto.class, periodMappingDto);
+  }
 
 }

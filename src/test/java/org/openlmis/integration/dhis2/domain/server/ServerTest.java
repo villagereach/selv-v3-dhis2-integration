@@ -21,11 +21,13 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
+import org.openlmis.integration.dhis2.builder.PeriodMappingDataBuilder;
 import org.openlmis.integration.dhis2.builder.ScheduleDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
 import org.openlmis.integration.dhis2.builder.SharedFacilityDataBuilder;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
+import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.dto.server.ServerDto;
 
@@ -42,12 +44,16 @@ public class ServerTest {
     SharedFacility sf1 = new SharedFacilityDataBuilder().build();
     SharedFacility sf2 = new SharedFacility();
 
+    PeriodMapping pm1 = new PeriodMappingDataBuilder().build();
+    PeriodMapping pm2 = new PeriodMapping();
+
     EqualsVerifier
         .forClass(Server.class)
         .withRedefinedSuperclass()
         .withPrefabValues(Dataset.class, ds1, ds2)
         .withPrefabValues(Schedule.class, sc1, sc2)
         .withPrefabValues(SharedFacility.class, sf1, sf2)
+        .withPrefabValues(PeriodMapping.class, pm1, pm2)
         .suppress(Warning.NONFINAL_FIELDS)
         .verify();
   }

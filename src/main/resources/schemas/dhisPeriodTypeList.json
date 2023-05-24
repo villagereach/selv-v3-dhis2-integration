@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DhisPeriodTypeList",
+  "description": "DHIS2 period type list instance",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "name"
+    },
+    "isoDuration": {
+      "type": "string",
+      "title": "isoDuration"
+    },
+    "isoFormat": {
+      "type": "string",
+      "title": "isoFormat"
+    },
+    "frequencyOrder": {
+      "type": "integer",
+      "title": "frequencyOrder"
+    }
+  },
+  "required": [
+    "name",
+    "isoDuration",
+    "isoFormat",
+    "frequencyOrder"
+  ]
+}

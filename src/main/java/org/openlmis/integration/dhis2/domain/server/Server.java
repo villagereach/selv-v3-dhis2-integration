@@ -33,6 +33,7 @@ import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.facility.SharedFacility;
+import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 
 @Entity
@@ -77,6 +78,10 @@ public class Server extends BaseEntity {
   @Column
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "server")
   private List<SharedFacility> sharedFacilityList = new ArrayList<>();
+
+  @Column
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "server")
+  private List<PeriodMapping> periodMappingList = new ArrayList<>();
 
   /**
    * Creates new instance based on data from the importer.

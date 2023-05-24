@@ -13,28 +13,26 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.referencedata;
+package org.openlmis.integration.dhis2.dto.dhis;
 
-import java.util.Date;
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.openlmis.integration.dhis2.dto.BaseDto;
+import lombok.ToString;
 
 /**
- * Objects of this class represent ProcessingPeriodDto data retrieved from the referencedata.
+ * Objects of this class represent data retrieved from the DHIS2 API.
+ * Period tells you <i>when</i> the data value was recorded. It becomes
+ * an important factor when analysing data over time.
+ * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-public class ProcessingPeriodDto extends BaseDto {
+@ToString
+public class DhisPeriodType {
 
-  private UUID id;
-  private ProcessingScheduleDto processingSchedule;
   private String name;
-  private String description;
-  private Date startDate;
-  private Date endDate;
+  private String isoDuration;
+  private String isoFormat;
+  private int frequencyOrder;
 
 }

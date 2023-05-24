@@ -40,6 +40,8 @@ import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
+import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodType;
+import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodTypeResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.service.auth.DhisAuthService;
@@ -187,6 +189,32 @@ public class DhisDataServiceTest {
     ).thenThrow(HttpClientErrorException.class);
 
     dhisDataService.createDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
+  }
+
+  @Test
+  public void getDhisPeriodTypesShouldReturnPeriodTypeList() {
+    ResponseEntity<DhisPeriodTypeResponseBody> response = mock(ResponseEntity.class);
+    DhisPeriodTypeResponseBody dhisPeriodTypeResponseBody = new DhisPeriodTypeResponseBody();
+    List<DhisPeriodType> periodTypes = new ArrayList<>();
+    dhisPeriodTypeResponseBody.setPeriodTypes(periodTypes);
+
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            eq(new ParameterizedTypeReference<DhisPeriodTypeResponseBody>() {}))
+    ).thenReturn(response);
+    when(response.getBody()).thenReturn(dhisPeriodTypeResponseBody);
+
+    List<DhisPeriodType> result =
+            dhisDataService.getDhisPeriodTypes(SERVER_URL, USERNAME, PASSWORD);
+    assertThat(result, is(equalTo(periodTypes)));
+  }
+
+  @Test(expected = RestOperationException.class)
+  public void getDhisPeriodTypesShouldThrowNotFoundException() {
+    when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(HttpEntity.class),
+            eq(new ParameterizedTypeReference<DhisPeriodTypeResponseBody>() {}))
+    ).thenThrow(HttpClientErrorException.class);
+
+    dhisDataService.getDhisPeriodTypes(SERVER_URL, USERNAME, PASSWORD);
   }
 
 }
