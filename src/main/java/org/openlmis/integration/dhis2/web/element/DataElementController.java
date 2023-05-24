@@ -78,9 +78,6 @@ public class DataElementController extends BaseController {
   @Autowired
   private ScheduleService scheduleService;
 
-  @Autowired
-  private PermissionService permissionService;
-
   /**
    * Retrieves the specified data element.
    */
