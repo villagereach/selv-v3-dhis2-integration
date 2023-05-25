@@ -45,6 +45,7 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodTypeResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.service.auth.DhisAuthService;
+import org.openlmis.integration.dhis2.service.communication.DhisDataService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

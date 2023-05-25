@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.dto.role;
 
 import static org.apache.commons.lang3.StringUtils.splitByWholeSeparator;
 

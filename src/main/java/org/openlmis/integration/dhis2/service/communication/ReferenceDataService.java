@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.communication;
 
 import static org.openlmis.integration.dhis2.util.RequestHelper.createEntity;
 

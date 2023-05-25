@@ -37,6 +37,8 @@ import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
 import org.openlmis.integration.dhis2.repository.facility.SharedFacilityRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.service.communication.DhisDataService;
+import org.openlmis.integration.dhis2.service.communication.ReferenceDataService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.springframework.data.domain.Sort;
 

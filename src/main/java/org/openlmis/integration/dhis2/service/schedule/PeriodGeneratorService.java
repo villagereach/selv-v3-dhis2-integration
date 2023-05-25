@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.openlmis.integration.dhis2.dto.referencedata.ProcessingPeriodDto;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
-import org.openlmis.integration.dhis2.service.ReferenceDataService;
+import org.openlmis.integration.dhis2.service.communication.ReferenceDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
