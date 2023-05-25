@@ -15,6 +15,7 @@
 
 package org.openlmis.integration.dhis2.web;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Matchers.any;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -76,6 +78,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
             .willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
     server.setPeriodMappingList(Collections.singletonList(periodMapping));
+    mockUserHasRight();
   }
 
   @Test
@@ -391,6 +394,138 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
             .then()
             .statusCode(HttpStatus.SC_UNAUTHORIZED);
 
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectGetPeriodMappingRequestIfUserHasNoRight() {
+    mockUserHasNoRight();
+    String response = restAssured
+        .given()
+        .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(ID, periodMappingDto.getId().toString())
+        .when()
+        .get(ID_URL)
+        .then()
+        .statusCode(HttpStatus.SC_FORBIDDEN)
+        .extract()
+        .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectGetPageOfPeriodMappingsIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findById(periodMappingDto.getServerDto()
+        .getId())).willReturn(Optional.of(server));
+
+    String response = restAssured
+        .given()
+        .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .queryParam("page", pageable.getPageNumber())
+        .queryParam("size", pageable.getPageSize())
+        .when()
+        .get(RESOURCE_URL)
+        .then()
+        .statusCode(HttpStatus.SC_FORBIDDEN)
+        .extract()
+        .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectCreatePeriodMappingIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findById(periodMappingDto.getServerDto()
+        .getId())).willReturn(Optional.of(server));
+
+    String response = restAssured
+        .given()
+        .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .body(periodMappingDto)
+        .when()
+        .post(RESOURCE_URL)
+        .then()
+        .statusCode(HttpStatus.SC_FORBIDDEN)
+        .extract()
+        .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectUpdatePeriodMappingIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(periodMappingRepository.findById(periodMappingDto.getId()))
+        .willReturn(Optional.of(periodMapping));
+
+    String response = restAssured
+        .given()
+        .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(ID, periodMappingDto.getId().toString())
+        .body(periodMappingDto)
+        .when()
+        .put(ID_URL)
+        .then()
+        .statusCode(HttpStatus.SC_FORBIDDEN)
+        .extract()
+        .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectDeletePeriodMappingIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(periodMappingRepository.existsById(periodMappingDto.getId())).willReturn(true);
+
+    String response = restAssured
+        .given()
+        .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(ID, periodMappingDto.getId().toString())
+        .when()
+        .delete(ID_URL)
+        .then()
+        .statusCode(HttpStatus.SC_FORBIDDEN)
+        .extract()
+        .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectRetrieveAuditLogsIfUserHasNoRights() {
+    mockUserHasNoRight();
+    given(periodMappingRepository.existsById(periodMappingDto.getId())).willReturn(true);
+    willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
+
+    String response = restAssured
+        .given()
+        .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(ID, periodMappingDto.getId().toString())
+        .when()
+        .get(AUDIT_LOG_URL)
+        .then()
+        .statusCode(HttpStatus.SC_FORBIDDEN)
+        .extract()
+        .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 

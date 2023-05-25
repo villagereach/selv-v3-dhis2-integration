@@ -20,6 +20,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -37,10 +40,13 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
+import org.openlmis.integration.dhis2.exception.PermissionMessageException;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
 import org.openlmis.integration.dhis2.repository.periodmapping.PeriodMappingRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.service.PermissionService;
+import org.openlmis.integration.dhis2.util.Message;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -113,6 +119,9 @@ public abstract class BaseWebIntegrationTest {
 
   @SpyBean(name = "javersProvider")
   public Javers javers;
+
+  @SpyBean
+  protected PermissionService permissionService;
 
   @MockBean
   public ServerRepository serverRepository;
@@ -207,6 +216,17 @@ public abstract class BaseWebIntegrationTest {
       return obj;
     }
 
+  }
+
+  protected void mockUserHasRight() {
+    doNothing().when(permissionService).canManageDhisIntegration();
+  }
+
+  protected void mockUserHasNoRight() {
+    Message message = new Message(ERROR_NO_FOLLOWING_PERMISSION);
+    PermissionMessageException exception = new PermissionMessageException(message);
+
+    doThrow(exception).when(permissionService).canManageDhisIntegration();
   }
 
 }

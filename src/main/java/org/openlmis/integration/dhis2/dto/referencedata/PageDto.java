@@ -58,14 +58,14 @@ public final class PageDto<T> implements Page<T> {
 
   private List<T> content;
 
-  PageDto() {
+  public PageDto() {
     this(new PageImpl<>(new ArrayList<>()));
   }
 
   /**
    * Creates new instance based on data from {@link Page} instance.
    */
-  PageDto(Page<T> page) {
+  public PageDto(Page<T> page) {
     this(
             checkNotNull(page).isLast(), page.isFirst(), page.getTotalPages(),
             page.getTotalElements(), page.getSize(), page.getNumber(),

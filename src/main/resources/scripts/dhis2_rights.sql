@@ -1,0 +1,2 @@
+INSERT INTO referencedata.rights (id, description, name, type) VALUES ('85abf93a-ea22-42a9-be7c-5baf64d757f9', NULL, 'DHIS2_ADMIN', 'GENERAL_ADMIN');
+INSERT INTO referencedata.role_rights (roleid, rightid) VALUES ('a439c5de-b8aa-11e6-80f5-76304dec7eb7', '85abf93a-ea22-42a9-be7c-5baf64d757f9');

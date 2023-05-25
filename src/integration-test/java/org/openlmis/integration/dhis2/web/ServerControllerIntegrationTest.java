@@ -15,6 +15,7 @@
 
 package org.openlmis.integration.dhis2.web;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Matchers.any;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -73,6 +75,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   public void setUp() {
     given(serverRepository.saveAndFlush(any(Server.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
+    mockUserHasRight();
   }
 
   @Test
@@ -366,6 +369,130 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED);
 
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectReturnGivenServerIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.of(server));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(ID, serverDto.getId().toString())
+            .when()
+            .get(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectReturnPageOfServersIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findAll(any(Pageable.class)))
+            .willReturn(new PageImpl<>(Collections.singletonList(server)));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .queryParam("page", pageable.getPageNumber())
+            .queryParam("size", pageable.getPageSize())
+            .when()
+            .get(RESOURCE_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectCreateServerIfUserHasNoRight() {
+    mockUserHasNoRight();
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .body(serverDto)
+            .when()
+            .post(RESOURCE_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectUpdateServerIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.findById(serverDto.getId())).willReturn(Optional.of(server));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .pathParam(ID, serverDto.getId().toString())
+            .body(serverDto)
+            .when()
+            .put(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectDeleteServerIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(ID, serverDto.getId().toString())
+            .when()
+            .delete(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectRetrieveAuditLogsIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(serverRepository.existsById(serverDto.getId())).willReturn(true);
+    willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(ID, serverDto.getId().toString())
+            .when()
+            .get(AUDIT_LOG_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 

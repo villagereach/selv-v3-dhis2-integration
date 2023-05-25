@@ -165,6 +165,8 @@ resourceTypes:
           body:
             application/json:
         403:
+          headers:
+            Keep-Alive:
           body:
             application/json:
               schema: localizedErrorResponse
@@ -191,6 +193,8 @@ resourceTypes:
           body:
             application/json:
         403:
+          headers:
+            Keep-Alive:
           body:
             application/json:
               schema: localizedErrorResponse
@@ -223,6 +227,8 @@ resourceTypes:
             body:
               application/json:
           403:
+            headers:
+              Keep-Alive:
             body:
               application/json:
                 schema: localizedErrorResponse
@@ -249,6 +255,8 @@ resourceTypes:
             body:
               application/json:
           403:
+            headers:
+              Keep-Alive:
             body:
               application/json:
                 schema: localizedErrorResponse
@@ -272,6 +280,12 @@ resourceTypes:
               Keep-Alive:
             body:
               application/json:
+          403:
+            headers:
+              Keep-Alive:
+            body:
+              application/json:
+                schema: localizedErrorResponse
           404:
             headers:
               Keep-Alive:
@@ -296,6 +310,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -322,6 +338,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -354,6 +372,8 @@ resourceTypes:
                 body:
                   application/json:
               403:
+                headers:
+                  Keep-Alive:
                 body:
                   application/json:
                     schema: localizedErrorResponse
@@ -380,6 +400,8 @@ resourceTypes:
                 body:
                   application/json:
               403:
+                headers:
+                  Keep-Alive:
                 body:
                   application/json:
                     schema: localizedErrorResponse
@@ -399,6 +421,11 @@ resourceTypes:
                   application/json:
                     schema: localizedErrorResponse
               401:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+              403:
                 headers:
                   Keep-Alive:
                 body:
@@ -468,6 +495,11 @@ resourceTypes:
                     Keep-Alive:
                   body:
                     application/json:
+                403:
+                  headers:
+                    Keep-Alive:
+                  body:
+                    application/json:
       /datasets:
         displayName: datasets
         get:
@@ -486,6 +518,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -512,6 +546,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -544,6 +580,8 @@ resourceTypes:
                 body:
                   application/json:
               403:
+                headers:
+                  Keep-Alive:
                 body:
                   application/json:
                     schema: localizedErrorResponse
@@ -570,6 +608,8 @@ resourceTypes:
                 body:
                   application/json:
               403:
+                headers:
+                  Keep-Alive:
                 body:
                   application/json:
                     schema: localizedErrorResponse
@@ -593,6 +633,12 @@ resourceTypes:
                   Keep-Alive:
                 body:
                   application/json:
+              403:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+                    schema: localizedErrorResponse
               404:
                 headers:
                   Keep-Alive:
@@ -617,6 +663,8 @@ resourceTypes:
                   body:
                     application/json:
                 403:
+                  headers:
+                    Keep-Alive:
                   body:
                     application/json:
                       schema: localizedErrorResponse
@@ -643,6 +691,8 @@ resourceTypes:
                   body:
                     application/json:
                 403:
+                  headers:
+                    Keep-Alive:
                   body:
                     application/json:
                       schema: localizedErrorResponse
@@ -675,6 +725,8 @@ resourceTypes:
                     body:
                       application/json:
                   403:
+                    headers:
+                      Keep-Alive:
                     body:
                       application/json:
                         schema: localizedErrorResponse
@@ -701,6 +753,8 @@ resourceTypes:
                     body:
                       application/json:
                   403:
+                    headers:
+                      Keep-Alive:
                     body:
                       application/json:
                         schema: localizedErrorResponse
@@ -724,6 +778,12 @@ resourceTypes:
                       Keep-Alive:
                     body:
                       application/json:
+                  403:
+                    headers:
+                      Keep-Alive:
+                    body:
+                      application/json:
+                        schema: localizedErrorResponse
                   404:
                     headers:
                       Keep-Alive:
@@ -779,6 +839,12 @@ resourceTypes:
                             ]
                     404:
                       description: The specified <<resourcePathName|!singularize>> does not exist.
+                      headers:
+                        Keep-Alive:
+                      body:
+                        application/json:
+                          schema: localizedErrorResponse
+                    403:
                       headers:
                         Keep-Alive:
                       body:
@@ -891,6 +957,12 @@ resourceTypes:
                   body:
                     application/json:
                       schema: localizedErrorResponse
+                403:
+                  headers:
+                    Keep-Alive:
+                  body:
+                    application/json:
+                      schema: localizedErrorResponse
                 401:
                   headers:
                     Keep-Alive:
@@ -914,6 +986,8 @@ resourceTypes:
               body:
                 application/json:
             403:
+              headers:
+                Keep-Alive:
               body:
                 application/json:
                   schema: localizedErrorResponse
@@ -1012,6 +1086,13 @@ resourceTypes:
                         "right": "NewValue"
                       }
                     ]
+            403:
+              description: The specified <<resourcePathName|!singularize>> is forbidden.
+              headers:
+                Keep-Alive:
+              body:
+                application/json:
+                  schema: localizedErrorResponse
             404:
               description: The specified <<resourcePathName|!singularize>> does not exist.
               headers:
@@ -1059,6 +1140,8 @@ resourceTypes:
           body:
             application/json:
         403:
+          headers:
+            Keep-Alive:
           body:
             application/json:
               schema: localizedErrorResponse

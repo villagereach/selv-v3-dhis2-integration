@@ -25,6 +25,7 @@ import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
+import org.openlmis.integration.dhis2.service.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.dataset.DatasetController;
@@ -60,6 +61,9 @@ public class DhisDataElementController extends BaseController {
   @Autowired
   private DhisDataService dhisDataService;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves the all dhis data elements for a given dataset.
    */
@@ -70,6 +74,8 @@ public class DhisDataElementController extends BaseController {
           @PathVariable("serverId") UUID serverId,
           @PathVariable("datasetId") UUID datasetId,
           Pageable pageable) {
+    permissionService.canManageDhisIntegration();
+
     Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
     Dataset dataset = datasetRepository.findById(datasetId)

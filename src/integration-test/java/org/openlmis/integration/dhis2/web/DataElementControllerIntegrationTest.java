@@ -15,6 +15,7 @@
 
 package org.openlmis.integration.dhis2.web;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Matchers.any;
+import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -91,6 +93,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
     change.bindToCommit(commitMetadata);
     server.setDatasetList(Collections.singletonList(dataset));
     dataset.setDataElementList(Collections.singletonList(dataElement));
+    mockUserHasRight();
   }
 
   @Test
@@ -423,6 +426,147 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
         .then()
         .statusCode(HttpStatus.SC_UNAUTHORIZED);
 
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectGetDataElementRequestIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(dataElementRepository.findById(dataElementDto.getId()))
+            .willReturn(Optional.of(dataElement));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
+            .pathParam(ID, dataElementDto.getId().toString())
+            .when()
+            .get(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectGetPageOfDataElementsIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(datasetRepository.findById(dataElementDto.getDatasetDto()
+            .getId())).willReturn(Optional.of(dataset));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
+            .queryParam("page", pageable.getPageNumber())
+            .queryParam("size", pageable.getPageSize())
+            .when()
+            .get(RESOURCE_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectCreateDataElementIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(datasetRepository.findById(dataElementDto.getDatasetDto()
+            .getId())).willReturn(Optional.of(dataset));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
+            .body(dataElementDto)
+            .when()
+            .post(RESOURCE_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectUpdateDataElementIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(dataElementRepository.findById(dataElementDto.getId()))
+            .willReturn(Optional.of(dataElement));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
+            .pathParam(ID, dataElementDto.getId().toString())
+            .body(dataElementDto)
+            .when()
+            .put(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectDeleteDataElementIfUserHasNoRight() {
+    mockUserHasNoRight();
+    given(dataElementRepository.existsById(dataElementDto.getId())).willReturn(true);
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
+            .pathParam(ID, dataElementDto.getId().toString())
+            .when()
+            .delete(ID_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
+    assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
+  }
+
+  @Test
+  public void shouldRejectRetrieveAuditLogsIfUserHasNoRights() {
+    mockUserHasNoRight();
+    given(dataElementRepository.existsById(dataElementDto.getId())).willReturn(true);
+    willReturn(Lists.newArrayList(change)).given(javers).findChanges(any(JqlQuery.class));
+
+    String response = restAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
+            .pathParam(ID, dataElementDto.getId().toString())
+            .when()
+            .get(AUDIT_LOG_URL)
+            .then()
+            .statusCode(HttpStatus.SC_FORBIDDEN)
+            .extract()
+            .path(MESSAGE_KEY);
+
+    assertThat(response, is(equalTo(ERROR_NO_FOLLOWING_PERMISSION)));
     assertThat(RAML_ASSERT_MESSAGE, restAssured.getLastReport(), RamlMatchers.hasNoViolations());
   }
 

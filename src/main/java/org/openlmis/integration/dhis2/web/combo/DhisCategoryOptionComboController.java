@@ -23,6 +23,7 @@ import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.DhisDataService;
+import org.openlmis.integration.dhis2.service.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.server.ServerController;
@@ -55,6 +56,9 @@ public class DhisCategoryOptionComboController extends BaseController {
   @Autowired
   private DhisDataService dhisDataService;
 
+  @Autowired
+  PermissionService permissionService;
+
   /**
    * Retrieves all dhis category option combos for a given server.
    */
@@ -63,6 +67,7 @@ public class DhisCategoryOptionComboController extends BaseController {
   @ResponseBody
   public Page<DhisCategoryOptionCombo> getAllCategoryOptionCombos(
       @PathVariable("serverId") UUID serverId, Pageable pageable) {
+    permissionService.canManageDhisIntegration();
     Server server = serverRepository.findById(serverId)
         .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
