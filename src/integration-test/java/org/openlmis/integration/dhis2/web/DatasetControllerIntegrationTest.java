@@ -77,7 +77,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     given(datasetRepository.saveAndFlush(any(Dataset.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
     server.setDatasetList(Collections.singletonList(dataset));
-    mockUserHasRight();
+    mockUserHasManageIntegrationRight();
   }
 
   @Test
@@ -104,6 +104,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForAllDatasetsEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured.given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .when()
@@ -137,6 +138,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForCreateDatasetEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -189,6 +191,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForGetDatasetEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
@@ -242,6 +245,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForUpdateDatasetEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -293,6 +297,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForDeleteDatasetEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
@@ -382,6 +387,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
