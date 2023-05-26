@@ -101,6 +101,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForAllServersEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured.given()
         .when()
         .get(RESOURCE_URL)
@@ -129,6 +130,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForCreateServerEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -178,6 +180,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForGetServerEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(ID, serverDto.getId().toString())
@@ -228,6 +231,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForUpdateServerEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -276,6 +280,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForDeleteServerEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(ID, serverDto.getId().toString())
@@ -361,6 +366,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
 
   @Test
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(ID, serverDto.getId().toString())

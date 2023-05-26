@@ -121,6 +121,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
 
   @Test
   public void shouldReturnUnauthorizedForAllDataElementsEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured.given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
         .pathParam(DATASET_ID, dataElementDto.getDatasetDto().getId().toString())
@@ -156,6 +157,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
 
   @Test
   public void shouldReturnUnauthorizedForCreateDataElementEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -212,6 +214,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
 
   @Test
   public void shouldReturnUnauthorizedForGetDataElementEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
@@ -269,6 +272,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
 
   @Test
   public void shouldReturnUnauthorizedForUpdateDataElementEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -323,6 +327,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
 
   @Test
   public void shouldReturnUnauthorizedForDeleteDataElementEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
@@ -416,6 +421,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
 
   @Test
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
         .given()
         .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
