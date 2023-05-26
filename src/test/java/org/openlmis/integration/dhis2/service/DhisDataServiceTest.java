@@ -178,7 +178,7 @@ public class DhisDataServiceTest {
 
     when(response.getBody()).thenReturn(dhisResponseBody);
 
-    DhisResponseBody newDhisResponseBody = dhisDataService.createDataValueSet(dataValueSet,
+    DhisResponseBody newDhisResponseBody = dhisDataService.sendDataValueSet(dataValueSet,
             SERVER_URL, USERNAME, PASSWORD);
     assertThat(newDhisResponseBody, is(equalTo(dhisResponseBody)));
   }
@@ -189,7 +189,7 @@ public class DhisDataServiceTest {
             eq(DhisResponseBody.class))
     ).thenThrow(HttpClientErrorException.class);
 
-    dhisDataService.createDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
+    dhisDataService.sendDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
   }
 
   @Test

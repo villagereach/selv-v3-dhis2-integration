@@ -213,7 +213,7 @@ public class DhisDataService {
    * @param password     User password.
    * @return the {@link DhisResponseBody}
    */
-  public DhisResponseBody createDataValueSet(DataValueSet dataValueSet, String serverUrl,
+  public DhisResponseBody sendDataValueSet(DataValueSet dataValueSet, String serverUrl,
                                              String username, String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
