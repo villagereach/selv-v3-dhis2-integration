@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
-import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
+import org.openlmis.integration.dhis2.service.communication.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

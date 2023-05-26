@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.role;
 
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.openlmis.integration.dhis2.i18n.MessageKeys.ERROR_NO_FOLLOWING_PERMISSION;
@@ -37,7 +37,8 @@ import org.springframework.web.client.HttpClientErrorException;
 @Service
 public class PermissionService {
 
-  public static final String DHIS2_ADMIN = "DHIS2_ADMIN";
+  public static final String MANAGE_DHIS2 = "MANAGE_DHIS2";
+  public static final String MANAGE_DHIS2_PERIODS = "MANAGE_DHIS2_PERIODS";
 
   @Autowired
   private AuthenticationHelper authenticationHelper;
@@ -58,7 +59,14 @@ public class PermissionService {
    * Checks if current user has permission to manage DHIS2 integration.
    */
   public void canManageDhisIntegration() {
-    hasPermission(DHIS2_ADMIN, null, null);
+    hasPermission(MANAGE_DHIS2, null, null);
+  }
+
+  /**
+   * Checks if current user has permission to manage DHIS2 period mappings.
+   */
+  public void canManageDhisPeriods() {
+    hasPermission(MANAGE_DHIS2_PERIODS, null, null);
   }
 
   public PermissionStrings.Handler getPermissionStrings(UUID userId) {

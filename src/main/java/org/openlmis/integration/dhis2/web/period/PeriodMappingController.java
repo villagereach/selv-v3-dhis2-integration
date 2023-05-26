@@ -29,7 +29,7 @@ import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.periodmapping.PeriodMappingRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
-import org.openlmis.integration.dhis2.service.PermissionService;
+import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.server.ServerController;
@@ -119,7 +119,7 @@ public class PeriodMappingController extends BaseController {
   @ResponseBody
   public PeriodMappingDto createPeriodMapping(@PathVariable("serverId") UUID serverId,
                                               @RequestBody PeriodMappingDto periodMappingDto) {
-    permissionService.canManageDhisIntegration();
+    permissionService.canManageDhisPeriods();
     LOGGER.debug("Creating new period mapping");
     PeriodMapping newPeriodMapping = PeriodMapping.newInstance(periodMappingDto);
 
@@ -141,7 +141,7 @@ public class PeriodMappingController extends BaseController {
   @ResponseBody
   public PeriodMappingDto updatePeriodMapping(@PathVariable("id") UUID id,
                                               @RequestBody PeriodMappingDto periodMappingDto) {
-    permissionService.canManageDhisIntegration();
+    permissionService.canManageDhisPeriods();
     if (null != periodMappingDto.getId() && !Objects.equals(periodMappingDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_PERIOD_MAPPING_ID_MISMATCH);
     }
@@ -162,7 +162,7 @@ public class PeriodMappingController extends BaseController {
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deletePeriodMapping(@PathVariable("id") UUID id) {
-    permissionService.canManageDhisIntegration();
+    permissionService.canManageDhisPeriods();
     if (!periodMappingRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_PERIOD_MAPPING_NOT_FOUND);
     }

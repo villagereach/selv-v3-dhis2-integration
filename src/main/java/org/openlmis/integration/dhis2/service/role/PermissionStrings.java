@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.role;
 
 import com.google.common.collect.Maps;
 import java.util.List;
@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
+import org.openlmis.integration.dhis2.dto.role.PermissionStringDto;
+import org.openlmis.integration.dhis2.service.ServiceResponse;
 import org.openlmis.integration.dhis2.service.referencedata.UserReferenceDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

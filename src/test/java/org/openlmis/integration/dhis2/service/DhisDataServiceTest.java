@@ -45,6 +45,7 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodTypeResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.service.auth.DhisAuthService;
+import org.openlmis.integration.dhis2.service.communication.DhisDataService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -177,7 +178,7 @@ public class DhisDataServiceTest {
 
     when(response.getBody()).thenReturn(dhisResponseBody);
 
-    DhisResponseBody newDhisResponseBody = dhisDataService.createDataValueSet(dataValueSet,
+    DhisResponseBody newDhisResponseBody = dhisDataService.sendDataValueSet(dataValueSet,
             SERVER_URL, USERNAME, PASSWORD);
     assertThat(newDhisResponseBody, is(equalTo(dhisResponseBody)));
   }
@@ -188,7 +189,7 @@ public class DhisDataServiceTest {
             eq(DhisResponseBody.class))
     ).thenThrow(HttpClientErrorException.class);
 
-    dhisDataService.createDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
+    dhisDataService.sendDataValueSet(dataValueSet, SERVER_URL, USERNAME, PASSWORD);
   }
 
   @Test
