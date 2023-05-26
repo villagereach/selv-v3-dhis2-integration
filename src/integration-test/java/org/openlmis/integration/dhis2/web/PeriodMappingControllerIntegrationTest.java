@@ -78,7 +78,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
             .willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
     server.setPeriodMappingList(Collections.singletonList(periodMapping));
-    mockUserHasRight();
+    mockUserHasManageIntegrationRight();
+    mockUserHasManagePeriodsRight();
   }
 
   @Test
@@ -105,6 +106,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldReturnUnauthorizedForAllPeriodMappingsEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured.given()
             .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
             .when()
@@ -138,6 +140,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldReturnUnauthorizedForCreatePeriodMappingEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
             .given()
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -191,6 +194,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldReturnUnauthorizedForGetPeriodMappingEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
             .given()
             .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
@@ -245,6 +249,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldReturnUnauthorizedForUpdatePeriodMappingEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
             .given()
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -296,6 +301,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldReturnUnauthorizedForDeletePeriodMappingEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
             .given()
             .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
@@ -385,6 +391,7 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldReturnUnauthorizedForAuditLogEndpointIfUserIsNotAuthorized() {
+    mockUserHasNoRight();
     restAssured
             .given()
             .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())

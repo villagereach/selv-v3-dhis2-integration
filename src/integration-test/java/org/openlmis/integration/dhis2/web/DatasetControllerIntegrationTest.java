@@ -77,7 +77,7 @@ public class DatasetControllerIntegrationTest extends BaseWebIntegrationTest {
     given(datasetRepository.saveAndFlush(any(Dataset.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
     server.setDatasetList(Collections.singletonList(dataset));
-    mockUserHasRight();
+    mockUserHasManageIntegrationRight();
   }
 
   @Test

@@ -75,7 +75,7 @@ public class ServerControllerIntegrationTest extends BaseWebIntegrationTest {
   public void setUp() {
     given(serverRepository.saveAndFlush(any(Server.class))).willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
-    mockUserHasRight();
+    mockUserHasManageIntegrationRight();
   }
 
   @Test

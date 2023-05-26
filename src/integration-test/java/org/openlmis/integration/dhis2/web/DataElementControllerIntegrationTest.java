@@ -93,7 +93,7 @@ public class DataElementControllerIntegrationTest extends BaseWebIntegrationTest
     change.bindToCommit(commitMetadata);
     server.setDatasetList(Collections.singletonList(dataset));
     dataset.setDataElementList(Collections.singletonList(dataElement));
-    mockUserHasRight();
+    mockUserHasManageIntegrationRight();
   }
 
   @Test

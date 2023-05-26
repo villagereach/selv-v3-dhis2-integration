@@ -218,8 +218,12 @@ public abstract class BaseWebIntegrationTest {
 
   }
 
-  protected void mockUserHasRight() {
+  protected void mockUserHasManageIntegrationRight() {
     doNothing().when(permissionService).canManageDhisIntegration();
+  }
+
+  protected void mockUserHasManagePeriodsRight() {
+    doNothing().when(permissionService).canManageDhisPeriods();
   }
 
   protected void mockUserHasNoRight() {
@@ -227,6 +231,7 @@ public abstract class BaseWebIntegrationTest {
     PermissionMessageException exception = new PermissionMessageException(message);
 
     doThrow(exception).when(permissionService).canManageDhisIntegration();
+    doThrow(exception).when(permissionService).canManageDhisPeriods();
   }
 
 }
