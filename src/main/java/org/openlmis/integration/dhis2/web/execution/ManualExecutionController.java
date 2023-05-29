@@ -78,7 +78,8 @@ public class ManualExecutionController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   public void runExecution(@RequestParam(value = "serverId") UUID serverId,
                            @RequestParam(value = "datasetId") UUID datasetId,
-                           @RequestParam(value = "periodMappingId") UUID periodMappingId,
+                           @RequestParam(value = "periodMappingId",
+                                   required = false) UUID periodMappingId,
                            @RequestBody(required = false) FacilityCodesWrapper facilityCodes) {
     permissionService.canManageDhisIntegration();
     LOGGER.debug("Running manual execution");
