@@ -18,6 +18,7 @@ package org.openlmis.integration.dhis2.web.execution;
 import java.util.List;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
+import org.openlmis.integration.dhis2.dto.facility.FacilityCodesWrapper;
 import org.openlmis.integration.dhis2.service.communication.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.openlmis.integration.dhis2.service.role.PermissionService;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -70,20 +72,23 @@ public class ManualExecutionController extends BaseController {
   }
 
   /**
-   * Run manual execution for certain server and dataset.
+   * Run manual execution for certain server, dataset, period mapping and facilities.
    */
-  @PostMapping(params = {"serverId", "datasetId"})
+  @PostMapping(params = {"serverId", "datasetId", "periodMappingId"})
   @ResponseStatus(HttpStatus.OK)
   public void runExecution(@RequestParam(value = "serverId") UUID serverId,
-                           @RequestParam(value = "datasetId") UUID datasetId) {
+                           @RequestParam(value = "datasetId") UUID datasetId,
+                           @RequestParam(value = "periodMappingId",
+                                   required = false) UUID periodMappingId,
+                           @RequestBody(required = false) FacilityCodesWrapper facilityCodes) {
     permissionService.canManageDhisIntegration();
     LOGGER.debug("Running manual execution");
     sharedFacilitySynchronizer.refreshSharedFacilities();
 
     List<Schedule> schedules = scheduleService
         .getSchedulesByServerAndDatasetId(serverId, datasetId);
-    schedules.forEach(
-        schedule -> processedDataExchangeService.sendData(schedule));
+    schedules.forEach(schedule -> processedDataExchangeService
+            .sendData(schedule, periodMappingId, facilityCodes.getFacilityCodes()));
   }
 
 }

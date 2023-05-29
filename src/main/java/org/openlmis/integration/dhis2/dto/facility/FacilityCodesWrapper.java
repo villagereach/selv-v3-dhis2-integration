@@ -13,24 +13,14 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.dto.dhis;
+package org.openlmis.integration.dhis2.dto.facility;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.List;
+import lombok.Data;
 
-/**
- * Objects of this class represent data retrieved from the DHIS2 API.
- * Period tells you <i>when</i> the data value was recorded. It becomes
- * an important factor when analysing data over time.
- * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
- */
-@Getter
-@Setter
-@ToString
-public class DhisPeriodType {
+@Data
+public class FacilityCodesWrapper {
 
-  private String name;
-  private String isoFormat;
+  private List<String> facilityCodes;
 
 }
