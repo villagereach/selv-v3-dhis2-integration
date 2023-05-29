@@ -18,6 +18,7 @@ package org.openlmis.integration.dhis2.service;
 import static org.openlmis.integration.dhis2.util.RequestHelper.createEntity;
 
 import java.net.URI;
+import java.util.UUID;
 import org.openlmis.integration.dhis2.dto.referencedata.MinimalFacilityDto;
 import org.openlmis.integration.dhis2.dto.referencedata.OrderableDto;
 import org.openlmis.integration.dhis2.dto.referencedata.PageDto;
@@ -60,7 +61,7 @@ public class ReferenceDataService {
    * @return page of MinimalFacilityDto objects.
    */
   public PageDto<MinimalFacilityDto> findAllFacilities() {
-    return doRequest(FACILITIES_RESOURCE_PATH, MinimalFacilityDto.class);
+    return doPageRequest(FACILITIES_RESOURCE_PATH, MinimalFacilityDto.class);
   }
 
   /**
@@ -69,7 +70,7 @@ public class ReferenceDataService {
    * @return page of OrderableDto objects.
    */
   public PageDto<OrderableDto> findAllOrderables() {
-    return doRequest(ORDERABLES_RESOURCE_PATH, OrderableDto.class);
+    return doPageRequest(ORDERABLES_RESOURCE_PATH, OrderableDto.class);
   }
 
   /**
@@ -78,10 +79,40 @@ public class ReferenceDataService {
    * @return page of ProcessingPeriodDto objects.
    */
   public PageDto<ProcessingPeriodDto> findAllProcessingPeriods() {
-    return doRequest(PROCESSING_PERIODS_RESOURCE_PATH, ProcessingPeriodDto.class);
+    return doPageRequest(PROCESSING_PERIODS_RESOURCE_PATH, ProcessingPeriodDto.class);
   }
 
-  private <T> PageDto<T> doRequest(String resourcePath, Class<T> clazz) {
+  /**
+   * Get {@link ProcessingPeriodDto} with specific ID from referencedata service.
+   *
+   * @param processingPeriodId ID of processing period to get.
+   * @return the {@link ProcessingPeriodDto} with specific ID.
+   */
+  public ProcessingPeriodDto findProcessingPeriod(UUID processingPeriodId) {
+    try {
+      ResponseEntity<ProcessingPeriodDto> response = restTemplate.exchange(
+              URI.create(serviceUrl + API_URL + PROCESSING_PERIODS_RESOURCE_PATH
+                      + processingPeriodId.toString()),
+              HttpMethod.GET,
+              createEntity(authService.obtainAccessToken(), "Bearer"),
+              new ParameterizedTypeReference<ProcessingPeriodDto>() {}
+      );
+
+      try {
+        return response.getBody();
+      } catch (NullPointerException ex) {
+        throw new ResponseParsingException(
+                MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
+      }
+    } catch (HttpClientErrorException ex) {
+      throw new RestOperationException(
+              MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
+    } catch (RestClientException ex) {
+      throw new RestOperationException(MessageKeys.ERROR_EXTERNAL_API_CONNECTION_FAILED, ex);
+    }
+  }
+
+  private <T> PageDto<T> doPageRequest(String resourcePath, Class<T> clazz) {
     try {
       ResponseEntity<PageDto<T>> response = restTemplate.exchange(
               URI.create(serviceUrl + API_URL + resourcePath),

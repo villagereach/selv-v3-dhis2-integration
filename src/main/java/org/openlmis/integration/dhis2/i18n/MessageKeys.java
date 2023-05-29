@@ -30,6 +30,7 @@ public abstract class MessageKeys {
   private static final String SCHEDULE = "schedule";
   private static final String FACILITY = "facility";
   private static final String PERIOD_MAPPING = "periodMapping";
+  private static final String PERIOD_TYPE = "periodType";
   private static final String JAVERS = "javers";
 
   private static final String ID = "id";
@@ -83,6 +84,9 @@ public abstract class MessageKeys {
 
   public static final String ERROR_PERIOD_MAPPING_ID_MISMATCH = join(ERROR_PREFIX, PERIOD_MAPPING,
           ID, MISMATCH);
+
+  public static final String ERROR_PERIOD_TYPE_NOT_FOUND = join(ERROR_PREFIX, PERIOD_TYPE,
+          NOT_FOUND);
 
   public static final String ERROR_ENUMERATOR_NOT_EXIST =
           join(ERROR_PREFIX, ENUMERATOR, NOT_EXIST);

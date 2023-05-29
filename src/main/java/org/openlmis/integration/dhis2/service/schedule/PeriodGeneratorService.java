@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
+import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
+import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodType;
 import org.openlmis.integration.dhis2.dto.referencedata.ProcessingPeriodDto;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.service.ReferenceDataService;
@@ -64,6 +66,23 @@ public class PeriodGeneratorService {
   public Pair<ZonedDateTime, ZonedDateTime> generateRange(
           String periodName, int offsetMinutes) {
     return generateRange(fromString(periodName), offsetMinutes);
+  }
+
+  /**
+   * Generates date range between starting and ending period based on given {@link PeriodMapping}.
+   *
+   * @param periodMapping {@link PeriodMapping} object.
+   * @return Pair of starting and end date
+   */
+  public Pair<ZonedDateTime, ZonedDateTime> generateRange(PeriodMapping periodMapping) {
+    ProcessingPeriodDto processingPeriod = referenceDataService
+                    .findProcessingPeriod(periodMapping.getProcessingPeriodId());
+    ZonedDateTime startDate = ZonedDateTime
+            .ofInstant(processingPeriod.getStartDate().toInstant(), ZoneId.systemDefault());
+    ZonedDateTime endDate = ZonedDateTime
+            .ofInstant(processingPeriod.getEndDate().toInstant(), ZoneId.systemDefault());
+
+    return Pair.of(startDate, endDate);
   }
 
   /**
@@ -112,6 +131,19 @@ public class PeriodGeneratorService {
 
   public String formatDate(ZonedDateTime date, String periodEnum) {
     return formatDate(date, fromString(periodEnum));
+  }
+
+  /**
+   * Format date to ISO format used by DHIS2.
+   *
+   * @param date date to be formatted
+   * @param dhisPeriodType {@link DhisPeriodType} object
+   * @return {@link String} with formatted date
+   */
+  public String formatDate(ZonedDateTime date, DhisPeriodType dhisPeriodType) {
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+            .ofPattern(dhisPeriodType.getIsoFormat());
+    return date.format(dateTimeFormatter);
   }
 
 }

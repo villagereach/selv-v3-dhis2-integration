@@ -29,6 +29,7 @@ import static org.openlmis.integration.dhis2.service.ReferenceDataService.PROCES
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -123,6 +124,26 @@ public class ReferenceDataServiceTest {
     PageDto<ProcessingPeriodDto> result = referenceDataService.findAllProcessingPeriods();
 
     assertThat(result, is(equalTo(processingPeriodDtos)));
+  }
+
+  @Test
+  public void shouldReturnProcessingPeriodDto() {
+    UUID processingPeriodId = UUID.fromString("ac5223c7-9846-4b34-82b6-20f0bbb2f8f6");
+    ProcessingPeriodDto processingPeriod = new ProcessingPeriodDto();
+    ResponseEntity<ProcessingPeriodDto> response =
+            new ResponseEntity<>(processingPeriod, HttpStatus.OK);
+    URI uri = URI.create(SERVICE_URL + API_URL + PROCESSING_PERIODS_RESOURCE_PATH
+            + processingPeriodId);
+
+    when(restTemplate.exchange(eq(uri),
+            eq(HttpMethod.GET), any(HttpEntity.class),
+            any(ParameterizedTypeReference.class)
+    )).thenReturn(response);
+    when(authService.obtainAccessToken()).thenReturn(TOKEN);
+
+    ProcessingPeriodDto result = referenceDataService.findProcessingPeriod(processingPeriodId);
+
+    assertThat(result, is(equalTo(processingPeriod)));
   }
 
   @Test(expected = RestOperationException.class)
