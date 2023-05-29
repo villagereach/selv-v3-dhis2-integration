@@ -28,7 +28,8 @@ import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.element.DataElementRepository;
-import org.openlmis.integration.dhis2.service.DhisDataService;
+import org.openlmis.integration.dhis2.service.communication.DhisDataService;
+import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.dataset.DatasetController;
@@ -64,6 +65,9 @@ public class DhisElementComboController extends BaseController {
   @Autowired
   private DhisDataService dhisDataService;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves all dhis element and category option combos combinations for a given server.
    */
@@ -73,6 +77,8 @@ public class DhisElementComboController extends BaseController {
   public Page<DhisElementCombo> getElementsAndCombos(
           @PathVariable("serverId") UUID serverId, @PathVariable("datasetId") UUID datasetId,
           Pageable pageable) {
+    permissionService.canManageDhisIntegration();
+
     Dataset dataset = datasetRepository.findById(datasetId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
     Server server = dataset.getServer();

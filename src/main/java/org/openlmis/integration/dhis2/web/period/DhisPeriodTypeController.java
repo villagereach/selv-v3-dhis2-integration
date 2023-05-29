@@ -22,7 +22,8 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodType;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
-import org.openlmis.integration.dhis2.service.DhisDataService;
+import org.openlmis.integration.dhis2.service.communication.DhisDataService;
+import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.server.ServerController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class DhisPeriodTypeController extends BaseController {
   @Autowired
   private DhisDataService dhisDataService;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves the all dhis period types for a given server.
    */
@@ -57,6 +61,7 @@ public class DhisPeriodTypeController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<DhisPeriodType> getDhisPeriodTypes(@PathVariable("serverId") UUID serverId) {
+    permissionService.canManageDhisIntegration();
     Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 

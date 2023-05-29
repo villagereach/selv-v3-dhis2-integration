@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.hibernate.exception.ConstraintViolationException;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
+import org.openlmis.integration.dhis2.exception.PermissionMessageException;
 import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
@@ -114,6 +115,13 @@ public class GlobalErrorHandling extends AbstractErrorHandling {
     }
 
     return getLocalizedMessage(new Message(ex.getMessage()));
+  }
+
+  @ExceptionHandler(PermissionMessageException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ResponseBody
+  public Message.LocalizedMessage handlePermissionException(PermissionMessageException ex) {
+    return getLocalizedMessage(ex);
   }
 
 }

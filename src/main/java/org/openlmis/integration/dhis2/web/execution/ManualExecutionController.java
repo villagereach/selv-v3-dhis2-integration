@@ -18,9 +18,11 @@ package org.openlmis.integration.dhis2.web.execution;
 import java.util.List;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
+import org.openlmis.integration.dhis2.service.communication.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.dto.facility.FacilityCodesWrapper;
 import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
+import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
@@ -54,12 +56,16 @@ public class ManualExecutionController extends BaseController {
   @Autowired
   private ScheduleService scheduleService;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Run manual execution.
    */
   @PostMapping
   @ResponseStatus(HttpStatus.OK)
   public void runExecution() {
+    permissionService.canManageDhisIntegration();
     LOGGER.debug("Running manual execution");
     sharedFacilitySynchronizer.refreshSharedFacilities();
     scheduleService.getAllSchedules().forEach(
@@ -75,6 +81,7 @@ public class ManualExecutionController extends BaseController {
                            @RequestParam(value = "datasetId") UUID datasetId,
                            @RequestParam(value = "periodMappingId") UUID periodMappingId,
                            @RequestBody(required = false) FacilityCodesWrapper facilityCodes) {
+    permissionService.canManageDhisIntegration();
     LOGGER.debug("Running manual execution");
     sharedFacilitySynchronizer.refreshSharedFacilities();
 

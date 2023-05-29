@@ -43,7 +43,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AuthServiceTest {
+public class ReferenceDataAuthServiceTest {
+
   private static final String TOKEN = "random-token";
   private static final String AUTHORIZATION_URL = "http://localhost/auth/oauth/token";
   private static final URI AUTHORIZATION_URI = URI.create(
@@ -93,4 +94,5 @@ public class AuthServiceTest {
             contains("Basic dHJ1c3RlZC1jbGllbnQ6c2VjcmV0")
     );
   }
+
 }

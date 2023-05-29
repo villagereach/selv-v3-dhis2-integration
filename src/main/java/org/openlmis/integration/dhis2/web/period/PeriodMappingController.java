@@ -29,6 +29,7 @@ import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.periodmapping.PeriodMappingRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.openlmis.integration.dhis2.web.server.ServerController;
@@ -71,6 +72,9 @@ public class PeriodMappingController extends BaseController {
   @Autowired
   private ServerRepository serverRepository;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves the specified period mapping.
    */
@@ -78,6 +82,7 @@ public class PeriodMappingController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public PeriodMappingDto getPeriodMapping(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     PeriodMapping periodMapping = periodMappingRepository.findById(id)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_PERIOD_MAPPING_NOT_FOUND));
 
@@ -93,6 +98,7 @@ public class PeriodMappingController extends BaseController {
   @ResponseBody
   public Page<PeriodMappingDto> getAllPeriodMappings(@PathVariable("serverId") UUID serverId,
                                                      Pageable pageable) {
+    permissionService.canManageDhisIntegration();
     Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
@@ -113,6 +119,7 @@ public class PeriodMappingController extends BaseController {
   @ResponseBody
   public PeriodMappingDto createPeriodMapping(@PathVariable("serverId") UUID serverId,
                                               @RequestBody PeriodMappingDto periodMappingDto) {
+    permissionService.canManageDhisPeriods();
     LOGGER.debug("Creating new period mapping");
     PeriodMapping newPeriodMapping = PeriodMapping.newInstance(periodMappingDto);
 
@@ -134,6 +141,7 @@ public class PeriodMappingController extends BaseController {
   @ResponseBody
   public PeriodMappingDto updatePeriodMapping(@PathVariable("id") UUID id,
                                               @RequestBody PeriodMappingDto periodMappingDto) {
+    permissionService.canManageDhisPeriods();
     if (null != periodMappingDto.getId() && !Objects.equals(periodMappingDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_PERIOD_MAPPING_ID_MISMATCH);
     }
@@ -154,6 +162,7 @@ public class PeriodMappingController extends BaseController {
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deletePeriodMapping(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisPeriods();
     if (!periodMappingRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_PERIOD_MAPPING_NOT_FOUND);
     }
@@ -178,6 +187,7 @@ public class PeriodMappingController extends BaseController {
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
+    permissionService.canManageDhisIntegration();
 
     // Return a 404 if the specified instance can't be found
     if (!periodMappingRepository.existsById(id)) {

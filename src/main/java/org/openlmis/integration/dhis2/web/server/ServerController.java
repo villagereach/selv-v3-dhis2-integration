@@ -25,6 +25,7 @@ import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
+import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public class ServerController extends BaseController {
   @Autowired
   private ServerRepository serverRepository;
 
+  @Autowired
+  private PermissionService permissionService;
+
   /**
    * Retrieves the specified server.
    */
@@ -68,6 +72,7 @@ public class ServerController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public ServerDto getServer(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     Server server = serverRepository.findById(id)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
@@ -82,6 +87,7 @@ public class ServerController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public Page<ServerDto> getAllServers(Pageable pageable) {
+    permissionService.canManageDhisIntegration();
     Page<Server> page = serverRepository.findAll(pageable);
     List<ServerDto> content = page
             .getContent()
@@ -98,6 +104,7 @@ public class ServerController extends BaseController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public ServerDto createServer(@RequestBody ServerDto serverDto) {
+    permissionService.canManageDhisIntegration();
     LOGGER.debug("Creating new server");
 
     Server newServer = Server.newInstance(serverDto);
@@ -114,6 +121,7 @@ public class ServerController extends BaseController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public ServerDto updateServer(@PathVariable("id") UUID id, @RequestBody ServerDto serverDto) {
+    permissionService.canManageDhisIntegration();
     if (null != serverDto.getId() && !Objects.equals(serverDto.getId(), id)) {
       throw new ValidationMessageException(MessageKeys.ERROR_SERVER_ID_MISMATCH);
     }
@@ -134,6 +142,7 @@ public class ServerController extends BaseController {
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteServer(@PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
     if (!serverRepository.existsById(id)) {
       throw new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND);
     }
@@ -158,6 +167,7 @@ public class ServerController extends BaseController {
       @RequestParam(name = "author", required = false, defaultValue = "") String author,
       @RequestParam(name = "changedPropertyName", required = false, defaultValue = "")
           String changedPropertyName, Pageable page) {
+    permissionService.canManageDhisIntegration();
 
     // Return a 404 if the specified instance can't be found
     if (!serverRepository.existsById(id)) {

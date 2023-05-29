@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org.
  */
 
-package org.openlmis.integration.dhis2.service;
+package org.openlmis.integration.dhis2.service.communication;
 
 import static org.openlmis.integration.dhis2.util.RequestHelper.createEntity;
 import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
@@ -213,7 +213,7 @@ public class DhisDataService {
    * @param password     User password.
    * @return the {@link DhisResponseBody}
    */
-  public DhisResponseBody createDataValueSet(DataValueSet dataValueSet, String serverUrl,
+  public DhisResponseBody sendDataValueSet(DataValueSet dataValueSet, String serverUrl,
                                              String username, String password) {
     String token = authService.obtainAccessToken(username, password, serverUrl);
 
