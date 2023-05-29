@@ -47,6 +47,7 @@ import org.springframework.stereotype.Service;
 public class ProcessedDataExchangeService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcessedDataExchangeService.class);
+  public static final String DEFAULT_DHIS_PERIOD = "Monthly";
 
   @Autowired
   private PeriodGeneratorService periodGeneratorService;
@@ -65,6 +66,19 @@ public class ProcessedDataExchangeService {
 
   /**
    * Sends data from OpenLMIS to DHIS2.
+   *
+   * @param schedule given {@link Schedule} object
+   */
+  public void sendData(Schedule schedule) {
+    sendData(schedule, null, null);
+  }
+
+  /**
+   * Sends data from OpenLMIS to DHIS2.
+   *
+   * @param schedule given {@link Schedule} object
+   * @param periodMappingId id of specific {@link PeriodMapping}
+   * @param facilityCodes codes of the facilities to be included in data transfer
    */
   public void sendData(Schedule schedule, UUID periodMappingId, List<String> facilityCodes) {
     DataElement dataElement = schedule.getDataElement();
@@ -84,24 +98,15 @@ public class ProcessedDataExchangeService {
     String formattedStartDate;
     if (sourceTable.equals("Requisition")) {
       if (periodMappingId != null) {
-        PeriodMapping periodMapping = periodMappingRepository
-                .findById(periodMappingId)
-                .orElseThrow(() -> new NotFoundException(
-                        MessageKeys.ERROR_PERIOD_MAPPING_NOT_FOUND));
-
+        PeriodMapping periodMapping = getPeriodMapping(periodMappingId);
         periodRange = periodGeneratorService.generateRange(periodMapping);
-        DhisPeriodType dhisPeriodType = dhisDataService
-                .getDhisPeriodTypes(server.getUrl(), server.getUsername(), server.getPassword())
-                .stream()
-                .filter(pt -> periodMapping.getDhisPeriod().equals(pt.getName()))
-                .findAny()
-                .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_PERIOD_TYPE_NOT_FOUND));
 
         formattedStartDate = periodGeneratorService.formatDate(periodRange.getSecond(),
-                dhisPeriodType);
+                getDhisPeriodTypeWithName(periodMapping.getDhisPeriod(), server));
       } else {
         periodRange = periodGeneratorService.getLastRequisitionPeriod();
-        formattedStartDate = periodGeneratorService.formatDate(periodRange.getSecond(), "Monthly");
+        formattedStartDate = periodGeneratorService.formatDate(periodRange.getSecond(),
+                DEFAULT_DHIS_PERIOD);
       }
     } else {
       periodRange = periodGeneratorService.generateRange(periodEnum, timeOffset);
@@ -122,22 +127,49 @@ public class ProcessedDataExchangeService {
       final BigDecimal calculatedIndicator = indicatorService.generate(sourceTable,
               indicator, periodRange, orderable, orgUnit);
 
-      DataValue dataValue = new DataValue();
-      dataValue.setDataElement(orderable);
-      dataValue.setCategoryOptionCombo(categoryOptionCombo);
-      dataValue.setValue(calculatedIndicator);
-
-      DataValueSet dataValueSet = new DataValueSet();
-      dataValueSet.setDataSet(dhisDatasetId);
-      dataValueSet.setPeriod(formattedStartDate);
-      dataValueSet.setOrgUnit(orgUnit);
-      dataValueSet.setDataValues(Collections.singletonList(dataValue));
-
-      DhisResponseBody dhisResponseBody = dhisDataService.createDataValueSet(dataValueSet,
+      DataValue dataValue = buildDataValue(orderable, categoryOptionCombo, calculatedIndicator);
+      DataValueSet dataValueSet = buildDataValueSet(dhisDatasetId, formattedStartDate, orgUnit,
+              dataValue);
+      DhisResponseBody dhisResponseBody = dhisDataService.sendDataValueSet(dataValueSet,
               server.getUrl(), server.getUsername(), server.getPassword());
       LOGGER.debug("Sending data value set: " + dataValueSet);
       LOGGER.debug("DHIS2 response body: " + dhisResponseBody);
     }
+  }
+
+  private PeriodMapping getPeriodMapping(UUID periodMappingId) {
+    return periodMappingRepository
+            .findById(periodMappingId)
+            .orElseThrow(() -> new NotFoundException(
+                    MessageKeys.ERROR_PERIOD_MAPPING_NOT_FOUND));
+  }
+
+  private DhisPeriodType getDhisPeriodTypeWithName(String name, Server server) {
+    return dhisDataService
+            .getDhisPeriodTypes(server.getUrl(), server.getUsername(), server.getPassword())
+            .stream()
+            .filter(pt -> name.equals(pt.getName()))
+            .findAny()
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_PERIOD_TYPE_NOT_FOUND));
+  }
+
+  private DataValue buildDataValue(String dataElement, String categoryOptionCombo,
+                                   BigDecimal value) {
+    DataValue dataValue = new DataValue();
+    dataValue.setDataElement(dataElement);
+    dataValue.setCategoryOptionCombo(categoryOptionCombo);
+    dataValue.setValue(value);
+    return dataValue;
+  }
+
+  private DataValueSet buildDataValueSet(String dataset, String period, String orgUnit,
+                                         DataValue dataValue) {
+    DataValueSet dataValueSet = new DataValueSet();
+    dataValueSet.setDataSet(dataset);
+    dataValueSet.setPeriod(period);
+    dataValueSet.setOrgUnit(orgUnit);
+    dataValueSet.setDataValues(Collections.singletonList(dataValue));
+    return dataValueSet;
   }
 
 }

@@ -73,7 +73,7 @@ public class DynamicCronScheduler {
     CronTrigger cronTrigger = new CronTrigger(periodGeneratorService, periodEnum, offset);
 
     ScheduledFuture<?> newProcess = taskScheduler.schedule(
-        () -> processedDataExchangeService.sendData(schedule, null, null), cronTrigger);
+        () -> processedDataExchangeService.sendData(schedule), cronTrigger);
     scheduledProcesses.putIfAbsent(schedule.getId(), newProcess);
   }
 

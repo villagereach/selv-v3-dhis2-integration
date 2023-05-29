@@ -18,8 +18,8 @@ package org.openlmis.integration.dhis2.web.execution;
 import java.util.List;
 import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
-import org.openlmis.integration.dhis2.service.communication.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.dto.facility.FacilityCodesWrapper;
+import org.openlmis.integration.dhis2.service.communication.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
@@ -68,7 +68,7 @@ public class ManualExecutionController extends BaseController {
     LOGGER.debug("Running manual execution");
     sharedFacilitySynchronizer.refreshSharedFacilities();
     scheduleService.getAllSchedules().forEach(
-        schedule -> processedDataExchangeService.sendData(schedule, null, null));
+        schedule -> processedDataExchangeService.sendData(schedule));
   }
 
   /**

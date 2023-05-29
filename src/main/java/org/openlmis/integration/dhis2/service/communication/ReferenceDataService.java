@@ -98,12 +98,7 @@ public class ReferenceDataService {
               new ParameterizedTypeReference<ProcessingPeriodDto>() {}
       );
 
-      try {
-        return response.getBody();
-      } catch (NullPointerException ex) {
-        throw new ResponseParsingException(
-                MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE, ex);
-      }
+      return response.getBody();
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
               MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);

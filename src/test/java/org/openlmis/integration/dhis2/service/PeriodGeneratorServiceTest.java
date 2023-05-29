@@ -38,6 +38,7 @@ import org.openlmis.integration.dhis2.domain.enumerator.DhisPeriod;
 import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
 import org.openlmis.integration.dhis2.dto.dhis.DhisPeriodType;
 import org.openlmis.integration.dhis2.dto.referencedata.ProcessingPeriodDto;
+import org.openlmis.integration.dhis2.service.communication.ReferenceDataService;
 import org.openlmis.integration.dhis2.service.schedule.PeriodGeneratorService;
 import org.springframework.data.util.Pair;
 
@@ -140,7 +141,7 @@ public class PeriodGeneratorServiceTest {
 
     String result = periodGeneratorService.formatDate(zonedDateTime, dhisPeriodType);
 
-    assertEquals(result, "201110");
+    assertEquals("201110", result);
   }
 
 }
