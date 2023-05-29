@@ -20,7 +20,6 @@ import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.service.communication.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.dto.facility.FacilityCodesWrapper;
-import org.openlmis.integration.dhis2.service.ProcessedDataExchangeService;
 import org.openlmis.integration.dhis2.service.facility.SharedFacilitySynchronizer;
 import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.service.schedule.ScheduleService;
