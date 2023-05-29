@@ -47,7 +47,7 @@ import org.springframework.stereotype.Service;
 public class ProcessedDataExchangeService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcessedDataExchangeService.class);
-  public static final String DEFAULT_DHIS_PERIOD = "Monthly";
+  private static final String DEFAULT_DHIS_PERIOD = "Monthly";
 
   @Autowired
   private PeriodGeneratorService periodGeneratorService;
