@@ -31,6 +31,7 @@ import org.openlmis.integration.dhis2.web.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -109,7 +110,12 @@ public class ServerController extends BaseController {
 
     Server newServer = Server.newInstance(serverDto);
     newServer.setId(null);
-    newServer = serverRepository.saveAndFlush(newServer);
+
+    try {
+      newServer = serverRepository.saveAndFlush(newServer);
+    } catch (DataIntegrityViolationException e) {
+      throw new ValidationMessageException(MessageKeys.ERROR_SERVER_CODE_DUPLICATED, e);
+    }
 
     return ServerDto.newInstance(newServer);
   }
@@ -132,7 +138,12 @@ public class ServerController extends BaseController {
       return server;
     }).orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
 
-    serverRepository.saveAndFlush(serverToSave);
+    try {
+      serverRepository.saveAndFlush(serverToSave);
+    } catch (DataIntegrityViolationException e) {
+      throw new ValidationMessageException(MessageKeys.ERROR_SERVER_CODE_DUPLICATED, e);
+    }
+
     return ServerDto.newInstance(serverToSave);
   }
 
