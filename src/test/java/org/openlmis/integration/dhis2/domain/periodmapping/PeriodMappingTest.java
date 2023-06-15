@@ -20,22 +20,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
+import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.builder.PeriodMappingDataBuilder;
-import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.dto.periodmapping.PeriodMappingDto;
 
 public class PeriodMappingTest {
 
   @Test
   public void equalsContract() {
-    Server sv1 = new ServerDataBuilder().build();
-    Server sv2 = new Server();
+    Dataset ds1 = new DatasetDataBuilder().build();
+    Dataset ds2 = new Dataset();
 
     EqualsVerifier
             .forClass(PeriodMapping.class)
             .withRedefinedSuperclass()
-            .withPrefabValues(Server.class, sv1, sv2)
+            .withPrefabValues(Dataset.class, ds1, ds2)
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
   }

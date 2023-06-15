@@ -42,10 +42,13 @@ import org.javers.repository.jql.JqlQuery;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.builder.PeriodMappingDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
 import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 import org.openlmis.integration.dhis2.dto.periodmapping.PeriodMappingDto;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.web.period.PeriodMappingController;
@@ -59,10 +62,14 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
   private static final String ID_URL = RESOURCE_URL + "/{id}";
   private static final String AUDIT_LOG_URL = ID_URL + "/auditLog";
   private static final String SERVER_ID = "serverId";
+  private static final String DATASET_ID = "datasetId";
   private static final String NAME = "name";
 
   private Server server = new ServerDataBuilder().build();
-  private PeriodMapping periodMapping = new PeriodMappingDataBuilder().withServer(server).build();
+  private Dataset dataset = new DatasetDataBuilder().withServer(server).build();
+  private PeriodMapping periodMapping = new PeriodMappingDataBuilder().withDataset(dataset).build();
+
+  private DatasetDto datasetDto = DatasetDto.newInstance(dataset);
   private PeriodMappingDto periodMappingDto = PeriodMappingDto.newInstance(periodMapping);
 
   private GlobalId globalId = new UnboundedValueObjectId(PeriodMapping.class.getSimpleName());
@@ -74,23 +81,27 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Before
   public void setUp() {
+    given(datasetRepository.saveAndFlush(any(Dataset.class)))
+            .willAnswer(new SaveAnswer<>());
     given(periodMappingRepository.saveAndFlush(any(PeriodMapping.class)))
             .willAnswer(new SaveAnswer<>());
     change.bindToCommit(commitMetadata);
-    server.setPeriodMappingList(Collections.singletonList(periodMapping));
+    server.setDatasetList(Collections.singletonList(dataset));
+    dataset.setPeriodMappingList(Collections.singletonList(periodMapping));
     mockUserHasManageIntegrationRight();
     mockUserHasManagePeriodsRight();
   }
 
   @Test
   public void shouldReturnPageOfPeriodMappings() {
-    given(serverRepository.findById(periodMappingDto.getServerDto()
-            .getId())).willReturn(Optional.of(server));
+    given(datasetRepository.findById(periodMappingDto.getDatasetDto()
+            .getId())).willReturn(Optional.of(dataset));
 
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .queryParam("page", pageable.getPageNumber())
             .queryParam("size", pageable.getPageSize())
             .when()
@@ -108,7 +119,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
   public void shouldReturnUnauthorizedForAllPeriodMappingsEndpointIfUserIsNotAuthorized() {
     mockUserHasNoRight();
     restAssured.given()
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .when()
             .get(RESOURCE_URL)
             .then()
@@ -119,14 +131,15 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
 
   @Test
   public void shouldCreatePeriodMapping() {
-    given(serverRepository.findById(periodMappingDto.getServerDto()
-            .getId())).willReturn(Optional.of(server));
+    given(datasetRepository.findById(periodMappingDto.getDatasetDto()
+            .getId())).willReturn(Optional.of(dataset));
 
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .body(periodMappingDto)
             .when()
             .post(RESOURCE_URL)
@@ -144,7 +157,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .body(periodMappingDto)
             .when()
             .post(RESOURCE_URL)
@@ -162,7 +176,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .get(ID_URL)
@@ -181,7 +196,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .get(ID_URL)
@@ -197,7 +213,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     mockUserHasNoRight();
     restAssured
             .given()
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .get(ID_URL)
@@ -216,7 +233,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .body(periodMappingDto)
             .when()
@@ -235,7 +253,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, UUID.randomUUID().toString())
             .body(periodMappingDto)
             .when()
@@ -253,7 +272,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .body(periodMappingDto)
             .when()
@@ -271,7 +291,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .delete(ID_URL)
@@ -288,7 +309,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .delete(ID_URL)
@@ -304,7 +326,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     mockUserHasNoRight();
     restAssured
             .given()
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .delete(ID_URL)
@@ -322,7 +345,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .get(AUDIT_LOG_URL)
@@ -350,7 +374,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .queryParam("author", commitMetadata.getAuthor())
             .queryParam("changedPropertyName", change.getPropertyName())
@@ -379,7 +404,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     restAssured
             .given()
             .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .get(AUDIT_LOG_URL)
@@ -394,7 +420,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     mockUserHasNoRight();
     restAssured
             .given()
-            .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+            .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+            .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
             .pathParam(ID, periodMappingDto.getId().toString())
             .when()
             .get(AUDIT_LOG_URL)
@@ -410,7 +437,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     String response = restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+        .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
         .pathParam(ID, periodMappingDto.getId().toString())
         .when()
         .get(ID_URL)
@@ -426,13 +454,14 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
   @Test
   public void shouldRejectGetPageOfPeriodMappingsIfUserHasNoRight() {
     mockUserHasNoRight();
-    given(serverRepository.findById(periodMappingDto.getServerDto()
-        .getId())).willReturn(Optional.of(server));
+    given(datasetRepository.findById(periodMappingDto.getDatasetDto()
+            .getId())).willReturn(Optional.of(dataset));
 
     String response = restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+        .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
         .queryParam("page", pageable.getPageNumber())
         .queryParam("size", pageable.getPageSize())
         .when()
@@ -449,14 +478,15 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
   @Test
   public void shouldRejectCreatePeriodMappingIfUserHasNoRight() {
     mockUserHasNoRight();
-    given(serverRepository.findById(periodMappingDto.getServerDto()
-        .getId())).willReturn(Optional.of(server));
+    given(datasetRepository.findById(periodMappingDto.getDatasetDto()
+            .getId())).willReturn(Optional.of(dataset));
 
     String response = restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+        .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
         .body(periodMappingDto)
         .when()
         .post(RESOURCE_URL)
@@ -479,7 +509,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+        .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
         .pathParam(ID, periodMappingDto.getId().toString())
         .body(periodMappingDto)
         .when()
@@ -501,7 +532,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     String response = restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+        .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
         .pathParam(ID, periodMappingDto.getId().toString())
         .when()
         .delete(ID_URL)
@@ -523,7 +555,8 @@ public class PeriodMappingControllerIntegrationTest extends BaseWebIntegrationTe
     String response = restAssured
         .given()
         .header(HttpHeaders.AUTHORIZATION, getTokenHeader())
-        .pathParam(SERVER_ID, periodMappingDto.getServerDto().getId().toString())
+        .pathParam(SERVER_ID, datasetDto.getServerDto().getId().toString())
+        .pathParam(DATASET_ID, periodMappingDto.getDatasetDto().getId().toString())
         .pathParam(ID, periodMappingDto.getId().toString())
         .when()
         .get(AUDIT_LOG_URL)

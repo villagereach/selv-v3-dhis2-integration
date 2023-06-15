@@ -103,7 +103,7 @@ public class DataElementController extends BaseController {
                                          Pageable pageable) {
     permissionService.canManageDhisIntegration();
     Dataset dataset = datasetRepository.findById(datasetId)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
     List<DataElement> dataElements = dataset.getDataElementList();
     List<DataElementDto> dataElementDtos = dataElements
@@ -126,7 +126,7 @@ public class DataElementController extends BaseController {
     LOGGER.debug("Creating new data element");
 
     Dataset dataset = datasetRepository.findById(datasetId)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATAELEMENT_NOT_FOUND));
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
     dataElementDto.setDataset(dataset);
     DataElement newDataElement = DataElement.newInstance(dataElementDto);
 

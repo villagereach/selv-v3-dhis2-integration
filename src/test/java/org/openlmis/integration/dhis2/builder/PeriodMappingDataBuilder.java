@@ -17,8 +17,8 @@ package org.openlmis.integration.dhis2.builder;
 
 import java.time.LocalDate;
 import java.util.UUID;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
-import org.openlmis.integration.dhis2.domain.server.Server;
 
 public class PeriodMappingDataBuilder {
 
@@ -30,10 +30,10 @@ public class PeriodMappingDataBuilder {
   private static final LocalDate START_DATE = LocalDate.of(2017, 1, 1);
   private static final LocalDate END_DATE = LocalDate.of(2017, 1, 31);
 
-  private Server server = new ServerDataBuilder().build();
+  private Dataset dataset = new DatasetDataBuilder().build();
 
-  public PeriodMappingDataBuilder withServer(Server server) {
-    this.server = server;
+  public PeriodMappingDataBuilder withDataset(Dataset dataset) {
+    this.dataset = dataset;
     return this;
   }
 
@@ -43,7 +43,7 @@ public class PeriodMappingDataBuilder {
   public PeriodMapping build() {
     PeriodMapping periodMapping = buildAsNew();
     periodMapping.setId(ID);
-    periodMapping.setServer(server);
+    periodMapping.setDataset(dataset);
 
     return periodMapping;
   }
@@ -54,7 +54,7 @@ public class PeriodMappingDataBuilder {
   public PeriodMapping buildAsNew() {
     PeriodMapping periodMapping = new PeriodMapping(NAME, SOURCE, DHIS_PERIOD_ID,
             PROCESSING_PERIOD_ID, START_DATE, END_DATE);
-    periodMapping.setServer(server);
+    periodMapping.setDataset(dataset);
     return periodMapping;
   }
 

@@ -27,10 +27,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
-import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.BaseDto;
-import org.openlmis.integration.dhis2.dto.server.ServerDto;
+import org.openlmis.integration.dhis2.dto.dataset.DatasetDto;
 
 @Getter
 @Setter
@@ -52,7 +52,7 @@ public final class PeriodMappingDto extends BaseDto implements PeriodMapping.Imp
   @JsonFormat(shape = STRING)
   private LocalDate endDate;
 
-  private ServerDto serverDto;
+  private DatasetDto datasetDto;
 
   /**
    * Creates new instance based on domain object.
@@ -60,19 +60,19 @@ public final class PeriodMappingDto extends BaseDto implements PeriodMapping.Imp
   public static PeriodMappingDto newInstance(PeriodMapping periodMapping) {
     PeriodMappingDto dto = new PeriodMappingDto();
     periodMapping.export(dto);
-    dto.setServer(periodMapping.getServer());
+    dto.setDataset(periodMapping.getDataset());
     return dto;
   }
 
   @JsonIgnore
   @Override
-  public void setServer(Server server) {
-    this.serverDto = ServerDto.newInstance(server);
+  public void setDataset(Dataset dataset) {
+    this.datasetDto = DatasetDto.newInstance(dataset);
   }
 
   @Override
-  public Server getServer() {
-    return Server.newInstance(serverDto);
+  public Dataset getDataset() {
+    return Dataset.newInstance(datasetDto);
   }
 
 }

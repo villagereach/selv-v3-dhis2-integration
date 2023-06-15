@@ -21,18 +21,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
-import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.periodmapping.PeriodMappingDto;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.exception.ValidationMessageException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
+import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.periodmapping.PeriodMappingRepository;
-import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.role.PermissionService;
 import org.openlmis.integration.dhis2.util.Pagination;
 import org.openlmis.integration.dhis2.web.BaseController;
-import org.openlmis.integration.dhis2.web.server.ServerController;
+import org.openlmis.integration.dhis2.web.dataset.DatasetController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,14 +63,14 @@ public class PeriodMappingController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PeriodMappingController.class);
 
-  public static final String RESOURCE_PATH = ServerController.RESOURCE_PATH
-          + "/{serverId}/periodMappings";
+  public static final String RESOURCE_PATH = DatasetController.RESOURCE_PATH
+          + "/{datasetId}/periodMappings";
 
   @Autowired
   private PeriodMappingRepository periodMappingRepository;
 
   @Autowired
-  private ServerRepository serverRepository;
+  private DatasetRepository datasetRepository;
 
   @Autowired
   private PermissionService permissionService;
@@ -96,13 +96,13 @@ public class PeriodMappingController extends BaseController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Page<PeriodMappingDto> getAllPeriodMappings(@PathVariable("serverId") UUID serverId,
+  public Page<PeriodMappingDto> getAllPeriodMappings(@PathVariable("datasetId") UUID datasetId,
                                                      Pageable pageable) {
     permissionService.canManageDhisIntegration();
-    Server server = serverRepository.findById(serverId)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+    Dataset dataset = datasetRepository.findById(datasetId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
 
-    List<PeriodMapping> periodMappings = server.getPeriodMappingList();
+    List<PeriodMapping> periodMappings = dataset.getPeriodMappingList();
     List<PeriodMappingDto> periodMappingDtos = periodMappings
             .stream()
             .map(PeriodMappingDto::newInstance)
@@ -117,15 +117,15 @@ public class PeriodMappingController extends BaseController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public PeriodMappingDto createPeriodMapping(@PathVariable("serverId") UUID serverId,
+  public PeriodMappingDto createPeriodMapping(@PathVariable("datasetId") UUID datasetId,
                                               @RequestBody PeriodMappingDto periodMappingDto) {
     permissionService.canManageDhisPeriods();
     LOGGER.debug("Creating new period mapping");
     PeriodMapping newPeriodMapping = PeriodMapping.newInstance(periodMappingDto);
 
-    Server server = serverRepository.findById(serverId)
-            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
-    newPeriodMapping.setServer(server);
+    Dataset dataset = datasetRepository.findById(datasetId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+    newPeriodMapping.setDataset(dataset);
 
     newPeriodMapping.setId(null);
     newPeriodMapping = periodMappingRepository.saveAndFlush(newPeriodMapping);

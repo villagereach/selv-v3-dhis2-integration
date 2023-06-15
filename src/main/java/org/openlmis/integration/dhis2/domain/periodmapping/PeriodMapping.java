@@ -32,7 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
-import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 
 @Entity
 @TypeName("PeriodMapping")
@@ -70,8 +70,8 @@ public class PeriodMapping extends BaseEntity {
   private LocalDate endDate;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "serverId", nullable = false)
-  private Server server;
+  @JoinColumn(name = "datasetId", nullable = false)
+  private Dataset dataset;
 
   /**
    * Creates new instance based on data from the importer.
@@ -94,7 +94,7 @@ public class PeriodMapping extends BaseEntity {
     processingPeriodId = importer.getProcessingPeriodId();
     startDate = importer.getStartDate();
     endDate = importer.getEndDate();
-    server = importer.getServer();
+    dataset = importer.getDataset();
   }
 
   /**
@@ -108,7 +108,7 @@ public class PeriodMapping extends BaseEntity {
     exporter.setProcessingPeriodId(processingPeriodId);
     exporter.setStartDate(startDate);
     exporter.setEndDate(endDate);
-    exporter.setServer(server);
+    exporter.setDataset(dataset);
   }
 
   public interface Exporter extends BaseExporter {
@@ -124,7 +124,7 @@ public class PeriodMapping extends BaseEntity {
 
     void setEndDate(LocalDate endDate);
 
-    void setServer(Server server);
+    void setDataset(Dataset dataset);
   }
 
   public interface Importer extends BaseImporter {
@@ -140,7 +140,7 @@ public class PeriodMapping extends BaseEntity {
 
     LocalDate getEndDate();
 
-    Server getServer();
+    Dataset getDataset();
   }
 
 }

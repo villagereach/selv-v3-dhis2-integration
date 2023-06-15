@@ -16,10 +16,13 @@
 package org.openlmis.integration.dhis2.repository;
 
 import java.util.UUID;
+import org.openlmis.integration.dhis2.builder.DatasetDataBuilder;
 import org.openlmis.integration.dhis2.builder.PeriodMappingDataBuilder;
 import org.openlmis.integration.dhis2.builder.ServerDataBuilder;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
 import org.openlmis.integration.dhis2.domain.server.Server;
+import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.periodmapping.PeriodMappingRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ public class PeriodMappingRepositoryIntegrationTest
   @Autowired
   private ServerRepository serverRepository;
 
+  @Autowired
+  private DatasetRepository datasetRepository;
+
   @Override
   public CrudRepository<PeriodMapping, UUID> getRepository() {
     return periodMappingRepository;
@@ -43,6 +49,9 @@ public class PeriodMappingRepositoryIntegrationTest
   public PeriodMapping generateInstance() {
     Server server = new ServerDataBuilder().buildAsNew();
     serverRepository.save(server);
-    return new PeriodMappingDataBuilder().withServer(server).buildAsNew();
+
+    Dataset dataset = new DatasetDataBuilder().withServer(server).buildAsNew();
+    datasetRepository.save(dataset);
+    return new PeriodMappingDataBuilder().withDataset(dataset).buildAsNew();
   }
 }
