@@ -32,9 +32,9 @@
       "type": "string",
       "title": "endDate"
     },
-    "serverDto": {
+    "datasetDto": {
       "type": "object",
-      "title": "serverDto",
+      "title": "datasetDto",
       "properties": {
         "id": {
           "type": "string",
@@ -44,22 +44,47 @@
           "type": "string",
           "title": "name"
         },
-        "url": {
+        "dhisDatasetId": {
           "type": "string",
-          "title": "url"
+          "title": "dhisDatasetId"
         },
-        "username": {
+        "cronExpression": {
           "type": "string",
-          "title": "username"
+          "title": "cronExpression"
         },
-        "password": {
-          "type": "string",
-          "title": "password"
+        "timeOffset": {
+          "type": "integer",
+          "title": "timeOffset"
+        },
+        "serverDto": {
+          "type": "object",
+          "title": "serverDto",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "id"
+            },
+            "name": {
+              "type": "string",
+              "title": "name"
+            },
+            "url": {
+              "type": "string",
+              "title": "url"
+            },
+            "username": {
+              "type": "string",
+              "title": "username"
+            },
+            "password": {
+              "type": "string",
+              "title": "password"
+            }
+          },
+          "required": ["id"]
         }
       },
-      "required": [
-        "id"
-      ]
+      "required": ["id"]
     }
   },
   "required": [
@@ -69,6 +94,6 @@
     "processingPeriodId",
     "startDate",
     "endDate",
-    "serverDto"
+    "datasetDto"
   ]
 }

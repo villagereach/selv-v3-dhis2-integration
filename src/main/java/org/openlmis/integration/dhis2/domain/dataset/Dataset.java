@@ -15,6 +15,8 @@
 
 package org.openlmis.integration.dhis2.domain.dataset;
 
+import static org.openlmis.integration.dhis2.domain.dataset.Dataset.DATASET;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -35,12 +37,13 @@ import lombok.ToString;
 import org.javers.core.metamodel.annotation.TypeName;
 import org.openlmis.integration.dhis2.domain.BaseEntity;
 import org.openlmis.integration.dhis2.domain.element.DataElement;
+import org.openlmis.integration.dhis2.domain.periodmapping.PeriodMapping;
 import org.openlmis.integration.dhis2.domain.schedule.Schedule;
 import org.openlmis.integration.dhis2.domain.server.Server;
 
 @Entity
 @TypeName("Dataset")
-@Table(name = "dataset", schema = "dhis2")
+@Table(name = DATASET, schema = "dhis2")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,6 +51,8 @@ import org.openlmis.integration.dhis2.domain.server.Server;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true, onlyExplicitlyIncluded = true)
 public class Dataset extends BaseEntity {
+
+  public static final String DATASET = "dataset";
 
   @Column
   @NonNull
@@ -74,12 +79,16 @@ public class Dataset extends BaseEntity {
   private Server server;
 
   @Column
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataset")
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = DATASET)
   private List<DataElement> dataElementList = new ArrayList<>();
 
   @Column
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataset")
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = DATASET)
   private List<Schedule> scheduleList = new ArrayList<>();
+
+  @Column
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = DATASET)
+  private List<PeriodMapping> periodMappingList = new ArrayList<>();
 
   /**
    * Creates new instance based on data from the importer.
