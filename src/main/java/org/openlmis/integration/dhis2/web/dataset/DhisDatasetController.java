@@ -16,10 +16,12 @@
 package org.openlmis.integration.dhis2.web.dataset;
 
 import java.util.UUID;
+import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
+import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
 import org.openlmis.integration.dhis2.repository.server.ServerRepository;
 import org.openlmis.integration.dhis2.service.communication.DhisDataService;
 import org.openlmis.integration.dhis2.service.role.PermissionService;
@@ -53,6 +55,9 @@ public class DhisDatasetController extends BaseController {
   private ServerRepository serverRepository;
 
   @Autowired
+  private DatasetRepository datasetRepository;
+
+  @Autowired
   private DhisDataService dhisDataService;
 
   @Autowired
@@ -72,6 +77,24 @@ public class DhisDatasetController extends BaseController {
 
     return Pagination.getPage(dhisDataService.getDhisDatasets(server.getUrl(),
             server.getUsername(), server.getPassword()), pageable);
+  }
+
+  /**
+   * Retrieves the specified dhis dataset.
+   */
+  @GetMapping(value = "/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public DhisDataset getDhisDataset(@PathVariable("serverId") UUID serverId,
+                                @PathVariable("id") UUID id) {
+    permissionService.canManageDhisIntegration();
+    Server server = serverRepository.findById(serverId)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
+    Dataset dataset = datasetRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_DATASET_NOT_FOUND));
+
+    return dhisDataService.getDhisDataSetById(dataset.getDhisDatasetId(), server.getUrl(),
+            server.getUsername(), server.getPassword());
   }
 
 }
