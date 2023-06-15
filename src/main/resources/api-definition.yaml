@@ -991,6 +991,40 @@ resourceTypes:
               body:
                 application/json:
                   schema: localizedErrorResponse
+        /{id}:
+          uriParameters:
+            id:
+              displayName: id
+              type: string
+              required: true
+              repeat: false
+          get:
+            is: [ secured ]
+            description: Get period mapping.
+            responses:
+              200:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+                    schema: periodMapping
+              404:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+                    schema: localizedErrorResponse
+              401:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+              403:
+                headers:
+                  Keep-Alive:
+                body:
+                  application/json:
+                    schema: localizedErrorResponse
       /dhisPeriodTypes:
         displayName: dhis period types
         get:
