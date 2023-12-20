@@ -20,6 +20,7 @@ import static org.openlmis.integration.dhis2.util.RequestHelper.createUri;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import org.openlmis.integration.dhis2.dto.dhis.DataValueSet;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionCombo;
 import org.openlmis.integration.dhis2.dto.dhis.DhisCategoryOptionComboResponseBody;
@@ -31,6 +32,7 @@ import org.openlmis.integration.dhis2.dto.dhis.DhisResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnit;
 import org.openlmis.integration.dhis2.dto.dhis.OrganisationUnitResponseBody;
 import org.openlmis.integration.dhis2.dto.dhis.SimpleDhisDataset;
+import org.openlmis.integration.dhis2.exception.ResponseParsingException;
 import org.openlmis.integration.dhis2.exception.RestOperationException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.service.auth.DhisAuthService;
@@ -208,7 +210,10 @@ public class DhisDataService {
           entity,
           clazz
       );
-      return response.getBody();
+      return Optional.ofNullable(response.getBody())
+          .orElseThrow(() -> new ResponseParsingException(
+              MessageKeys.ERROR_EXTERNAL_API_RESPONSE_BODY_UNABLE_TO_PARSE));
+
     } catch (HttpClientErrorException ex) {
       throw new RestOperationException(
           MessageKeys.ERROR_EXTERNAL_API_CLIENT_REQUEST_FAILED, ex);
