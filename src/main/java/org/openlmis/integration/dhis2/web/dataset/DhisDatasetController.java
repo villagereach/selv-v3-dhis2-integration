@@ -19,6 +19,7 @@ import java.util.UUID;
 import org.openlmis.integration.dhis2.domain.dataset.Dataset;
 import org.openlmis.integration.dhis2.domain.server.Server;
 import org.openlmis.integration.dhis2.dto.dhis.DhisDataset;
+import org.openlmis.integration.dhis2.dto.dhis.SimpleDhisDataset;
 import org.openlmis.integration.dhis2.exception.NotFoundException;
 import org.openlmis.integration.dhis2.i18n.MessageKeys;
 import org.openlmis.integration.dhis2.repository.dataset.DatasetRepository;
@@ -69,8 +70,8 @@ public class DhisDatasetController extends BaseController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Page<DhisDataset> getAllDatasets(@PathVariable("serverId") UUID serverId,
-                                          Pageable pageable) {
+  public Page<SimpleDhisDataset> getAllDatasets(@PathVariable("serverId") UUID serverId,
+                                                Pageable pageable) {
     permissionService.canManageDhisIntegration();
     Server server = serverRepository.findById(serverId)
             .orElseThrow(() -> new NotFoundException(MessageKeys.ERROR_SERVER_NOT_FOUND));
