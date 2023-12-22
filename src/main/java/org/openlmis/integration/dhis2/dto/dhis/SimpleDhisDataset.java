@@ -15,22 +15,20 @@
 
 package org.openlmis.integration.dhis2.dto.dhis;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * List of all DHIS datasets for a server, retrieved from the DHIS2 API.
+ * Objects of this class represent data retrieved from the DHIS2 API.
  * @see <a href="https://docs.dhis2.org/">DHIS2 Documentation</a>
  */
+@ToString
 @Getter
 @Setter
-@ToString
-public class DhisDatasetResponseBody {
+public class SimpleDhisDataset {
 
-  @JsonProperty("dataSets")
-  private List<SimpleDhisDataset> dhisDatasets;
+  private String id;
+  private String displayName;
 
 }
